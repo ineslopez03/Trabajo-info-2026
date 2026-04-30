@@ -62,5 +62,12 @@ void MotorArchon::bucle() {
 }
 
 void inicializar() {
-	
+
+	//inicializamos jugadores y los estados
+	//conceptual, se debe modificar 
+	//no se si ponerlo en el constructor o en un metodo aparte, lo dejo aqui por ahora
+	cambiarEstado(EstadoJuego::MENU); //para empezar en el menu
+	jugador1 = new jugador();
+	jugador2 = new jugador();
+
 }
