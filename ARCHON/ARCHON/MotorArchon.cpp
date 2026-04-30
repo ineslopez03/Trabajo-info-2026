@@ -31,7 +31,8 @@ void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado) {
 	//hago que el nuevo estado se represente
 	switch (estadoActual) {
 		case EstadoJuego::MENU//en el caso de que queramos representar el menú
-			pantallaActiva = new MenuPrincipal();//creamos dinamicamente el menu y lo asigno a pantallaActica para su representaicon
+			pantallaActiva = new MenuPrincipal();//creamos dinamicamente el objeto menu (llamamos a su constructor) y asigno su direccion a pantallaActica para despues acceder a el mediante los metodos del objeto
+			//tipo pantallaActiva->metodo();
 			break;
 		
 		case EstadoJuego::TABLERO//en el caso de que queramos representar el tabelro
@@ -39,12 +40,18 @@ void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado) {
 			break;
 		
 		case EstadoJuego::ARENA//en el caso de que queramos representar la arena
-			pantallaActiva = new Arena();//la estrucutura a la que apunta el punero será MenuPrincipal
+			pantallaActiva = new Arena();//lo mismo
 			break;
 		
 		case EstadoJuego::FIN//en el caso de que se termine el juego
 			ejecutando = false;//ejecutando a 0 para que salga del bucle principal.
 			break;
 		
+	}
+}
+
+void MotorArchon::bucle() {
+	while (ejecutando) {
+
 	}
 }
