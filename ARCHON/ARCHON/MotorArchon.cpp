@@ -60,3 +60,7 @@ void MotorArchon::bucle() {
 		}
 	}
 }
+
+void inicializar() {
+	
+}
