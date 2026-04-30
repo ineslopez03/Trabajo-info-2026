@@ -52,6 +52,11 @@ void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado) {
 
 void MotorArchon::bucle() {
 	while (ejecutando) {
-
+		if (pantallaActiva != nullptr)
+		{
+			pantallaActiva->procesarEntrada(); //gracias al polimorfismo puedo decirle a pantallaActiva (sea el que sea el objeto)
+			//que ejecute su propio metodo de procesar entrada(es un metodo de la interfaz(y pantallaActiva es un puntero de tipo interfaz) que heredan todas las clases hijas con el mismo nombre pero que implementan individualmente).
+			pantallaActiva->dibujarPantalla(); //lo mismo pero para dibujar la pantalla
+		}
 	}
 }
