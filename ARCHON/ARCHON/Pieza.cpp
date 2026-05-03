@@ -1,7 +1,7 @@
 #include"Pieza.h"
 #include"Casilla.h"
 
-Pieza::Pieza(int _v, int _d, int _vm, int _va,sf::Texture& textura): vida(_v), danio(_d), velMov(_vm), velAta(_va), sprite(textura) 
+Pieza::Pieza(int _v, int _d, int _vm, int _va,sf::Texture& textura,Bando _b): vida(_v), danio(_d), velMov(_vm), velAta(_va), sprite(textura),bando(_b)
 {
     posicion = nullptr;
 }
