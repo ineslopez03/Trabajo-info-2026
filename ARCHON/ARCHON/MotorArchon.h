@@ -28,4 +28,4 @@ public:
 	void inicializar();//inicializamos todo lo necesario para el juego.
 	void bucle();// es el bucle principal del juego, se procesan entradas, se dibuja, etc.
 	void cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1 = nullptr, Pieza* p2 = nullptr);
-}//si se da la condición de cambiar de estado llamamos a esta funcion y gestiona el cambio
+};//si se da la condición de cambiar de estado llamamos a esta funcion y gestiona el cambio
