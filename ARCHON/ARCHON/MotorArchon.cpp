@@ -1,4 +1,7 @@
 #include "MotorArchon.h"
+#include "Tablero.h"
+#include "Arena"
+#include "MenuPrincipal.h"
 
 
 
@@ -20,7 +23,7 @@ MotorArchon::~MotorArchon(){
 	if (jugador2 = !nullptr) delete jugador2;
 }
 
-void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado) {
+void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado, Pieza* p1 , Pieza* p2) {
 	//en el caso de	que vengamos de un estado previo borramos la pantalla y apuntamos a la nada.
 	//si el puntero esta vacio no tengo que hacer nada
 	if (pantallaActiva != nullptr) {
@@ -29,25 +32,26 @@ void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado) {
 	}
 	estadoActual = NuevoEstado; //asigno directamente el estado actual por el estado que he pasado al metodo.
 
+	
 	//hago que el nuevo estado se represente
-	switch (estadoActual) {
-		case EstadoJuego::MENU//en el caso de que queramos representar el menú
+	switch(estadoActual) {
+		case EstadoJuego::MENU://en el caso de que queramos representar el menú
 			pantallaActiva = new MenuPrincipal();//creamos dinamicamente el objeto menu (llamamos a su constructor) y asigno su direccion a pantallaActica para despues acceder a el mediante los metodos del objeto
 			//tipo pantallaActiva->metodo();
 			break;
-		
-		case EstadoJuego::TABLERO//en el caso de que queramos representar el tabelro
+
+		case EstadoJuego::TABLERO://en el caso de que queramos representar el tabelro
 			pantallaActiva = new Tablero();//se le asigna a pantallaActiva la clase Tablero que representara el tablero
 			break;
-		
-		case EstadoJuego::ARENA//en el caso de que queramos representar la arena
-			pantallaActiva = new Arena();//lo mismo
+
+		case EstadoJuego::ARENA://en el caso de que queramos representar la arena
+			pantallaActiva = new Arena(p1,p2);//lo mismo
 			break;
-		
-		case EstadoJuego::FIN//en el caso de que se termine el juego
+
+		case EstadoJuego::FIN://en el caso de que se termine el juego
 			ejecutando = false;//ejecutando a 0 para que salga del bucle principal.
 			break;
-		
+
 	}
 }
 
@@ -59,6 +63,19 @@ void MotorArchon::bucle() {
 
 			pantallaActiva->procesarEntrada(ventana); //gracias al polimorfismo puedo decirle a pantallaActiva (sea el que sea el objeto)
 			//que ejecute su propio metodo de procesar entrada(es un metodo de la interfaz(y pantallaActiva es un puntero de tipo interfaz) que heredan todas las clases hijas con el mismo nombre pero que implementan individualmente).
+			if (estadoActual == EstadoJuego::TABLERO)
+			{
+				Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva); //hago un cast para acceder a los metodos especificos del tablero, como comprobar victoria
+			
+				if (tab!=nullptr && tab->getHaycombate){//uso la bandera de combate
+					pieza* atacante = tab->getAtacante(); //tomo las piezas atacante y defensor para el combate
+					pieza* defensor = tab->getDefensor();
+
+					tab->resetCombate(); //reseteo el combate para que no se quede bloqueado en la fase de combate
+
+					cambiarEstado(EstadoJuego::ARENA,atacante,defensor); //cambio a la pantalla de combate
+				}
+			}
 			pantallaActiva->dibujarPantalla(venatana); //lo mismo pero para dibujar la pantalla
 		
 			ventana.display(); //muestro la ventana actualizada

@@ -105,10 +105,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)Librerias\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Librerias\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,12 +130,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Casilla.h" />
     <ClInclude Include="InterfazUsuario.h" />
     <ClInclude Include="MotorArchon.h" />
+    <ClInclude Include="Pieza.h" />
+    <ClInclude Include="Tablero.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
+    <ClCompile Include="Pieza.cpp" />
+    <ClCompile Include="Tablero.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sfml-audio-3.dll" />
+    <None Include="sfml-audio-d-3.dll" />
+    <None Include="sfml-graphics-3.dll" />
+    <None Include="sfml-graphics-d-3.dll" />
+    <None Include="sfml-network-3.dll" />
+    <None Include="sfml-network-d-3.dll" />
+    <None Include="sfml-system-3.dll" />
+    <None Include="sfml-system-d-3.dll" />
+    <None Include="sfml-window-3.dll" />
+    <None Include="sfml-window-d-3.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
