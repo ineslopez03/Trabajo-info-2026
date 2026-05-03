@@ -15,9 +15,9 @@ private:
 
 	EstadoJuego estadoActual; //Variable para almacenar/conocer el estado actual del juego
 	InterfazUsuario* pantallaActiva; //puntero general para la pantalla activa, que se asignará a cada pantalla concreta según el estado del juego
-	//GestorArchivos guardado;//objeto que guardará los datos del juego.
-	//Jugador* jugador1;
-	//Jugador* jugador2;
+	GestorArchivos guardado;//objeto que guardará los datos del juego.
+	Jugador* jugador1;
+	Jugador* jugador2;
 	//punteros que apuntan a los dos jugadores sean reales o IA.
 
 	bool ejecutando; //EN caso de estar jugando vale 1, si terminamos/salimos vale 0.

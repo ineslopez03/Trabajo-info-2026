@@ -131,14 +131,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Casilla.h" />
+    <ClInclude Include="GestorArchivos.h" />
     <ClInclude Include="InterfazUsuario.h" />
+    <ClInclude Include="Jugador.h" />
+    <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
     <ClInclude Include="Pieza.h" />
     <ClInclude Include="Tablero.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Casilla.cpp" />
+    <ClCompile Include="GestorArchivos.cpp" />
+    <ClCompile Include="Jugador.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
     <ClCompile Include="Pieza.cpp" />
     <ClCompile Include="Tablero.cpp" />

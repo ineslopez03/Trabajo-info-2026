@@ -2,6 +2,8 @@
 #include "Tablero.h"
 #include "Arena"
 #include "MenuPrincipal.h"
+#include "MenuPrincipal.h"
+
 
 
 
@@ -89,7 +91,7 @@ void inicializar() {
 	//conceptual, se debe modificar 
 	//no se si ponerlo en el constructor o en un metodo aparte, lo dejo aqui por ahora
 	cambiarEstado(EstadoJuego::MENU); //para empezar en el menu
-	jugador1 = new jugador();
-	jugador2 = new jugador();
+	jugador1 = new Jugador();
+	jugador2 = new Jugador();
 
 }
