@@ -5,7 +5,7 @@
 
 enum class EstadoJuego { MENU, TABLERO, ARENA, FIN };//Se hace enum class para que no se puedan comparar con enteros, y para que no haya confusión con otros estados de otras partes del programa
 
-class MotorJuego
+class MotorArchon
 {
 private:
 	EstadoJuego estadoActual; //Variable para almacenar/conocer el estado actual del juego
@@ -17,9 +17,9 @@ private:
 
 	bool ejecutando; //EN caso de estar jugando vale 1, si terminamos/salimos vale 0.
 public:
-	MotorJuego();//constructor generico 
-	~MotorJuego(); //destructor generico 
+	MotorArchon();//constructor generico 
+	~MotorArchon(); //destructor generico 
 
 	void inicializar();//inicializamos todo lo necesario para el juego.
-	void Bucle();// es el bucle principal del juego, se procesan entradas, se dibuja, etc.
-	void CambiarEstado(EstadoJuego nuevoEstado);//si se da la condición de cambiar de estado llamamos a esta funcion y gestiona el cambio.
+	void bucle();// es el bucle principal del juego, se procesan entradas, se dibuja, etc.
+	void cambiarEstado(EstadoJuego nuevoEstado);//si se da la condición de cambiar de estado llamamos a esta funcion y gestiona el cambio.
