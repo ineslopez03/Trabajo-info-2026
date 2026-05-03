@@ -2,8 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-Tablero::Tablero(sf::RenderWindow& ventana)
-    : ventanaJuego(ventana), origenSeleccionado(nullptr), primerClicRealizado(false), anguloRotacion(0.0f) {
+Tablero::Tablero():origenSeleccionado(nullptr), primerClicRealizado(false), anguloRotacion(0.0f) {
     inicializarTablero();
 }
 
@@ -43,22 +42,22 @@ void Tablero::inicializarTablero() {
         }
     }
 }
-void Tablero::dibujarPantalla() {
-    sf::View vistaTablero = ventanaJuego.getDefaultView();
+void Tablero::dibujarPantalla(sf::RenderWindow& ventana) {
+    sf::View vistaTablero = ventana.getDefaultView();
     float tamCasilla = 60.0f; // Ajustado de 80 a 60
     float tamTotal = 9 * tamCasilla;
 
     vistaTablero.setCenter({ tamTotal / 2.f, tamTotal / 2.f });
     vistaTablero.setRotation(sf::degrees(anguloRotacion));
-    ventanaJuego.setView(vistaTablero);
+    ventana.setView(vistaTablero);
 
 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-            matriz[i][j]->dibujar(ventanaJuego, origenSeleccionado,tiempoAcumuladoOscilacion, tamCasilla);
+            matriz[i][j]->dibujar(ventana, origenSeleccionado,tiempoAcumuladoOscilacion, tamCasilla);
         }
     }
-    ventanaJuego.setView(ventanaJuego.getDefaultView());
+    ventana.setView(ventana.getDefaultView());
 }
 
 bool Tablero::estaEnRango(Casilla* origen, Casilla* destino) {
@@ -96,7 +95,7 @@ void Tablero::gestionarTurno(Casilla* origen, Casilla* destino) {
     }
 }
 
-void Tablero::procesarEntrada() {
+void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
     // 1. Rotación con tecla Espacio
     static bool espacioPresionado = false;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {

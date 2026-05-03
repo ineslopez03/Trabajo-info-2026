@@ -8,10 +8,8 @@ private:
 	Casilla* matriz[9][9];
 	Casilla* origenSeleccionado;
 	bool primerClicRealizado;
-	sf::RenderWindow& ventanaJuego;
 	sf::Clock relojOscilacion;
 	float anguloRotacion = 0.0f;
-	bool estaenRango(Casilla* origen, Casilla* destino);
 	bool hayCombatePendiente = false;
 	Pieza* atacante = nullptr;
 	Pieza* defensor = nullptr;
@@ -19,10 +17,10 @@ private:
 	int turnosContados = 0;
 	const float Duracion_fase = 2.0f;
 public:
-	Tablero(sf::RenderWindow& ventana);
+	Tablero();
 	~Tablero() override;
-	void procesarEntrada() override;
-	void dibujarPantalla() override;
+	void procesarEntrada(sf::RenderWindow& ventana);
+	void dibujarPantalla(sf::RenderWindow& ventana);
 	void inicializarTablero();
 	void moverPieza(Casilla* origen, Casilla* destino);
 	bool esMovimientoValido(Casilla* origen, Casilla* destino);
