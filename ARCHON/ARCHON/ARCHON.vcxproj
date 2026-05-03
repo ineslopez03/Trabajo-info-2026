@@ -135,7 +135,6 @@
   <ItemGroup>
     <ClInclude Include="Casilla.h" />
     <ClInclude Include="Pieza.h" />
-    <ClInclude Include="PiezaTerrestre.h" />
     <ClInclude Include="Tablero.h" />
   </ItemGroup>
   <ItemGroup>

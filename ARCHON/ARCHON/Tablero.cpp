@@ -17,8 +17,12 @@ void Tablero::inicializarTablero() {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             // 1. Identificar Puntos de Poder (Amarillos fijos)
-            // Son las 4 esquinas, los centros de los 4 bordes y el centro total.
-            bool esPuntoPoder = (i == 0 || i == 4 || i == 8) && (j == 0 || j == 4 || j == 8);
+            
+            bool esPuntoPoder = false;
+            if ((i == 4 && (j == 0 || j == 4 || j == 8)) ||
+                (j == 4 && (i == 0 || i == 8))) {
+                esPuntoPoder = true;
+            }
 
   
             bool oscila = false;
@@ -151,7 +155,8 @@ bool Tablero::comprobarVictoria() {
                 else piezasOscuras++;
 
                 // Puntos de Poder (Esquinas y centros de bordes/tablero)
-                bool esPuntoPoder = (i == 0 || i == 4 || i == 8) && (j == 0 || j == 4 || j == 8);
+                bool esPuntoPoder = ((i == 4 && (j == 0 || j == 4 || j == 8)) ||
+                    (j == 4 && (i == 0 || i == 8)));
                 if (esPuntoPoder) {
                     if (p->getBando() == Bando::LUZ) puntosLuz++;
                     else puntosOscuros++;
