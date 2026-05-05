@@ -8,16 +8,19 @@
 
 MotorArchon::MotorArchon(){
 	ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON"); //creo la ventana 
-	estadoActual = EstadoJuego::MENU; //Empezamos en el menú
+	//estadoActual = EstadoJuego::MENU; //Empezamos en el menú
+	//cambiarEstado(EstadoJuego::MENU);
+
 	//dejamos vacios los punteros al inicio y ya se les asignará valores cuando toque, evitamos accesos no habilitados
 	pantallaActiva = nullptr; 
 	jugador1 = nullptr;
 	jugador2 = nullptr; 
 	ejecutando = true; //ponemos a 1 nada mas iniciar para que el bucle se pueda ejecutar
+	cambiarEstado(EstadoJuego::MENU);
 }
 
 MotorArchon::~MotorArchon(){
-	//como los voy a crear dinamicamente usando new, debo hacer el delete
+	//como los voy a crear dinamicamente usando new, debo hacer el delete para no tener fugas de memoria
 	if (pantallaActiva!=nullptr) delete pantallaActiva;
 	if (jugador1 !=nullptr) delete jugador1;
 	if (jugador2 !=nullptr) delete jugador2;
@@ -27,8 +30,8 @@ void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado, Pieza* p1 , Pieza* p2) 
 	//en el caso de	que vengamos de un estado previo borramos la pantalla y apuntamos a la nada.
 	//si el puntero esta vacio no tengo que hacer nada
 	if (pantallaActiva != nullptr) {
-		delete pantallaActiva;
-		pantallaActiva = nullptr;
+		delete pantallaActiva;//porque se le asocia a un objeto creado dinamicamente que debo borrar
+		pantallaActiva = nullptr;//porque el puntero sigue apuntando a la direccion del objeto que acabo de borrar(por seguridad)
 	}
 	estadoActual = NuevoEstado; //asigno directamente el estado actual por el estado que he pasado al metodo.
 
@@ -64,7 +67,7 @@ void MotorArchon::bucle() {
 			pantallaActiva->procesarEntrada(ventana); //gracias al polimorfismo puedo decirle a pantallaActiva (sea el que sea el objeto)
 			//que ejecute su propio metodo de procesar entrada(es un metodo de la interfaz(y pantallaActiva es un puntero de tipo interfaz) que heredan todas las clases hijas con el mismo nombre pero que implementan individualmente).
 			
-			//FUERZO QUE ENTRE A ESTADO TABLERO 
+			//FUERZO QUE ENTRE A ESTADO TABLERO CAMBIARLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 			if (estadoActual == EstadoJuego::MENU && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
 				cambiarEstado(EstadoJuego::TABLERO);
 			}
@@ -72,10 +75,12 @@ void MotorArchon::bucle() {
 			if (estadoActual == EstadoJuego::TABLERO)
 			{
 				Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva); //hago un cast para acceder a los metodos especificos del tablero, como comprobar victoria
-			
-				if (tab!=nullptr && tab->getHaycombate()){//uso la bandera de combate
+				//basicamente transformo el puntero pantallaActiva de tipo interfazUsuario* a un puntero tipo Tablero* para poder acceder a los metodos de tablero
+				// , si el cast no es correcto el puntero tab se queda apuntando a nullptr y no se ejecuta el if
+				//el casteo no es automatico, para upcasting sí pero no para downcasting, es decir de padre a hijo no se puede solito.
+				if (tab!=nullptr && tab->getHaycombate()){//uso la bandera de combate, tambien compruebo que el cast esta bien hecho(porque si no es tablero la pantalla activa que intento cambiar crashea
 					Pieza* atacante = tab->getAtacante(); //tomo las piezas atacante y defensor para el combate
-					Pieza* defensor = tab->getDefensor();
+					Pieza* defensor = tab->getDefensor();//estos son los metodos especificos del tablero
 
 					tab->resetCombate(); //reseteo el combate para que no se quede bloqueado en la fase de combate
 
@@ -94,7 +99,7 @@ void MotorArchon::inicializar() {
 	//inicializamos jugadores y los estados
 	//conceptual, se debe modificar 
 	//no se si ponerlo en el constructor o en un metodo aparte, lo dejo aqui por ahora
-	cambiarEstado(EstadoJuego::MENU); //para empezar en el menu
+	//cambiarEstado(EstadoJuego::MENU); //para empezar en el menu
 	jugador1 = new Jugador();
 	jugador2 = new Jugador();
 
