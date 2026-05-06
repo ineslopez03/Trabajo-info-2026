@@ -66,3 +66,4 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
         p->dibujar(ventana);
     }
 }
+

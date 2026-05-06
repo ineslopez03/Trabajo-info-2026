@@ -135,6 +135,8 @@
     <ClInclude Include="GestorArchivos.h" />
     <ClInclude Include="InterfazUsuario.h" />
     <ClInclude Include="Jugador.h" />
+    <ClInclude Include="JugadorHumano.h" />
+    <ClInclude Include="JugadorIA.h" />
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
     <ClInclude Include="Pieza.h" />
@@ -146,6 +148,8 @@
     <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />
     <ClCompile Include="Jugador.cpp" />
+    <ClCompile Include="JugadorHumano.cpp" />
+    <ClCompile Include="JugadorIA.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
