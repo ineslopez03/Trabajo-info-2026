@@ -1,10 +1,10 @@
 #include "MenuPrincipal.h"
 MenuPrincipal::MenuPrincipal() {
-	
+
 }
 
 MenuPrincipal::~MenuPrincipal() {
-	
+
 }
 
 void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {

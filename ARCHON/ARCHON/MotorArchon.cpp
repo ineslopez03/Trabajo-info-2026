@@ -1,106 +1,111 @@
 #include "MotorArchon.h"
 #include "Tablero.h"
-//#include "Arena"
+#include "Arena.h"
 #include "MenuPrincipal.h"
 
+MotorArchon::MotorArchon() {
+    // Creación de la ventana principal según la normativa (Visual Studio 2026 / SFML)
+    ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON - Informática Industrial 2026");
+    estadoActual = EstadoJuego::MENU;
 
-
-
-MotorArchon::MotorArchon(){
-	ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON"); //creo la ventana 
-	//estadoActual = EstadoJuego::MENU; //Empezamos en el menú
-	//cambiarEstado(EstadoJuego::MENU);
-
-	//dejamos vacios los punteros al inicio y ya se les asignará valores cuando toque, evitamos accesos no habilitados
-	pantallaActiva = nullptr; 
-	jugador1 = nullptr;
-	jugador2 = nullptr; 
-	ejecutando = true; //ponemos a 1 nada mas iniciar para que el bucle se pueda ejecutar
-	cambiarEstado(EstadoJuego::MENU);
+    // Inicialización de punteros de control
+    pantallaActiva = nullptr;
+    jugador1 = nullptr;
+    jugador2 = nullptr;
+    ejecutando = true;
 }
 
-MotorArchon::~MotorArchon(){
-	//como los voy a crear dinamicamente usando new, debo hacer el delete para no tener fugas de memoria
-	if (pantallaActiva!=nullptr) delete pantallaActiva;
-	if (jugador1 !=nullptr) delete jugador1;
-	if (jugador2 !=nullptr) delete jugador2;
+MotorArchon::~MotorArchon() {
+    // Liberación de memoria dinámica para evitar fugas (Memory Leaks)
+    if (pantallaActiva != nullptr) delete pantallaActiva;
+    if (jugador1 != nullptr) delete jugador1;
+    if (jugador2 != nullptr) delete jugador2;
 }
 
-void MotorArchon::cambiarEstado(EstadoJuego NuevoEstado, Pieza* p1 , Pieza* p2) {
-	//en el caso de	que vengamos de un estado previo borramos la pantalla y apuntamos a la nada.
-	//si el puntero esta vacio no tengo que hacer nada
-	if (pantallaActiva != nullptr) {
-		delete pantallaActiva;//porque se le asocia a un objeto creado dinamicamente que debo borrar
-		pantallaActiva = nullptr;//porque el puntero sigue apuntando a la direccion del objeto que acabo de borrar(por seguridad)
-	}
-	estadoActual = NuevoEstado; //asigno directamente el estado actual por el estado que he pasado al metodo.
+void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2) {
+    // 1. Limpieza de la pantalla anterior
+    if (pantallaActiva != nullptr) {
+        delete pantallaActiva;
+        pantallaActiva = nullptr;
+    }
 
-	
-	//hago que el nuevo estado se represente
-	switch(estadoActual) {
-		case EstadoJuego::MENU://en el caso de que queramos representar el menú
-			pantallaActiva = new MenuPrincipal();//creamos dinamicamente el objeto menu (llamamos a su constructor) y asigno su direccion a pantallaActica para despues acceder a el mediante los metodos del objeto
-			//tipo pantallaActiva->metodo();
-			break;
+    estadoActual = nuevoEstado;
 
-		case EstadoJuego::TABLERO://en el caso de que queramos representar el tabelro
-			pantallaActiva = new Tablero();//se le asigna a pantallaActiva la clase Tablero que representara el tablero
-			break;
+    // 2. Instanciación de la nueva pantalla según la jerarquía del esquema[cite: 2]
+    switch (estadoActual) {
+    case EstadoJuego::MENU:
+        pantallaActiva = new MenuPrincipal();
+        break;
 
-		case EstadoJuego::ARENA://en el caso de que queramos representar la arena
-			//pantallaActiva = new Arena(p1,p2);//lo mismo
-			break;
+    case EstadoJuego::TABLERO:
+        pantallaActiva = new Tablero();
+        break;
 
-		case EstadoJuego::FIN://en el caso de que se termine el juego
-			ejecutando = false;//ejecutando a 0 para que salga del bucle principal.
-			break;
+    case EstadoJuego::ARENA:
+        // Se pasan los punteros de las piezas que entran en conflicto
+        if (p1 != nullptr && p2 != nullptr) {
+            pantallaActiva = new Arena(p1, p2);
+        }
+        else {
+            // Seguridad: Si no hay piezas, volvemos al tablero
+            estadoActual = EstadoJuego::TABLERO;
+            pantallaActiva = new Tablero();
+        }
+        break;
 
-	}
+    case EstadoJuego::FIN:
+        ejecutando = false;
+        break;
+    }
 }
 
 void MotorArchon::bucle() {
-	while (ejecutando && ventana.isOpen()) {
-		if (pantallaActiva != nullptr)
-		{
-			ventana.clear(); //limpio la ventana anterior antes de pintar
+    while (ejecutando && ventana.isOpen()) {
+        if (pantallaActiva != nullptr) {
 
-			pantallaActiva->procesarEntrada(ventana); //gracias al polimorfismo puedo decirle a pantallaActiva (sea el que sea el objeto)
-			//que ejecute su propio metodo de procesar entrada(es un metodo de la interfaz(y pantallaActiva es un puntero de tipo interfaz) que heredan todas las clases hijas con el mismo nombre pero que implementan individualmente).
-			
-			//FUERZO QUE ENTRE A ESTADO TABLERO CAMBIARLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-			if (estadoActual == EstadoJuego::MENU && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-				cambiarEstado(EstadoJuego::TABLERO);
-			}
+            // --- 1. PROCESAMIENTO DE ENTRADA ---
+            pantallaActiva->procesarEntrada(ventana);
 
-			if (estadoActual == EstadoJuego::TABLERO)
-			{
-				Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva); //hago un cast para acceder a los metodos especificos del tablero, como comprobar victoria
-				//basicamente transformo el puntero pantallaActiva de tipo interfazUsuario* a un puntero tipo Tablero* para poder acceder a los metodos de tablero
-				// , si el cast no es correcto el puntero tab se queda apuntando a nullptr y no se ejecuta el if
-				//el casteo no es automatico, para upcasting sí pero no para downcasting, es decir de padre a hijo no se puede solito.
-				if (tab!=nullptr && tab->getHaycombate()){//uso la bandera de combate, tambien compruebo que el cast esta bien hecho(porque si no es tablero la pantalla activa que intento cambiar crashea
-					Pieza* atacante = tab->getAtacante(); //tomo las piezas atacante y defensor para el combate
-					Pieza* defensor = tab->getDefensor();//estos son los metodos especificos del tablero
+            // --- 2. LÓGICA DE TRANSICIÓN ---
+            // Transición de MENÚ a TABLERO mediante tecla Enter
+            if (estadoActual == EstadoJuego::MENU && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
+                cambiarEstado(EstadoJuego::TABLERO);
+            }
 
-					tab->resetCombate(); //reseteo el combate para que no se quede bloqueado en la fase de combate
+            // Gestión de combate detectado por la lógica del Tablero
+            if (estadoActual == EstadoJuego::TABLERO) {
+                // Cast seguro para acceder a los métodos específicos de la clase Tablero[cite: 2]
+                Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva);
 
-					cambiarEstado(EstadoJuego::ARENA,atacante,defensor); //cambio a la pantalla de combate
-				}
-			}
-			pantallaActiva->dibujarPantalla(ventana); //lo mismo pero para dibujar la pantalla
-		
-			ventana.display(); //muestro la ventana actualizada
-		}
-	}
+                if (tab != nullptr && tab->getHaycombate()) {
+                    Pieza* atacante = tab->getAtacante();
+                    Pieza* defensor = tab->getDefensor();
+
+                    // Reseteamos el flag de combate antes de la transición
+                    tab->resetCombate();
+
+                    // Transición a la Arena enviando los datos de combate
+                    cambiarEstado(EstadoJuego::ARENA, atacante, defensor);
+                }
+            }
+
+            // --- 3. RENDERIZADO ---
+            ventana.clear(); // Limpieza del buffer
+
+            // Gracias al polimorfismo, dibujamos la pantalla activa actual[cite: 2]
+            pantallaActiva->dibujarPantalla(ventana);
+
+            ventana.display(); // Intercambio de buffers
+        }
+    }
 }
 
 void MotorArchon::inicializar() {
+    // Configuración inicial del sistema de jugadores
+    // Según el esquema, Jugador es abstracta, aquí se instanciarían JugadorHumano o JugadorIA[cite: 2]
+    cambiarEstado(EstadoJuego::MENU);
 
-	//inicializamos jugadores y los estados
-	//conceptual, se debe modificar 
-	//no se si ponerlo en el constructor o en un metodo aparte, lo dejo aqui por ahora
-	//cambiarEstado(EstadoJuego::MENU); //para empezar en el menu
-	jugador1 = new Jugador();
-	jugador2 = new Jugador();
-
+    // Por ahora, inicialización genérica (esto debe evolucionar según el bando elegido)
+    // jugador1 = new JugadorHumano(...); 
+    // jugador2 = new JugadorIA(...);
 }

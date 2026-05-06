@@ -29,5 +29,3 @@ public:
 	void bucle();// es el bucle principal del juego, se procesan entradas, se dibuja, etc.
 	void cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1 = nullptr, Pieza* p2 = nullptr);
 };//si se da la condición de cambiar de estado llamamos a esta funcion y gestiona el cambio
-//he hecho que pieza* p1 y pieza*p2 sean nullptr y no he usado referencias a las piezas porque no siempre existen
-//por ejemplo en menu no hay piezas todavía.Además las piezas que van a llegar van a ser polimorficas y creadas dinamicamente

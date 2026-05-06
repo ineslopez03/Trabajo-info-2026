@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Arena.h" />
     <ClInclude Include="Casilla.h" />
     <ClInclude Include="GestorArchivos.h" />
     <ClInclude Include="InterfazUsuario.h" />
@@ -137,9 +138,11 @@
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
     <ClInclude Include="Pieza.h" />
+    <ClInclude Include="Proyectiles.h" />
     <ClInclude Include="Tablero.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Arena.cpp" />
     <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />
     <ClCompile Include="Jugador.cpp" />
@@ -147,6 +150,7 @@
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
     <ClCompile Include="Pieza.cpp" />
+    <ClCompile Include="Proyectiles.cpp" />
     <ClCompile Include="Tablero.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,8 @@
 #include<iostream>
 #include <SFML/Graphics.hpp>
 Casilla::Casilla(int _x, int _y, bool _osc)
-	: x(_x), y(_y), esOscilante(_osc), piezaOcupante(nullptr) {}
+    : x(_x), y(_y), esOscilante(_osc), piezaOcupante(nullptr) {
+}
 Casilla::~Casilla() {}
 void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, float tiempo, float tamano) {
     sf::RectangleShape cuadrado(sf::Vector2f(tamano, tamano));
@@ -47,7 +48,7 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, float ti
 
     sf::RectangleShape luzSuperior(sf::Vector2f(tamano, 2.0f));
     luzSuperior.setPosition(sf::Vector2f(posX, posY));
-    luzSuperior.setFillColor(sf::Color(255, 255, 255, 40)); 
+    luzSuperior.setFillColor(sf::Color(255, 255, 255, 40));
     ventana.draw(luzSuperior);
 
     // --- SELECCIÓN ---
