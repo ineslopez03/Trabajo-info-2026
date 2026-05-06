@@ -2,39 +2,74 @@
 #include<iostream>
 #include <SFML/Graphics.hpp>
 Casilla::Casilla(int _x, int _y, bool _osc)
-	: x(_x), y(_y), esOscilante(_osc), piezaOcupante(nullptr) {}
+    : x(_x), y(_y), esOscilante(_osc), piezaOcupante(nullptr) {
+    ColorOscilante = ColorCasilla::NEGRO;
+}//constructor de la casilla, la pieza ocupante esta vacia por defecto
 Casilla::~Casilla() {}
-void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, float tiempo, float tamano) {
-    sf::RectangleShape cuadrado(sf::Vector2f(tamano, tamano));
-    float posX = x * tamano;
-    float posY = y * tamano;
-    cuadrado.setPosition({ posX, posY });
-
-
-    bool esPuntoPoder = (x == 0 || x == 4 || x == 8) && (y == 0 || y == 4 || y == 8);
-    sf::Color colorRelleno;
-
-    if (esPuntoPoder) {
-        colorRelleno = sf::Color(218, 165, 32);
+void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) {
+    sf::RectangleShape cuadrado(sf::Vector2f(tamano, tamano));//se pinta el cuadrado de tamaño tamano
+	float posX = x * tamano; //se le asigna la posicion en x multiplicando la coordenada x por el tamaño de la casilla
+	float posY = y * tamano;//se le asigna la posicion en y multiplicando la coordenada y por el tamaño de la casilla
+    cuadrado.setPosition({ posX, posY });// se le asigna finalmente la posicion al cuadrado
+    
+    bool esPuntoPoder = ((x == 4 && y == 4)|| (x == 0 && y == 4) || (x == 4 && y == 0) || (x == 4 && y == 8) || (x == 8 && y == 4));
+    int fase = turno%4;
+    switch (fase) {//se debe asegurar que turno empieze en 0 y se reinicie cuando llegue a 3
+    case 0: 
+        ColorOscilante = ColorCasilla::NEGRO;
+        break;
+    case 1:
+        ColorOscilante = ColorCasilla::GRIS_OSCURO;
+        break;
+    case 2:
+        ColorOscilante = ColorCasilla::GRIS_CLARO;
+        break;
+    case 3:
+        ColorOscilante = ColorCasilla::BLANCO;
+        break;
     }
-    else {
-        if (esOscilante) {
-            int ciclo[] = { 0, 1, 2, 3, 3, 2, 1, 0 };
-            int fase = (int)(tiempo / 2.0f) % 8;
-            int intensidad = ciclo[fase];
-            switch (intensidad) {
-            case 0: colorRelleno = sf::Color::Black; break;
-            case 1: colorRelleno = sf::Color(45, 45, 45); break;
-            case 2: colorRelleno = sf::Color(140, 140, 140); break;
-            case 3: colorRelleno = sf::Color::White; break;
-            }
-        }
-        else {
-            colorRelleno = ((x + y) % 2 == 0) ? sf::Color::White : sf::Color::Black;
-        }
-    }
+   
+   sf::Color colorRelleno;
+
+   if (esOscilante) {
+       switch (ColorOscilante)
+       {
+       case ColorCasilla::NEGRO:
+       colorRelleno = sf::Color::Black; 
+       break;
+       case ColorCasilla::GRIS_OSCURO:
+        colorRelleno = sf::Color(45, 45, 45);
+           
+        break;
+       case ColorCasilla::GRIS_CLARO:
+       colorRelleno = sf::Color(140, 140, 140); 
+       
+       break;  
+       case ColorCasilla::BLANCO:
+       colorRelleno = sf::Color::White; 
+
+       break;
+       }
+
+       
+   }
+   else {
+       colorRelleno = ((x + y) % 2 == 0) ? sf::Color::White : sf::Color::Black;   
+   }
+  
     cuadrado.setFillColor(colorRelleno);
     ventana.draw(cuadrado);
+
+    if (esPuntoPoder) {
+     int proporcion = 0.55;
+        sf::RectangleShape cuadrado(sf::Vector2f(tamano * proporcion, tamano * proporcion));//Lo pinto mas pequeñ
+       float posX = x * (tamano - (tamano * proporcion / 2.0f)); //se le asigna la posicion en x multiplicando la coordenada x por el tamaño de la casilla
+       float posY = y * (tamano - (tamano * proporcion/ 2.0f));//se le asigna la posicion en y multiplicando la coordenada y por el tamaño de la casilla
+       cuadrado.setPosition({ posX, posY });// se le asigna finalmente la posicion al cuadrado
+        colorRelleno = sf::Color(218, 165, 32);
+        cuadrado.setFillColor(colorRelleno);
+        ventana.draw(cuadrado);
+    }
 
     sf::Color colorBorde = (colorRelleno == sf::Color::Black) ? sf::Color(60, 60, 60) : sf::Color(100, 100, 100, 150);
 
