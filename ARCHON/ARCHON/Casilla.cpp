@@ -2,19 +2,33 @@
 #include<iostream>
 #include <SFML/Graphics.hpp>
 
-Casilla::Casilla(int _x, int _y, bool _osc)
-    : x(_x), y(_y), esOscilante(_osc), piezaOcupante(nullptr) {
+Casilla::Casilla(int _x, int _y)
+    : x(_x), y(_y), piezaOcupante(nullptr) {
     ColorOscilante = ColorCasilla::NEGRO;
 }//constructor de la casilla, la pieza ocupante esta vacia por defecto
-Casilla::~Casilla() {}
+
+
+Casilla::~Casilla() {
+
+}
+
+
 void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) {
     sf::RectangleShape cuadrado(sf::Vector2f(tamano, tamano));//se pinta el cuadrado de tamaño tamano
 	float posX = x * tamano; //se le asigna la posicion en x multiplicando la coordenada x por el tamaño de la casilla
 	float posY = y * tamano;//se le asigna la posicion en y multiplicando la coordenada y por el tamaño de la casilla
     cuadrado.setPosition({ posX, posY });// se le asigna finalmente la posicion al cuadrado
     
-    bool esPuntoPoder = ((x == 4 && y == 4)|| (x == 0 && y == 4) || (x == 4 && y == 0) || (x == 4 && y == 8) || (x == 8 && y == 4));
-    int fase = turno%4;
+    
+   bool esPuntoPoder = ((x == 4 && y == 4)|| (x == 0 && y == 4) || (x == 4 && y == 0) || (x == 4 && y == 8) || (x == 8 && y == 4));
+   bool lasOscilantes = ( ((x==4 && y<=8) || (y==4 && (x>0 && x<8)))//aquí defino la cruz
+                        || x == 3 && y == 0 || x == 2 && y == 1 || x == 1 && y == 2 || x == 0 && y == 3
+                        || x == 5 && y == 0 || x == 6 && y == 1 || x == 7 && y == 2 || x == 8 && y == 3//parte supuerior
+                        || y == 5 && x == 0 || y == 6 && x == 1 || y == 7 && x == 2 || y == 8 && x == 3
+                        || y == 8 && x == 5 || y == 7 && x == 6 || y == 6 && x == 7 || y == 5 && x == 8);
+
+
+   int fase = turno%4;
     switch (fase) {//se debe asegurar que turno empieze en 0 y se reinicie cuando llegue a 3
     case 0: 
         ColorOscilante = ColorCasilla::NEGRO;
@@ -32,7 +46,14 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
    
    sf::Color colorRelleno;
 
-   if (esOscilante) {
+   if (lasOscilantes) {
+
+       esOscilante = 1;// si entra aqui es que es oscilante y ya de paso le asigno el atributo para poder leerlo desde fuera
+       
+       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
+           ColorOscilante = ColorCasilla::GRIS_CLARO;
+       }
+
        switch (ColorOscilante)
        {
        case ColorCasilla::NEGRO:

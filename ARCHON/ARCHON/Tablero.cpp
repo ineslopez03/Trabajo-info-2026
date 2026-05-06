@@ -18,7 +18,7 @@ void Tablero::inicializarTablero() {
         for (int j = 0; j < 9; j++) {
             // 1. Identificar Puntos de Poder (Amarillos fijos)
             // Son las 4 esquinas, los centros de los 4 bordes y el centro total.
-            bool esPuntoPoder = (i == 0 || i == 4 || i == 8) && (j == 0 || j == 4 || j == 8);
+            /*bool esPuntoPoder = (i == 0 || i == 4 || i == 8) && (j == 0 || j == 4 || j == 8);
 
   
             bool oscila = false;
@@ -36,9 +36,9 @@ void Tablero::inicializarTablero() {
             }
 
             // Si es punto de poder, NO oscila 
-            if (esPuntoPoder) oscila = false;
+            if (esPuntoPoder) oscila = false;*/
 
-            matriz[i][j] = new Casilla(i, j, oscila);
+            matriz[i][j] = new Casilla(i, j);
         }
     }
 }

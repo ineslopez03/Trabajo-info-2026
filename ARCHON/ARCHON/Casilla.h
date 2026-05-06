@@ -10,7 +10,7 @@ private:
     Pieza* piezaOcupante; // puntero a la pieza que va a ocupar la casilla (puede ser nullptr si vacia)
     ColorCasilla ColorOscilante;
 public:
-    Casilla(int _x, int _y, bool _osc); //constructor de la casilla
+    Casilla(int _x, int _y); //constructor de la casilla
     ~Casilla(); //destructor de la casilla 
     void setPieza(Pieza* p) { // metodo set, pasamos un puntero de la pieza que la va a ocupar.
         //Asigna el puntero al atributo privado
