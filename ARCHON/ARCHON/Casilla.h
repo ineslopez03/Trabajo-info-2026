@@ -24,4 +24,5 @@ public:
     void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano);// se dibuja la casilla
 	int getX() const { return x; }//me devuelve la coordenada x
 	int getY() const { return y; }//me devuelve la coordenada y
+	int getColor() const { return static_cast<int>(Color); }//me devuelve el color de la casilla en formato int para poder usarlo en el tablero
     };
