@@ -7,9 +7,9 @@ class Casilla {
 private:
     int x, y; //coordenadas de la matriz del tablero 
     bool esOscilante; // con esto definimos si queremos que la casilla cambie de color o no 
-    bool esPuntoDePoder;
+    bool esPuntoDePoder;//con esto definimos si es punto de poder
     Pieza* piezaOcupante; // puntero a la pieza que va a ocupar la casilla (puede ser nullptr si vacia)
-    ColorCasilla ColorOscilante;
+    ColorCasilla Color;//con esto guardamos el color de la casilla
 public:
     Casilla(int _x, int _y); //constructor de la casilla
     ~Casilla(); //destructor de la casilla 
@@ -24,5 +24,4 @@ public:
     void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano);// se dibuja la casilla
 	int getX() const { return x; }//me devuelve la coordenada x
 	int getY() const { return y; }//me devuelve la coordenada y
-    
-};
+    };

@@ -16,7 +16,7 @@ Casilla::Casilla(int _x, int _y)
 
     if (lasOscilantes) esOscilante = true; else esOscilante = false;
 
-    ColorOscilante = ColorCasilla::NEGRO;
+    Color = ColorCasilla::NEGRO;
 }//constructor de la casilla, la pieza ocupante esta vacia por defecto
 
 
@@ -31,32 +31,23 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
 	float posY = y * tamano;//se le asigna la posicion en y multiplicando la coordenada y por el tamaño de la casilla
     cuadrado.setPosition({ posX, posY });// se le asigna finalmente la posicion al cuadrado
     
-    //maquina de estados para el cambio de colores
-   int fase = turno%4;// esto simplemente mira el resto de la operacion y el resto siempre va a ir de 0 a 3
-    switch (fase) {//se debe asegurar que turno empieze en 0 y se reinicie cuando llegue a 3
-    case 0: 
-        ColorOscilante = ColorCasilla::NEGRO;
-        break;
-    case 1:
-        ColorOscilante = ColorCasilla::GRIS_OSCURO;
-        break;
-    case 2:
-        ColorOscilante = ColorCasilla::GRIS_CLARO;
-        break;
-    case 3:
-        ColorOscilante = ColorCasilla::BLANCO;
-        break;
-    }
-   
    sf::Color colorRelleno;//declaro el que va a ser el color de relleno 
 
    //lógica de como se va a pintar
    if (esOscilante) {
-       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {//metodo para visualizar lo que estoy haciendo
-           ColorOscilante = ColorCasilla::GRIS_CLARO;
+       int fase = turno % 4;// esto simplemente mira el resto de la operacion y el resto siempre va a ir de 0 a 3
+       switch (fase) {//se debe asegurar que turno empieze en 0 y se reinicie cuando llegue a 3
+       case 0:Color = ColorCasilla::NEGRO;break;
+       case 1:Color = ColorCasilla::GRIS_OSCURO;break;
+       case 2:Color = ColorCasilla::GRIS_CLARO;break;
+       case 3:Color = ColorCasilla::BLANCO;break;
        }
 
-       switch (ColorOscilante)//segun el color que toque el color de relleno sera uno u otro
+       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {//metodo para visualizar lo que estoy haciendo
+           Color = ColorCasilla::GRIS_CLARO;
+       }
+
+       switch (Color)//segun el color que toque el color de relleno sera uno u otro
        {
        case ColorCasilla::NEGRO:
        colorRelleno = sf::Color::Black; 
@@ -80,10 +71,15 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
    else {
        if (x < 4) {//pintamos una mitad
            colorRelleno = ((x + y) % 2 == 0) ? sf::Color::White : sf::Color::Black;
+           
        }
        else {//la otra mitad está invertida 
            colorRelleno = ((x + y) % 2 == 1) ? sf::Color::White : sf::Color::Black;
        }
+       if (colorRelleno == sf::Color::White) {
+           Color = ColorCasilla::BLANCO;
+       }
+       else { Color = ColorCasilla::NEGRO; }
    }
   
     cuadrado.setFillColor(colorRelleno);// aplico el color de relleno
