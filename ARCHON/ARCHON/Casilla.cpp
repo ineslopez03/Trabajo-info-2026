@@ -4,6 +4,18 @@
 
 Casilla::Casilla(int _x, int _y)
     : x(_x), y(_y), piezaOcupante(nullptr) {
+    bool esPuntoPoder = ((x == 4 && y == 4) || (x == 0 && y == 4) || (x == 4 && y == 0) || (x == 4 && y == 8) || (x == 8 && y == 4));
+	
+    if (esPuntoPoder) esPuntoDePoder = true; else esPuntoDePoder = false;
+
+    bool lasOscilantes = (((x == 4 && y <= 8) || (y == 4 && (x > 0 && x < 8)))//aquí defino la cruz
+        || x == 3 && y == 0 || x == 2 && y == 1 || x == 1 && y == 2 || x == 0 && y == 3
+        || x == 5 && y == 0 || x == 6 && y == 1 || x == 7 && y == 2 || x == 8 && y == 3//parte supuerior
+        || y == 5 && x == 0 || y == 6 && x == 1 || y == 7 && x == 2 || y == 8 && x == 3
+        || y == 8 && x == 5 || y == 7 && x == 6 || y == 6 && x == 7 || y == 5 && x == 8);
+
+    if (lasOscilantes) esOscilante = true; else esOscilante = false;
+
     ColorOscilante = ColorCasilla::NEGRO;
 }//constructor de la casilla, la pieza ocupante esta vacia por defecto
 
@@ -14,21 +26,13 @@ Casilla::~Casilla() {
 
 
 void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) {
-    sf::RectangleShape cuadrado(sf::Vector2f(tamano, tamano));//se pinta el cuadrado de tamaño tamano
+    sf::RectangleShape cuadrado(sf::Vector2f(tamano, tamano));//se elige el cuadrado de tamaño tamano
 	float posX = x * tamano; //se le asigna la posicion en x multiplicando la coordenada x por el tamaño de la casilla
 	float posY = y * tamano;//se le asigna la posicion en y multiplicando la coordenada y por el tamaño de la casilla
     cuadrado.setPosition({ posX, posY });// se le asigna finalmente la posicion al cuadrado
     
-    
-   bool esPuntoPoder = ((x == 4 && y == 4)|| (x == 0 && y == 4) || (x == 4 && y == 0) || (x == 4 && y == 8) || (x == 8 && y == 4));
-   bool lasOscilantes = ( ((x==4 && y<=8) || (y==4 && (x>0 && x<8)))//aquí defino la cruz
-                        || x == 3 && y == 0 || x == 2 && y == 1 || x == 1 && y == 2 || x == 0 && y == 3
-                        || x == 5 && y == 0 || x == 6 && y == 1 || x == 7 && y == 2 || x == 8 && y == 3//parte supuerior
-                        || y == 5 && x == 0 || y == 6 && x == 1 || y == 7 && x == 2 || y == 8 && x == 3
-                        || y == 8 && x == 5 || y == 7 && x == 6 || y == 6 && x == 7 || y == 5 && x == 8);
-
-
-   int fase = turno%4;
+    //maquina de estados para el cambio de colores
+   int fase = turno%4;// esto simplemente mira el resto de la operacion y el resto siempre va a ir de 0 a 3
     switch (fase) {//se debe asegurar que turno empieze en 0 y se reinicie cuando llegue a 3
     case 0: 
         ColorOscilante = ColorCasilla::NEGRO;
@@ -44,17 +48,15 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
         break;
     }
    
-   sf::Color colorRelleno;
+   sf::Color colorRelleno;//declaro el que va a ser el color de relleno 
 
-   if (lasOscilantes) {
-
-       esOscilante = 1;// si entra aqui es que es oscilante y ya de paso le asigno el atributo para poder leerlo desde fuera
-       
-       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
+   //lógica de como se va a pintar
+   if (esOscilante) {
+       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {//metodo para visualizar lo que estoy haciendo
            ColorOscilante = ColorCasilla::GRIS_CLARO;
        }
 
-       switch (ColorOscilante)
+       switch (ColorOscilante)//segun el color que toque el color de relleno sera uno u otro
        {
        case ColorCasilla::NEGRO:
        colorRelleno = sf::Color::Black; 
@@ -76,14 +78,19 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
        
    }
    else {
-       colorRelleno = ((x + y) % 2 == 0) ? sf::Color::White : sf::Color::Black;   
+       if (x < 4) {//pintamos una mitad
+           colorRelleno = ((x + y) % 2 == 0) ? sf::Color::White : sf::Color::Black;
+       }
+       else {//la otra mitad está invertida 
+           colorRelleno = ((x + y) % 2 == 1) ? sf::Color::White : sf::Color::Black;
+       }
    }
   
-    cuadrado.setFillColor(colorRelleno);
-    ventana.draw(cuadrado);
+    cuadrado.setFillColor(colorRelleno);// aplico el color de relleno
+    ventana.draw(cuadrado);// y lo pinto ahora
 
-    if (esPuntoPoder) {
-        float proporcion = 0.55;//proporcion para reducir el tamaño del cuadrado del punto de poder
+    if (esPuntoDePoder) {//en caso de que sea p. de poder le pinto un rectangulo dorado para saber cual es cual 
+        float proporcion = 0.55f;//proporcion para reducir el tamaño del cuadrado del punto de poder
         sf::RectangleShape cuadrado(sf::Vector2f(tamano * proporcion, tamano * proporcion));//Lo pinto mas pequeñ
        float posX = x * tamano+((tamano-tamano*proporcion)/2); // se le desplaza a la derecha LA MITAD del espacio que queda entre el cuadrado del fondo y el dorado
        float posY = y * tamano + ((tamano - tamano * proporcion) / 2);//lo mismo

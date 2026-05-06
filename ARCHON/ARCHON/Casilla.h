@@ -7,6 +7,7 @@ class Casilla {
 private:
     int x, y; //coordenadas de la matriz del tablero 
     bool esOscilante; // con esto definimos si queremos que la casilla cambie de color o no 
+    bool esPuntoDePoder;
     Pieza* piezaOcupante; // puntero a la pieza que va a ocupar la casilla (puede ser nullptr si vacia)
     ColorCasilla ColorOscilante;
 public:
