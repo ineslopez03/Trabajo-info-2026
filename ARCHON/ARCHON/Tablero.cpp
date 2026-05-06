@@ -16,28 +16,6 @@ Tablero::~Tablero() {
 void Tablero::inicializarTablero() {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-            // 1. Identificar Puntos de Poder (Amarillos fijos)
-            // Son las 4 esquinas, los centros de los 4 bordes y el centro total.
-            /*bool esPuntoPoder = (i == 0 || i == 4 || i == 8) && (j == 0 || j == 4 || j == 8);
-
-  
-            bool oscila = false;
-
-            
-            if (i == 4 || j == 4) {
-                oscila = true;
-            }
-         
-            else if ((i == 1 || i == 7) && (j == 2 || j == 6)) {
-                oscila = true;
-            }
-            else if ((i == 2 || i == 6) && (j == 1 || j == 7)) {
-                oscila = true;
-            }
-
-            // Si es punto de poder, NO oscila 
-            if (esPuntoPoder) oscila = false;*/
-
             matriz[i][j] = new Casilla(i, j);
         }
     }
@@ -54,7 +32,7 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventana) {
 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-            matriz[i][j]->dibujar(ventana, origenSeleccionado,tiempoAcumuladoOscilacion, tamCasilla);
+            matriz[i][j]->dibujar(ventana, origenSeleccionado,turnosContados, tamCasilla);
         }
     }
     ventana.setView(ventana.getDefaultView());
@@ -151,8 +129,8 @@ bool Tablero::comprobarVictoria() {
                 else piezasOscuras++;
 
                 // Puntos de Poder (Esquinas y centros de bordes/tablero)
-                bool esPuntoPoder = (i == 0 || i == 4 || i == 8) && (j == 0 || j == 4 || j == 8);
-                if (esPuntoPoder) {
+               // bool esPuntoPoder = (i == 0 || i == 4 || i == 8) && (j == 0 || j == 4 || j == 8);
+                if (c->getEsPuntoDePoder()) {
                     if (p->getBando() == Bando::LUZ) puntosLuz++;
                     else puntosOscuros++;
                 }

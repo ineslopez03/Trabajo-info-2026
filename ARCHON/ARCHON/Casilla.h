@@ -25,4 +25,6 @@ public:
 	int getX() const { return x; }//me devuelve la coordenada x
 	int getY() const { return y; }//me devuelve la coordenada y
 	int getColor() const { return static_cast<int>(Color); }//me devuelve el color de la casilla en formato int para poder usarlo en el tablero
-    };
+   bool getEsPuntoDePoder() const { return esPuntoDePoder; } // me devuelve si es punto de poder o no
+   bool getEsOscilante() const { return esOscilante; } // me devuelve si es oscilante o no
+};
