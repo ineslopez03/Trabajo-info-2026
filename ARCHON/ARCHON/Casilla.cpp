@@ -1,6 +1,7 @@
 #include "Casilla.h"
 #include<iostream>
 #include <SFML/Graphics.hpp>
+
 Casilla::Casilla(int _x, int _y, bool _osc)
     : x(_x), y(_y), esOscilante(_osc), piezaOcupante(nullptr) {
     ColorOscilante = ColorCasilla::NEGRO;
@@ -61,14 +62,15 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
     ventana.draw(cuadrado);
 
     if (esPuntoPoder) {
-     int proporcion = 0.55;
+        float proporcion = 0.55;//proporcion para reducir el tamaño del cuadrado del punto de poder
         sf::RectangleShape cuadrado(sf::Vector2f(tamano * proporcion, tamano * proporcion));//Lo pinto mas pequeñ
-       float posX = x * (tamano - (tamano * proporcion / 2.0f)); //se le asigna la posicion en x multiplicando la coordenada x por el tamaño de la casilla
-       float posY = y * (tamano - (tamano * proporcion/ 2.0f));//se le asigna la posicion en y multiplicando la coordenada y por el tamaño de la casilla
+       float posX = x * tamano+((tamano-tamano*proporcion)/2); // se le desplaza a la derecha LA MITAD del espacio que queda entre el cuadrado del fondo y el dorado
+       float posY = y * tamano + ((tamano - tamano * proporcion) / 2);//lo mismo
        cuadrado.setPosition({ posX, posY });// se le asigna finalmente la posicion al cuadrado
-        colorRelleno = sf::Color(218, 165, 32);
-        cuadrado.setFillColor(colorRelleno);
-        ventana.draw(cuadrado);
+	   colorRelleno = sf::Color(218, 165, 32);//color dorado
+		cuadrado.setFillColor(colorRelleno);// se le asigna el color dorado
+        ventana.draw(cuadrado);// le digo que me lo pinte(se lo digo después de que pinte los demás cuadrados para
+        //que quede superpuesto 
     }
 
     sf::Color colorBorde = (colorRelleno == sf::Color::Black) ? sf::Color(60, 60, 60) : sf::Color(100, 100, 100, 150);
