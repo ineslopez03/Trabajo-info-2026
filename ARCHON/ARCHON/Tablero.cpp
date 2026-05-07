@@ -1,7 +1,7 @@
 #include "Tablero.h"
 #include <iostream>
 #include <cmath>
-
+#include"Peon.h"
 Tablero::Tablero():origenSeleccionado(nullptr), primerClicRealizado(false), anguloRotacion(0.0f) {
     inicializarTablero();
 }
@@ -19,6 +19,12 @@ void Tablero::inicializarTablero() {
             matriz[i][j] = new Casilla(i, j);
         }
     }
+    for (int i = 0; i < 9; i++) {
+        matriz[i][1]->setPieza(new Peon(Bando::LUZ));
+    }
+        for (int i = 0; i < 9; i++) {
+            matriz[i][7]->setPieza(new Peon(Bando::OSCURIDAD));
+        }
 }
 void Tablero::dibujarPantalla(sf::RenderWindow& ventana) {
     sf::View vistaTablero = ventana.getDefaultView();
@@ -32,27 +38,24 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventana) {
 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-            matriz[i][j]->dibujar(ventana, origenSeleccionado,turnosContados, tamCasilla);
+            matriz[i][j]->dibujar(ventana, origenSeleccionado, turnosContados, tamCasilla);
         }
     }
     ventana.setView(ventana.getDefaultView());
 }
 
-bool Tablero::estaEnRango(Casilla* origen, Casilla* destino) {
-    if (!origen->getPieza()) return false;
-    int dist = std::abs(origen->getX() - destino->getX()) + std::abs(origen->getY() - destino->getY());
-    return dist <= origen->getPieza()->getVelmov();
-}
-
 bool Tablero::esMovimientoValido(Casilla* origen, Casilla* destino) {
+    if (!origen || !destino) return false;
+    Pieza* p = origen->getPieza();
+    if (!p) return false; 
     if (destino->estaOcupada()) return false;
-    return estaEnRango(origen, destino);
+    return p->mover(origen, destino, this->matriz);
 }
-
 bool Tablero::esAtaqueValido(Casilla* origen, Casilla* destino) {
+    if (!origen || !destino || !origen->getPieza()) return false;
     if (!destino->estaOcupada()) return false;
     if (origen->getPieza()->getBando() == destino->getPieza()->getBando()) return false;
-    return estaEnRango(origen, destino);
+    return origen->getPieza()->mover(origen, destino, this->matriz);
 }
 
 void Tablero::gestionarTurno(Casilla* origen, Casilla* destino) {

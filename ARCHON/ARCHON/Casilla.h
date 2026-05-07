@@ -16,8 +16,6 @@ public:
     void setPieza(Pieza* p) { // metodo set, pasamos un puntero de la pieza que la va a ocupar.
         //Asigna el puntero al atributo privado
         piezaOcupante = p;
-        // Si la pieza no es nula, actualizamos también la posición de la pieza
-        if (p != nullptr) p->setPosicion(this);//si el puntero no esta vacío le pasamos a la pieza las coordenadas de esta casilla
     }
     Pieza* getPieza() { return piezaOcupante; } // metodo get para saber que pieza exactamente ocupa esta casilla
     bool estaOcupada() { return piezaOcupante != nullptr; }// si alguna pieza ocupa la casilla devuelve 1

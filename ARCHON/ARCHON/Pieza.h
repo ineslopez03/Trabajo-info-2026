@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
+#include<string>
 // Forward declarations (Declaraciones adelantadas) para evitar inclusiones circulares
 enum class Bando { LUZ, OSCURIDAD };
 class Casilla;
@@ -22,12 +22,13 @@ protected:
     Bando bando;
 
 public:
-    Pieza(int _v, int _d, int _vm, int _va, sf::Texture& textura, Bando _b);
+
+    Pieza(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b);
     virtual ~Pieza() {}
 
     // Métodos virtuales puros (Clase Abstracta)
-    virtual void mover() = 0;
-    virtual void atacar() = 0;
+    virtual bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) = 0;
+ 
 
     // Lógica de representación y combate
     virtual void dibujar(sf::RenderWindow& ventana, float x, float y, float tamano);

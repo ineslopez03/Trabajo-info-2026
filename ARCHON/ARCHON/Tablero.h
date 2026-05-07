@@ -26,7 +26,6 @@ public:
 	bool esMovimientoValido(Casilla* origen, Casilla* destino);
 	bool esAtaqueValido(Casilla* origen, Casilla* destino);
 	bool comprobarVictoria();
-	bool estaEnRango(Casilla* origen, Casilla* destino);
 	void gestionarTurno(Casilla* origen, Casilla* destino);
 	bool getHaycombate() const { return hayCombatePendiente; }
 	void resetCombate() { hayCombatePendiente = false; atacante = nullptr; defensor = nullptr; }

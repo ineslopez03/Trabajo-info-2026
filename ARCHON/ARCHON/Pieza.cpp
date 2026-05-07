@@ -1,9 +1,13 @@
 #include"Pieza.h"
 #include"Casilla.h"
 
-Pieza::Pieza(int _v, int _d, int _vm, int _va, sf::Texture& textura, Bando _b) : vida(_v), danio(_d), velMov(_vm), velAta(_va), sprite(textura), bando(_b)
+Pieza::Pieza(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b)
+    : vida(_v), danio(_d), velMov(_vm), velAta(_va), bando(_b),
+    textura(_tex), sprite(textura) 
 {
+    
     posicion = nullptr;
+    duenio = nullptr;
 }
 void Pieza::setPosicion(Casilla* c) { posicion = c; }
 Casilla* Pieza::getPosicion() { return posicion; }
