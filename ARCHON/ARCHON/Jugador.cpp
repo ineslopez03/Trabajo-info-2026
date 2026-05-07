@@ -1,4 +1,5 @@
 #include "Jugador.h"
+#include "Pieza.h"
 #include <algorithm>
 
 Jugador::Jugador(std::string _nombre, Bando _bando)
@@ -6,15 +7,13 @@ Jugador::Jugador(std::string _nombre, Bando _bando)
 }
 
 Jugador::~Jugador() {
-    // Nota: Las piezas se suelen borrar en el Motor o Tablero para evitar 
-    // errores de doble liberación si están en varias listas.
     piezas.clear();
 }
 
 void Jugador::anadirPieza(Pieza* p) {
     if (p) {
         piezas.push_back(p);
-        p->setJugador(this); // Establecemos la relación bidireccional
+        p->setJugador(this); 
     }
 }
 

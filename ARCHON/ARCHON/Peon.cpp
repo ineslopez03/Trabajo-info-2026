@@ -1,21 +1,36 @@
 #include "Peon.h"
 #include <iostream>
 
-// Implementación de la carga de textura
 sf::Texture& Peon::obtenerTexturaHP(Bando b) {
-    static sf::Texture tLuz, tOsc;
-    static bool cargado = false;
-    if (!cargado) {
-        if (!tLuz.loadFromFile("imagenes/Dobby.png")) std::cerr << "Error: dobby.png no encontrado\n";
-        if (!tOsc.loadFromFile("imagenes/Scabbers.png")) std::cerr << "Error: rata.png no encontrado\n";
-        cargado = true;
+    // static asegura que la textura viva durante todo el programa
+    static sf::Texture tLuz;
+    static sf::Texture tOsc;
+    static bool cargadaLuz = false;
+    static bool cargadaOsc = false;
+
+    if (b == Bando::LUZ) {
+        if (!cargadaLuz) {
+            if (!tLuz.loadFromFile("imagenes/Dobby.png")) {
+                std::cerr << "ERROR: No se encuentra imagenes/Dobby.png" << std::endl;
+            }
+            cargadaLuz = true;
+        }
+        return tLuz;
     }
-    return (b == Bando::LUZ) ? tLuz : tOsc;
+    else {
+        if (!cargadaOsc) {
+            if (!tOsc.loadFromFile("imagenes/Scabbers.png")) {
+                std::cerr << "ERROR: No se encuentra imagenes/Scabbers.png" << std::endl;
+            }
+            cargadaOsc = true;
+        }
+        return tOsc;
+    }
 }
 
-// Implementación del constructor
 Peon::Peon(Bando b)
     : PiezaTerrestre(8, 2, 2, 0, obtenerTexturaHP(b), b)
 {
-    // Aquí puedes ajustar algo del sprite si fuera necesario
+    this->rangoMovimiento = 3; // El Peón camina 3 casillas
+    sprite.setTexture(obtenerTexturaHP(b));
 }

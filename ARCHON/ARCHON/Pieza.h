@@ -1,54 +1,33 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include<string>
-// Forward declarations (Declaraciones adelantadas) para evitar inclusiones circulares
+#include <iostream>
+
 enum class Bando { LUZ, OSCURIDAD };
 class Casilla;
 class Jugador;
 
 class Pieza {
 protected:
-    int vida;
-    int danio;
-    int velMov;
-    int velAta;
-
-    // Relaciones de agregación según el esquema
-    Casilla* posicion;
-    Jugador* duenio; // Relación con el Jugador necesaria para Jugador.cpp 
-
-    sf::Texture textura;
-    sf::Sprite sprite;
+    int vida, danio, velMov, velAta;
     Bando bando;
-
+    sf::Texture& textura;
+    sf::Sprite sprite;
+    Casilla* posicion;
+    int rangoMovimiento;
 public:
+    Pieza(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b)
+        : vida(_v), danio(_d), velMov(_vm), velAta(_va), bando(_b),
+        textura(_tex), sprite(_tex), posicion(nullptr), rangoMovimiento(0) {
+    }
 
-    Pieza(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b);
     virtual ~Pieza() {}
 
-    // Métodos virtuales puros (Clase Abstracta)
-    virtual bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) = 0;
- 
+    virtual void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) = 0;
 
-    // Lógica de representación y combate
-    virtual void dibujar(sf::RenderWindow& ventana, float x, float y, float tamano);
+    void setPosicion(Casilla* c) { posicion = c; }
+    Casilla* getPosicion() { return posicion; }
+    Bando getBando() { return bando; }
 
-    virtual sf::FloatRect getBounds(float x, float y, float tamano) {
-        return sf::FloatRect({ x, y }, { tamano, tamano });
-    }
-
-    void recibirDanyo(int cantidad) {
-        vida -= cantidad;
-        if (vida < 0) vida = 0;
-    }
-
-    // Getters y Setters
-    virtual Bando getBando() const { return bando; }
-    int getVelmov() const { return velMov; }
-
-    void setPosicion(Casilla* c);
-    Casilla* getPosicion();
-
-
-    void setJugador(Jugador* j) { duenio = j; }
+    virtual void setJugador(Jugador* j) {}
+    virtual bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9])=0;
 };
