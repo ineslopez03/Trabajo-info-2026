@@ -4,9 +4,10 @@
 #include <cmath>
 #include "Peon.h"
 #include "Casilla.h"
+#include"Gigante.h"
 
 // Constructor por defecto
-Tablero::Tablero() : Tablero(60.0f) {}
+Tablero::Tablero() : Tablero(95.0f) {}
 
 Tablero::Tablero(float _tamano) {
     tamCasilla = _tamano;
@@ -51,6 +52,10 @@ void Tablero::inicializarTablero() {
         matriz[1][j]->setPieza(new Peon(Bando::LUZ));
         matriz[7][j]->setPieza(new Peon(Bando::OSCURIDAD));
     }
+    matriz[0][2]->setPieza(new Gigante(Bando::LUZ));
+    matriz[0][6]->setPieza(new Gigante(Bando::LUZ));
+    matriz[8][2]->setPieza(new Gigante(Bando::OSCURIDAD));
+    matriz[8][6]->setPieza(new Gigante(Bando::OSCURIDAD));
 }
 
 void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
@@ -88,7 +93,6 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
 void Tablero::gestionarTurno(Casilla* casillaClicada) {
     if (!primerClicRealizado) {
         Pieza* p = casillaClicada->getPieza();
-
         // Verificamos que haya pieza y sea su turno
         if (p != nullptr && p->getBando() == turnoActual) {
             origenSeleccionado = casillaClicada;
@@ -104,22 +108,42 @@ void Tablero::gestionarTurno(Casilla* casillaClicada) {
             return;
         }
 
-        // Lógica de Movimiento
+        // Lógica de Movimiento y Ataque
         if (esMovimientoValido(origenSeleccionado, casillaClicada)) {
-            // Transferencia de pieza
-            casillaClicada->setPieza(origenSeleccionado->getPieza());
-            origenSeleccionado->setPieza(nullptr);
 
-            // Reset de estado y cambio de turno
-            primerClicRealizado = false;
-            origenSeleccionado = nullptr;
-            turnoActual = (turnoActual == Bando::LUZ) ? Bando::OSCURIDAD : Bando::LUZ;
-            turnosContados++;
+            // ¿Es un ataque o un movimiento a una casilla vacía?
+            if (casillaClicada->estaOcupada()) {
+                // ¡ES UN ATAQUE! Preparamos las variables para que MotorArchon lo detecte
+                atacante = origenSeleccionado->getPieza();
+                defensor = casillaClicada->getPieza();
+                hayCombatePendiente = true;
 
-            std::cout << "Movimiento exitoso. Turno del oponente." << std::endl;
+                std::cout << "¡Combate iniciado! Pasando a la Arena..." << std::endl;
+
+                // Limpiamos la selección del ratón, pero NO movemos la pieza en el tablero aún.
+                // Eso se hará cuando alguien gane la batalla.
+                primerClicRealizado = false;
+                origenSeleccionado = nullptr;
+                // Nota: El cambio de turno se hará en tu función resetCombate()
+
+            }
+            else {
+                // MOVIMIENTO NORMAL A CASILLA VACÍA
+                casillaClicada->setPieza(origenSeleccionado->getPieza());
+                origenSeleccionado->setPieza(nullptr);
+
+                // Reset de estado y cambio de turno
+                primerClicRealizado = false;
+                origenSeleccionado = nullptr;
+                turnoActual = (turnoActual == Bando::LUZ) ? Bando::OSCURIDAD : Bando::LUZ;
+                turnosContados++;
+
+                std::cout << "Movimiento exitoso. Turno del oponente." << std::endl;
+            }
+
         }
-        // Si clicamos otra pieza nuestra, cambiamos la selección
         else if (casillaClicada->getPieza() && casillaClicada->getPieza()->getBando() == turnoActual) {
+            // Si clicamos otra pieza nuestra válida, cambiamos la selección
             origenSeleccionado = casillaClicada;
         }
         else {
@@ -131,20 +155,10 @@ void Tablero::gestionarTurno(Casilla* casillaClicada) {
 }
 
 bool Tablero::esMovimientoValido(Casilla* origen, Casilla* destino) {
-    // 1. Validaciones de seguridad
+   
     if (!origen || !destino) return false;
-
-    // 2. Comprobar si la casilla de destino está ocupada
-    if (destino->estaOcupada()) {
-        return false;
-    }
-
-    // 3. Obtener la pieza del origen
     Pieza* p = origen->getPieza();
     if (p == nullptr) return false;
-
-    // 4. Llamar a la lógica de la pieza (PiezaTerrestre::mover)
-    // Aquí es donde se comprueba el rango de 3 casillas y que no haya obstáculos
     return p->mover(origen, destino, matriz);
 }
 bool Tablero::esAtaqueValido(Casilla* origen, Casilla* destino) {

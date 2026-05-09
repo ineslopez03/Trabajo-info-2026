@@ -23,14 +23,7 @@ void PiezaTerrestre::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, i
         sprite.setScale({ escala, escala });
         ventana.draw(sprite);
     }
-    else {
-        // SI LA IMAGEN FALLA, ESTO DIBUJA UN CIRCULO BRILLANTE
-        sf::CircleShape errorShape(tamano * 0.3f);
-        errorShape.setOrigin({ tamano * 0.3f, tamano * 0.3f });
-        errorShape.setPosition(centroCasilla);
-        errorShape.setFillColor(bando == Bando::LUZ ? sf::Color::Cyan : sf::Color::Magenta);
-        ventana.draw(errorShape);
-    }
+    
 }
 bool PiezaTerrestre::mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) {
     if (!origen || !destino) return false;
@@ -57,7 +50,7 @@ bool PiezaTerrestre::mover(Casilla* origen, Casilla* destino, Casilla* matriz[9]
 
     // 4. No saltar sobre otras piezas (Camino despejado)
     int dirX = (x2 > x1) ? 1 : (x2 < x1 ? -1 : 0);
-    int dirY = (y2 > y1) ? 1 : (y2 < x1 ? -1 : 0);
+    int dirY = (y2 > y1) ? 1 : (y2 < y1 ? -1 : 0);
 
     int currX = x1 + dirX;
     int currY = y1 + dirY;

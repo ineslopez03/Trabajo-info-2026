@@ -1,7 +1,7 @@
-#include "Peon.h"
+#include "Gigante.h"
 #include <iostream>
 
-sf::Texture& Peon::obtenerTexturaHP(Bando b) {
+sf::Texture& Gigante::obtenerTexturaHP(Bando b) {
     // static asegura que la textura viva durante todo el programa
     static sf::Texture tLuz;
     static sf::Texture tOsc;
@@ -10,7 +10,7 @@ sf::Texture& Peon::obtenerTexturaHP(Bando b) {
 
     if (b == Bando::LUZ) {
         if (!cargadaLuz) {
-            if (!tLuz.loadFromFile("imagenes/Dobby.png")) {
+            if (!tLuz.loadFromFile("imagenes/Hagrid.png")) {
                 std::cerr << "ERROR: No se encuentra imagenes/Dobby.png" << std::endl;
             }
             cargadaLuz = true;
@@ -19,7 +19,7 @@ sf::Texture& Peon::obtenerTexturaHP(Bando b) {
     }
     else {
         if (!cargadaOsc) {
-            if (!tOsc.loadFromFile("imagenes/Scabbers.png")) {
+            if (!tOsc.loadFromFile("imagenes/Troll.png")) {
                 std::cerr << "ERROR: No se encuentra imagenes/Scabbers.png" << std::endl;
             }
             cargadaOsc = true;
@@ -28,9 +28,9 @@ sf::Texture& Peon::obtenerTexturaHP(Bando b) {
     }
 }
 
-Peon::Peon(Bando b)
-    : PiezaTerrestre(8, 2, 3, 0, obtenerTexturaHP(b), b)
+Gigante::Gigante(Bando b)
+    : PiezaTerrestre(15, 5, 2, 0, obtenerTexturaHP(b), b)
 {
-    this->rangoMovimiento = 3; // El Peón camina 3 casillas
+    this->rangoMovimiento = 2; // El Gigante camina 2 casillas
     sprite.setTexture(obtenerTexturaHP(b));
 }
