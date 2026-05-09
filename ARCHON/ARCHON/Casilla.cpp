@@ -86,11 +86,7 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
     ventana.draw(cuadrado);
 
     if (esPuntoDePoder) {
-        float proporcion = 0.55f;
-        sf::RectangleShape cuadrado(sf::Vector2f(tamano * proporcion, tamano * proporcion));
-       float posX = x * tamano+((tamano-tamano*proporcion)/2);  
-       float posY = y * tamano + ((tamano - tamano * proporcion) / 2);
-       cuadrado.setPosition({ posX, posY });
+        
 	   colorRelleno = sf::Color(218, 165, 32);
 		cuadrado.setFillColor(colorRelleno);
         ventana.draw(cuadrado);

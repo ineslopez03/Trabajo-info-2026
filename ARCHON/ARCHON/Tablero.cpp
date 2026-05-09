@@ -7,6 +7,8 @@
 #include"Gigante.h"
 #include"Fenix.h"
 #include"Rango.h"
+#include"Hechicero.h"
+
 // Constructor por defecto
 Tablero::Tablero() : Tablero(95.0f) {}
 
@@ -72,6 +74,12 @@ void Tablero::inicializarTablero() {
     matriz[8][3]->setPieza(new Rango(Bando::OSCURIDAD));
     matriz[8][5]->setPieza(new Rango(Bando::OSCURIDAD));
     matriz[8][8]->setPieza(new Rango(Bando::OSCURIDAD));
+
+    matriz[0][4]->setPieza(new Hechicero(Bando::LUZ));
+    matriz[8][4]->setPieza(new Hechicero(Bando::OSCURIDAD));
+
+
+
 
 }
 
