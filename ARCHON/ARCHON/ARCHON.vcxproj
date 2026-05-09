@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Casilla.h" />
+    <ClInclude Include="Fenix.h" />
     <ClInclude Include="GestorArchivos.h" />
     <ClInclude Include="Gigante.h" />
     <ClInclude Include="InterfazUsuario.h" />
@@ -143,12 +144,15 @@
     <ClInclude Include="Peon.h" />
     <ClInclude Include="Pieza.h" />
     <ClInclude Include="PiezaTerrestre.h" />
+    <ClInclude Include="PiezaVoladora.h" />
     <ClInclude Include="Proyectiles.h" />
+    <ClInclude Include="Rango.h" />
     <ClInclude Include="Tablero.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="Casilla.cpp" />
+    <ClCompile Include="Fenix.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />
     <ClCompile Include="Gigante.cpp" />
     <ClCompile Include="Jugador.cpp" />
@@ -160,7 +164,9 @@
     <ClCompile Include="Peon.cpp" />
     <ClCompile Include="Pieza.cpp" />
     <ClCompile Include="PiezaTerrestre.cpp" />
+    <ClCompile Include="PiezaVoladora.cpp" />
     <ClCompile Include="Proyectiles.cpp" />
+    <ClCompile Include="Rango.cpp" />
     <ClCompile Include="Tablero.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,8 @@
 #include "Peon.h"
 #include "Casilla.h"
 #include"Gigante.h"
-
+#include"Fenix.h"
+#include"Rango.h"
 // Constructor por defecto
 Tablero::Tablero() : Tablero(95.0f) {}
 
@@ -56,6 +57,22 @@ void Tablero::inicializarTablero() {
     matriz[0][6]->setPieza(new Gigante(Bando::LUZ));
     matriz[8][2]->setPieza(new Gigante(Bando::OSCURIDAD));
     matriz[8][6]->setPieza(new Gigante(Bando::OSCURIDAD));
+
+    matriz[0][1]->setPieza(new Fenix(Bando::LUZ));
+    matriz[8][1]->setPieza(new Fenix(Bando::OSCURIDAD));
+    matriz[0][7]->setPieza(new Fenix(Bando::LUZ));
+    matriz[8][7]->setPieza(new Fenix(Bando::OSCURIDAD));
+
+    matriz[0][0]->setPieza(new Rango(Bando::LUZ));
+    matriz[0][3]->setPieza(new Rango(Bando::LUZ));
+    matriz[0][5]->setPieza(new Rango(Bando::LUZ));
+    matriz[0][8]->setPieza(new Rango(Bando::LUZ));
+  
+    matriz[8][0]->setPieza(new Rango(Bando::OSCURIDAD));
+    matriz[8][3]->setPieza(new Rango(Bando::OSCURIDAD));
+    matriz[8][5]->setPieza(new Rango(Bando::OSCURIDAD));
+    matriz[8][8]->setPieza(new Rango(Bando::OSCURIDAD));
+
 }
 
 void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {

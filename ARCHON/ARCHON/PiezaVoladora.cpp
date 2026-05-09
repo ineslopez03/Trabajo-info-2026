@@ -19,7 +19,7 @@ void PiezaVoladora::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, in
 
     if (distancia > 1.0f) {
         // Velocidad del vuelo 
-        sprite.move(direccion * 0.02f);
+        sprite.move(direccion * 0.015f);
     }
     else {
         sprite.setPosition(posDestino);
