@@ -21,13 +21,13 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
 void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     float dt = relojArena.restart().asSeconds();
 
-    // Ejemplo de movimiento de piezas en Arena
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) posAtacante.y -= 400.f * dt;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) posAtacante.y += 400.f * dt;
+    // Movimiento de piezas en Arena
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)) posAtacante.y -= 400.f * dt;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)) posAtacante.y += 400.f * dt;
 
-    // Creación dinámica de un proyectil (Composición)
+    // Creación dinámica de un proyectil
     static bool teclaLibre = true;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Space)) {
         if (teclaLibre) {
             lista_proyectiles.push_back(new Proyectiles(posAtacante.x, posAtacante.y, 10, 8.0f, { 1.f, 0.f }, atacante->getBando()));
             teclaLibre = false;
@@ -54,16 +54,22 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 }
 
 void Arena::gestionarColisiones() {
-    // Aquí se invoca comprobarImpacto() según el esquema
+    // Lógica de colisiones
 }
 
 void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     ventana.draw(fondoArena);
-    if (atacante) atacante->dibujar(ventana, posAtacante.x, posAtacante.y, 50.f);
-    if (defensor) defensor->dibujar(ventana, posDefensor.x, posDefensor.y, 50.f);
+
+    if (atacante) {
+        
+        atacante->dibujar(ventana, nullptr, 0, 50.f);
+    }
+
+    if (defensor) {
+        defensor->dibujar(ventana, nullptr, 0, 50.f);
+    }
 
     for (auto p : lista_proyectiles) {
         p->dibujar(ventana);
     }
 }
-

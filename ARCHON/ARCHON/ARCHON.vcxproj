@@ -133,13 +133,16 @@
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Casilla.h" />
     <ClInclude Include="GestorArchivos.h" />
+    <ClInclude Include="Gigante.h" />
     <ClInclude Include="InterfazUsuario.h" />
     <ClInclude Include="Jugador.h" />
     <ClInclude Include="JugadorHumano.h" />
     <ClInclude Include="JugadorIA.h" />
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
+    <ClInclude Include="Peon.h" />
     <ClInclude Include="Pieza.h" />
+    <ClInclude Include="PiezaTerrestre.h" />
     <ClInclude Include="Proyectiles.h" />
     <ClInclude Include="Tablero.h" />
   </ItemGroup>
@@ -147,13 +150,16 @@
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />
+    <ClCompile Include="Gigante.cpp" />
     <ClCompile Include="Jugador.cpp" />
     <ClCompile Include="JugadorHumano.cpp" />
     <ClCompile Include="JugadorIA.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
+    <ClCompile Include="Peon.cpp" />
     <ClCompile Include="Pieza.cpp" />
+    <ClCompile Include="PiezaTerrestre.cpp" />
     <ClCompile Include="Proyectiles.cpp" />
     <ClCompile Include="Tablero.cpp" />
   </ItemGroup>
