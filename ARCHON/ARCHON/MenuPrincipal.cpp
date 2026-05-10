@@ -83,7 +83,7 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 			float EscalaY = 800.0f / FondoStarWars.getSize().y;//para tener el ajuste perfecto 
 			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 		}
-		else
+		else// soluciono de esta forma que se me quede el fondo expandido despues de pasar el raton por encima de algun boton con fondo
 		{
 			float EscalaX = 800.0f / FondoMenu.getSize().x; //La relacion de escala es la division entre el ancho de la ventana y el de la imagen
 			float EscalaY = 800.0f / FondoMenu.getSize().y;//para tener el ajuste perfecto 
