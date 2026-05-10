@@ -58,15 +58,34 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 	while (auto evento = ventana.pollEvent()) {
 		if (evento->is<sf::Event::Closed>()) {
 			ventana.close();
+
+
 		}
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {}
 }
 
 void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
-	if (EstadoInterno == OpcionesMenu::PRINCIPAL) {
-		for (auto& boton : BotonesMenuPrincipal)
-			boton.dibujar(ventana);
+	auto dibujarLista = [&](std::vector<Boton>& lista) {
+		for (auto& b : lista) b.dibujar(ventana);
+		};//otra funcion lambda que funciona igual que la de arriba 
+	switch (EstadoInterno)
+	{
+	case OpcionesMenu::PRINCIPAL:
+		dibujarLista(BotonesMenuPrincipal);
+		break;
+	case OpcionesMenu::RANKING:
+		dibujarLista(BotonesRanking);
+		break;
+	case OpcionesMenu::SELECCION_MODO:
+		dibujarLista(BotonesSeleccionModo);
+		break;
+	case OpcionesMenu::IA_NODISPONIBLE:
+		dibujarLista(BotonVolverIA);
+		break;
+	case OpcionesMenu::SELECCION_SKIN:
+		dibujarLista(BotonesSeleccionSkin);
+		break;
 	}
 }
 void MenuPrincipal::inicializarBotones() {
