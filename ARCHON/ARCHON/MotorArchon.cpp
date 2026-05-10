@@ -3,7 +3,6 @@
 #include "Arena.h"
 #include "MenuPrincipal.h"
 #include <optional> 
-#include <filesystem>//para cargar el menu y usar system()
 MotorArchon::MotorArchon() {
     
     ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON - Informatica Industrial 2026");
