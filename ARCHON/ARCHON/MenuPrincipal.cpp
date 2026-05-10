@@ -28,6 +28,15 @@ MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo 
 		float EscalaY = 800.0f/FondoMenu.getSize().y;//para tener el ajuste perfecto 
 		SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 	}
+	if (!FondoStarWars.loadFromFile("../ARCHON/imagenes/DarthVaderEpica.png")) {
+		std::cout << "Error cargando el fondo\n\n";
+	}
+	if (!FondoHarryPotter.loadFromFile("../ARCHON/imagenes/VoldemortEpico.png")) {
+		std::cout << "Error cargando el fondo\n\n";
+	}
+	if (!FondoArchon.loadFromFile("../ARCHON/imagenes/FondoArchon.png")) {
+		std::cout << "Error cargando el fondo\n\n";
+	}
 	inicializarBotones();
 }
 
@@ -48,6 +57,34 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 		//tener en cuenta que mi clase boton para actualizar el color antes pregunta si tengo el raton encima
 		};
 
+	SpriteFondo.setTexture(FondoMenu, true);
+	if (EstadoInterno == OpcionesMenu::SELECCION_SKIN) {
+		if (BotonesSeleccionSkin[0].botonContieneRaton(PosRaton)) {
+			SpriteFondo.setTexture(FondoArchon, true);
+
+			//para escalarlo porque si no me sale gigante la imagen 
+			float EscalaX = 800.0f / FondoArchon.getSize().x; //La relacion de escala es la division entre el ancho de la ventana y el de la imagen
+			float EscalaY = 800.0f / FondoArchon.getSize().y;//para tener el ajuste perfecto 
+			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
+		}
+		if (BotonesSeleccionSkin[1].botonContieneRaton(PosRaton)) {
+			SpriteFondo.setTexture(FondoHarryPotter, true);
+
+			//para escalarlo porque si no me sale gigante la imagen 
+			float EscalaX = 800.0f / FondoHarryPotter.getSize().x; //La relacion de escala es la division entre el ancho de la ventana y el de la imagen
+			float EscalaY = 800.0f / FondoHarryPotter.getSize().y;//para tener el ajuste perfecto 
+			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
+		}
+		if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) {
+			SpriteFondo.setTexture(FondoStarWars, true);
+
+			//para escalarlo porque si no me sale gigante la imagen 
+			float EscalaX = 800.0f / FondoStarWars.getSize().x; //La relacion de escala es la division entre el ancho de la ventana y el de la imagen
+			float EscalaY = 800.0f / FondoStarWars.getSize().y;//para tener el ajuste perfecto 
+			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
+		}
+	}
+	
 	switch (EstadoInterno)
 	{
 	case OpcionesMenu::PRINCIPAL:

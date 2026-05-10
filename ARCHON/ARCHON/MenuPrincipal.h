@@ -17,7 +17,7 @@ private:
 	sf::Font FuenteMenu;//fuente para los botones, se carga en el constructor
 	OpcionesMenu EstadoInterno;//para saber en que menu estoy y mostrar los botones correspondientes
 
-	sf::Texture FondoMenu;//mi textura
+	sf::Texture FondoMenu,FondoHarryPotter,FondoStarWars,FondoArchon;//mis texturas para los fondos
 	sf::Sprite SpriteFondo;//el que va a dibujar el fondo
 
 	std::vector<Boton> BotonesMenuPrincipal;//listas de botones para tener todo organizado.
