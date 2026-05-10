@@ -39,7 +39,17 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
 	}
 }
 void MenuPrincipal::inicializarBotones() {
-	int centroMenu_x{ 800 };
+	struct vboton{
+		float centroMenu_x{300};
+		float anchoBoton{300};
+		float altoBoton{50};
+		float espaciado{ 80 };
+	}vboton;
+	//ESTOS SON LOS BOTONES PARA EL MENU PRINCIPAL
+	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f,vboton.anchoBoton, vboton.altoBoton, "INICIAR PARTIDA", FuenteMenu));
+	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f+vboton.espaciado, vboton.anchoBoton, vboton.altoBoton, "CARGAR PARTIDA", FuenteMenu));
+	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado*2, vboton.anchoBoton, vboton.altoBoton, "RANKING", FuenteMenu));
+	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado*3, vboton.anchoBoton, vboton.altoBoton, "MANUAL", FuenteMenu));
+	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado*4, vboton.anchoBoton, vboton.altoBoton, "SALIR", FuenteMenu));
 
-	BotonesMenuPrincipal.push_back(Boton((800-300)/2, 250, 300, 50, "INICIAR PARTIDA", FuenteMenu));
 }
