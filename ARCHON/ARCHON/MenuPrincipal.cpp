@@ -58,11 +58,42 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 	while (auto evento = ventana.pollEvent()) {
 		if (evento->is<sf::Event::Closed>()) {
 			ventana.close();
+		}
+			else if (const auto* click = evento->getIf<sf::Event::MouseButtonPressed>()) {
+				if (click->button == sf::Mouse::Button::Left) {
+					//Menu principal
+					if (EstadoInterno == OpcionesMenu::PRINCIPAL)
+					{
+						if (BotonesMenuPrincipal[0].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::SELECCION_MODO;
+						//if (BotonesMenuPrincipal[1].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::; por si queremos hacer el cargar partida es aqui 
+						if (BotonesMenuPrincipal[2].botonContieneRaton(PosRaton)) system("start manual.txt");
+						if (BotonesMenuPrincipal[3].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::RANKING;
+						if (BotonesMenuPrincipal[4].botonContieneRaton(PosRaton)) ventana.close();
+					}
+					else if (EstadoInterno == OpcionesMenu::SELECCION_MODO) {//Modos
+						if (BotonesSeleccionModo[0].botonContieneRaton(PosRaton))EstadoInterno = OpcionesMenu::SELECCION_SKIN;
+						if (BotonesSeleccionModo[1].botonContieneRaton(PosRaton))EstadoInterno = OpcionesMenu::IA_NODISPONIBLE;
+						if (BotonesSeleccionModo[2].botonContieneRaton(PosRaton))EstadoInterno = OpcionesMenu::PRINCIPAL;
 
+					}//Ranking
+					else if (EstadoInterno == OpcionesMenu::RANKING) {
+						if (BotonesRanking[0].botonContieneRaton(PosRaton))EstadoInterno = OpcionesMenu::PRINCIPAL;
+					}//Volver de la IA
+					else if (EstadoInterno == OpcionesMenu::IA_NODISPONIBLE) {
+						if (BotonVolverIA[0].botonContieneRaton(PosRaton))EstadoInterno = OpcionesMenu::SELECCION_MODO;
+					}//Seleccion de skin
+					else if (EstadoInterno == OpcionesMenu::SELECCION_SKIN) {
+						if (BotonesSeleccionSkin[0].botonContieneRaton(PosRaton)) { SkinSeleccionada = "ARCHON"; IniciarJuego = true; }
+						if (BotonesSeleccionSkin[1].botonContieneRaton(PosRaton)) { SkinSeleccionada = "HARRY POTTER"; IniciarJuego = true; }
+						if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) { SkinSeleccionada = "STAR WARS"; IniciarJuego = true; }
+						if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::SELECCION_MODO;
+					}
+					
+				}
+			}
 
 		}
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {}
+	
 }
 
 void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {

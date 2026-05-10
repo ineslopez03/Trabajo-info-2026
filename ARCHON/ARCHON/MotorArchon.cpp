@@ -3,7 +3,7 @@
 #include "Arena.h"
 #include "MenuPrincipal.h"
 #include <optional> 
-
+#include <filesystem>//para cargar el menu y usar system()
 MotorArchon::MotorArchon() {
     
     ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON - Informatica Industrial 2026");
@@ -69,8 +69,14 @@ void MotorArchon::bucle() {
             pantallaActiva->procesarEntrada(ventana);
 
             // 2. LÓGICA DE TRANSICIÓN
-            if (estadoActual == EstadoJuego::MENU && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-                cambiarEstado(EstadoJuego::TABLERO);
+            if (estadoActual == EstadoJuego::MENU) {
+                MenuPrincipal* menu = dynamic_cast<MenuPrincipal*>(pantallaActiva);
+                //Hago el dynamic cast para que pueda usar los metodos de Menu
+                if (menu != nullptr && menu->getIniciarJuego())
+                {
+                    std::string SKIN = menu->getSkinSeleccionada();//luego pensar en como lo voy a usar para pasarlo
+                    cambiarEstado(EstadoJuego::TABLERO);
+                }
             }
 
             if (estadoActual == EstadoJuego::TABLERO) {

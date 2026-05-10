@@ -35,8 +35,8 @@ public:
 	void procesarEntrada(sf::RenderWindow& ventana) override;
 	void dibujarPantalla(sf::RenderWindow& ventana) override;
 	//getters para usar en motorArchon
-	bool getIniciarJuego() const { return IniciarJuego; }
-	bool getContraIA() const { return ContraIA; }
-	std::string getSkinSeleccionada() const { return SkinSeleccionada; }
+	bool getIniciarJuego() const { return IniciarJuego; };
+	bool getContraIA() const { return ContraIA; };
+	std::string getSkinSeleccionada() const { return SkinSeleccionada; };
 };
 
