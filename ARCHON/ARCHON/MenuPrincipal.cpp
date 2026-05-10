@@ -1,6 +1,6 @@
 #include "MenuPrincipal.h"
 #include <iostream>
-MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo inicialice al crearlo 
+MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu), Titulos(FuenteMenu)//sfml 3.0 me pide que lo inicialice al crearlo 
 {
 	EstadoInterno = OpcionesMenu::PRINCIPAL;
 	ContraIA = false;
@@ -15,6 +15,10 @@ MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo 
 	if (!FuenteMenu.openFromFile("../ARCHON/fuentes/Rush Zone.otf")) {
 		std::cout << "Error cargando la fuente\n\n";
 	}
+	Titulos.setCharacterSize(100);
+	Titulos.setFillColor(sf::Color::White);
+	Titulos.setOutlineThickness(4.0f);
+	Titulos.setOutlineColor(sf::Color::Black);
 	if (!MusicaFondo.openFromFile("../ARCHON/Musica/MusicaFondo.mp3"))
 	{
 		std::cout << "Error cargando la Musica\n\n";
@@ -162,6 +166,28 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
 
 	ventana.draw(SpriteFondo);//Lo pinto antes porque si no me va a tapar los botones
 
+	std::string titulo = "";
+	switch (EstadoInterno)
+	{
+	case OpcionesMenu::PRINCIPAL: Titulos.setCharacterSize(150); titulo = "ARCHON";
+		break;
+	case OpcionesMenu::RANKING: Titulos.setCharacterSize(100); titulo = "RANKING";
+		break;
+	case OpcionesMenu::SELECCION_MODO: Titulos.setCharacterSize(80); titulo="MODO DE JUEGO";
+		break;
+	case OpcionesMenu::IA_NODISPONIBLE: Titulos.setCharacterSize(50); titulo="DLC-IA POR 99 EUROS";
+		break;
+	case OpcionesMenu::SELECCION_SKIN:Titulos.setCharacterSize(100); titulo="TEMATICA";
+		break;
+	}
+	Titulos.setString(titulo);
+	sf::FloatRect limites = Titulos.getLocalBounds();
+	float posX = (800.0f - limites.size.x) / 2.0f;
+	float posY = 50.0f-limites.position.y;
+	Titulos.setPosition({ posX,posY });
+	ventana.draw(Titulos);
+
+
 	auto dibujarLista = [&](std::vector<Boton>& lista) {
 		for (auto& b : lista) b.dibujar(ventana);
 		};//otra funcion lambda que funciona igual que la de arriba 
@@ -184,6 +210,11 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
 		break;
 	}
 }
+
+
+
+
+
 void MenuPrincipal::inicializarBotones() {
 	struct vboton{
 		float centroMenu_x{250};
