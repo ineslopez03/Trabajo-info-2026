@@ -14,8 +14,15 @@ MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo 
 	//if (!FuenteMenu.openFromFile("../ARCHON/fuentes/Chopera.otf")) {
 	if (!FuenteMenu.openFromFile("../ARCHON/fuentes/Rush Zone.otf")) {
 		std::cout << "Error cargando la fuente\n\n";
-		system("pause");
-		exit(1);
+	}
+	if (!MusicaFondo.openFromFile("../ARCHON/Musica/MusicaFondo.mp3"))
+	{
+		std::cout << "Error cargando la Musica\n\n";
+	}
+	else {
+		MusicaFondo.setVolume(50.0f);//control del volumen, por si peta mucho
+		MusicaFondo.setLooping(true);//que se quede sonando en bucle
+		MusicaFondo.play(); //play
 	}
 	if (!FondoMenu.loadFromFile("../ARCHON/imagenes/Fondo Menu 800x800.png")) {
 		std::cout << "Error cargando el fondo\n\n";
