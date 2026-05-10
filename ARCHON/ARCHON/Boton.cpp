@@ -5,8 +5,8 @@ Boton::Boton(float x, float y, float ancho, float alto, std::string textoBoton, 
 	fondo.setPosition({ x, y });//ubicacion del boton
 	fondo.setSize(sf::Vector2f(ancho, alto));//tamaño del boton
 	//coloracion del boton
-	colorNormal = sf::Color(100, 100, 100);//color normal del boton
-	colorEncima = sf::Color(150, 150, 150);//color del boton al pasar por encima
+	colorNormal = sf::Color(0, 191, 200,50);//color normal del boton (r,g,b,transparencia)
+	colorEncima = sf::Color(135, 206, 235,200);//color del boton al pasar por encima
 	fondo.setFillColor(colorNormal);//se pone el color 
 	fondo.setOutlineThickness(2.0f);//grosor del borde, luego lo cambio si eso
 	fondo.setOutlineColor(sf::Color::White);//de color blanco 

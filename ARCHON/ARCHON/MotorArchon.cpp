@@ -5,7 +5,7 @@
 #include <optional> 
 MotorArchon::MotorArchon() {
     
-    ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON - Informatica Industrial 2026");
+  //  ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON - Informatica Industrial 2026");
     estadoActual = EstadoJuego::MENU;
 
    
@@ -97,7 +97,7 @@ void MotorArchon::bucle() {
 }
 void MotorArchon::inicializar() {
     
-    ventana.create(sf::VideoMode({ 900, 900 }), "ARCHON 2026");
+    ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON 2026");
 
    
     jugador1 = new JugadorHumano("Heroe de la Luz", Bando::LUZ);

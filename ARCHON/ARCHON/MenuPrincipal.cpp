@@ -1,6 +1,7 @@
 #include "MenuPrincipal.h"
 #include <iostream>
-MenuPrincipal::MenuPrincipal() {
+MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo inicialice al crearlo 
+{
 	EstadoInterno = OpcionesMenu::PRINCIPAL;
 	ContraIA = false;
 	IniciarJuego = false;
@@ -15,6 +16,12 @@ MenuPrincipal::MenuPrincipal() {
 		std::cout << "Error cargando la fuente\n\n";
 		system("pause");
 		exit(1);
+	}
+	if (!FondoMenu.loadFromFile("../ARCHON/imagenes/Fondo Menu 800x800.png")) {
+		std::cout << "Error cargando el fondo\n\n";
+	}
+	else {
+		SpriteFondo.setTexture(FondoMenu,true);
 	}
 	inicializarBotones();
 }
@@ -97,6 +104,9 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 }
 
 void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
+
+	ventana.draw(SpriteFondo);//Lo pinto antes porque si no me va a tapar los botones
+
 	auto dibujarLista = [&](std::vector<Boton>& lista) {
 		for (auto& b : lista) b.dibujar(ventana);
 		};//otra funcion lambda que funciona igual que la de arriba 

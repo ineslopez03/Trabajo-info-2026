@@ -17,6 +17,9 @@ private:
 	sf::Font FuenteMenu;//fuente para los botones, se carga en el constructor
 	OpcionesMenu EstadoInterno;//para saber en que menu estoy y mostrar los botones correspondientes
 
+	sf::Texture FondoMenu;//mi textura
+	sf::Sprite SpriteFondo;//el que va a dibujar el fondo
+
 	std::vector<Boton> BotonesMenuPrincipal;//listas de botones para tener todo organizado.
 	std::vector<Boton> BotonesSeleccionModo;
 	std::vector<Boton> BotonesSeleccionSkin;
