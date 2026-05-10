@@ -22,6 +22,11 @@ MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo 
 	}
 	else {
 		SpriteFondo.setTexture(FondoMenu,true);
+
+		//para escalarlo porque si no me sale gigante la imagen 
+		float EscalaX = 800.0f/FondoMenu.getSize().x; //La relacion de escala es la division entre el ancho de la ventana y el de la imagen
+		float EscalaY = 800.0f/FondoMenu.getSize().y;//para tener el ajuste perfecto 
+		SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 	}
 	inicializarBotones();
 }
@@ -131,7 +136,7 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
 }
 void MenuPrincipal::inicializarBotones() {
 	struct vboton{
-		float centroMenu_x{300};
+		float centroMenu_x{250};
 		float anchoBoton{300};
 		float altoBoton{50};
 		float espaciado{ 80 };
