@@ -67,7 +67,7 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 			float EscalaY = 800.0f / FondoArchon.getSize().y;//para tener el ajuste perfecto 
 			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 		}
-		if (BotonesSeleccionSkin[1].botonContieneRaton(PosRaton)) {
+		else if (BotonesSeleccionSkin[1].botonContieneRaton(PosRaton)) {
 			SpriteFondo.setTexture(FondoHarryPotter, true);
 
 			//para escalarlo porque si no me sale gigante la imagen 
@@ -75,12 +75,18 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 			float EscalaY = 800.0f / FondoHarryPotter.getSize().y;//para tener el ajuste perfecto 
 			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 		}
-		if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) {
+		else if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) {
 			SpriteFondo.setTexture(FondoStarWars, true);
 
 			//para escalarlo porque si no me sale gigante la imagen 
 			float EscalaX = 800.0f / FondoStarWars.getSize().x; //La relacion de escala es la division entre el ancho de la ventana y el de la imagen
 			float EscalaY = 800.0f / FondoStarWars.getSize().y;//para tener el ajuste perfecto 
+			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
+		}
+		else
+		{
+			float EscalaX = 800.0f / FondoMenu.getSize().x; //La relacion de escala es la division entre el ancho de la ventana y el de la imagen
+			float EscalaY = 800.0f / FondoMenu.getSize().y;//para tener el ajuste perfecto 
 			SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 		}
 	}
