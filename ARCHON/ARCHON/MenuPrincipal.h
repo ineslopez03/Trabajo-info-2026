@@ -14,15 +14,18 @@ enum class OpcionesMenu{PRINCIPAL,RANKING,SELECCION_MODO,IA_NODISPONIBLE,SELECCI
 
 class MenuPrincipal:public InterfazUsuario{
 private:
-	std::vector<Boton> botonesMenuPrincipal;//listas de botones para tener todo organizado.
-	std::vector<Boton> botonesSeleccionModo;
-	std::vector<Boton> botonesSeleccionSkin;
-	std::vector<Boton> botonesRanking;
-	std::vector<Boton> botonVolverIA;
+	sf::Font FuenteMenu;//fuente para los botones, se carga en el constructor
+	OpcionesMenu EstadoInterno;//para saber en que menu estoy y mostrar los botones correspondientes
+
+	std::vector<Boton> BotonesMenuPrincipal;//listas de botones para tener todo organizado.
+	std::vector<Boton> BotonesSeleccionModo;
+	std::vector<Boton> BotonesSeleccionSkin;
+	std::vector<Boton> BotonesRanking;
+	std::vector<Boton> BotonVolverIA;
 	//meto banderas para leerlas en motorArchon
-	bool iniciarJuego = false;
-	bool contraIA = false;
-	std::string skinSeleccionada;
+	bool IniciarJuego;
+	bool ContraIA;
+	std::string SkinSeleccionada;
 	void inicializarBotones();//no hace falta que sea publico.
 
 public:
@@ -32,8 +35,8 @@ public:
 	void procesarEntrada(sf::RenderWindow& ventana) override;
 	void dibujarPantalla(sf::RenderWindow& ventana) override;
 	//getters para usar en motorArchon
-	bool getIniciarJuego() const { return iniciarJuego; }
-	bool getContraIA() const { return contraIA; }
-	std::string getSkinSeleccionada() const { return skinSeleccionada; }
+	bool getIniciarJuego() const { return IniciarJuego; }
+	bool getContraIA() const { return ContraIA; }
+	std::string getSkinSeleccionada() const { return SkinSeleccionada; }
 };
 

@@ -1,6 +1,11 @@
 #include "MenuPrincipal.h"
 MenuPrincipal::MenuPrincipal() {
-
+	EstadoInterno = OpcionesMenu::PRINCIPAL;
+	ContraIA = false;
+	IniciarJuego = false;
+	SkinSeleccionada = "Archon";
+	FuenteMenu.openFromFile("fuentes-game-over.otf");//si se quiere cambiar la fuente cambiar gameover por otra fuente
+	inicializarBotones();
 }
 
 MenuPrincipal::~MenuPrincipal() {
