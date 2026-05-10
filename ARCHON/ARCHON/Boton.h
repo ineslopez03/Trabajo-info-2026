@@ -12,7 +12,8 @@ public:
 	//simplemente le digo la forma del recuadro, el texto a contener y la fuente a usar
 
 	void dibujar(sf::RenderWindow& ventana);
-	void raton(sf::Vector2f posRaton);
-	void setTexto( sf::Text nuevoTexto );
+	bool botonContieneRaton(sf::Vector2f posRaton);
+	void setTexto( std::string nuevoTexto );
+	void actualizarColorBoton(sf::Vector2f posRaton);
 };
 
