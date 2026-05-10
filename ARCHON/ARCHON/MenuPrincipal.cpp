@@ -1,6 +1,6 @@
 #include "MenuPrincipal.h"
 #include <iostream>
-MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo inicialice al crearlo 
+MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu), Titulos(FuenteMenu)//sfml 3.0 me pide que lo inicialice al crearlo 
 {
 	EstadoInterno = OpcionesMenu::PRINCIPAL;
 	ContraIA = false;
@@ -15,6 +15,10 @@ MenuPrincipal::MenuPrincipal(): SpriteFondo(FondoMenu)//sfml 3.0 me pide que lo 
 	if (!FuenteMenu.openFromFile("../ARCHON/fuentes/Rush Zone.otf")) {
 		std::cout << "Error cargando la fuente\n\n";
 	}
+	Titulos.setCharacterSize(100);
+	Titulos.setFillColor(sf::Color::White);
+	Titulos.setOutlineThickness(4.0f);
+	Titulos.setOutlineColor(sf::Color::Black);
 	if (!MusicaFondo.openFromFile("../ARCHON/Musica/MusicaFondo.mp3"))
 	{
 		std::cout << "Error cargando la Musica\n\n";

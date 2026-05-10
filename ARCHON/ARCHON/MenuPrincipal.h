@@ -21,7 +21,7 @@ private:
 	sf::Texture FondoMenu,FondoHarryPotter,FondoStarWars,FondoArchon;//mis texturas para los fondos
 	sf::Sprite SpriteFondo;//el que va a dibujar el fondo
 	sf::Music MusicaFondo;//mi musica de fondo
-
+	sf::Text Titulos;
 	std::vector<Boton> BotonesMenuPrincipal;//listas de botones para tener todo organizado.
 	std::vector<Boton> BotonesSeleccionModo;
 	std::vector<Boton> BotonesSeleccionSkin;
