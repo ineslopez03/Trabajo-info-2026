@@ -24,7 +24,36 @@ MenuPrincipal::~MenuPrincipal() {
 }
 
 void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
+	//obtengo la posicion del raton en pixeles y la traduzco a coordenadas 
+	sf::Vector2f PosRaton = ventana.mapPixelToCoords(sf::Mouse::getPosition(ventana));
+	//Creo una funcion Lambda (ya que solo la voy a usar para esto) 
+	//Le permito leer las variables de este fragmento con [&] que viene a ser la clausula de captura.	
+	//basicamente le digo que recorra el vector de tipo boton que se le pase y que actualice el color 
+	//en funcion de la posicion de mi raton.
+	auto actualizar = [&](std::vector<Boton>& lista) {
 
+		for (auto& b : lista) b.actualizarColorBoton(PosRaton);//con este for recorre todos los botones y consulta si estoy encima
+		//tener en cuenta que mi clase boton para actualizar el color antes pregunta si tengo el raton encima
+		};
+
+	switch (EstadoInterno)
+	{
+	case OpcionesMenu::PRINCIPAL:
+		actualizar(BotonesMenuPrincipal);//aqui uso mi funcion lambda
+		break;
+	case OpcionesMenu::RANKING:
+		actualizar(BotonesRanking);
+		break;
+	case OpcionesMenu::SELECCION_MODO:
+		actualizar(BotonesSeleccionModo);
+		break;
+	case OpcionesMenu::IA_NODISPONIBLE:
+		actualizar(BotonVolverIA);
+		break;
+	case OpcionesMenu::SELECCION_SKIN:
+		actualizar(BotonesSeleccionSkin);
+		break;
+	}
 
 	while (auto evento = ventana.pollEvent()) {
 		if (evento->is<sf::Event::Closed>()) {
