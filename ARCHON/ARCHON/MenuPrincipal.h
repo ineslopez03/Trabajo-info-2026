@@ -1,6 +1,7 @@
 #pragma once
 #include "InterfazUsuario.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Boton.h"
 #include <vector>
 enum class OpcionesMenu{PRINCIPAL,RANKING,SELECCION_MODO,IA_NODISPONIBLE,SELECCION_SKIN,};
@@ -19,6 +20,7 @@ private:
 
 	sf::Texture FondoMenu,FondoHarryPotter,FondoStarWars,FondoArchon;//mis texturas para los fondos
 	sf::Sprite SpriteFondo;//el que va a dibujar el fondo
+	sf::Music MusicaFondo;//mi musica de fondo
 
 	std::vector<Boton> BotonesMenuPrincipal;//listas de botones para tener todo organizado.
 	std::vector<Boton> BotonesSeleccionModo;
