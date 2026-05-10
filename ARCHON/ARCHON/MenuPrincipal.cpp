@@ -24,6 +24,8 @@ MenuPrincipal::~MenuPrincipal() {
 }
 
 void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
+
+
 	while (auto evento = ventana.pollEvent()) {
 		if (evento->is<sf::Event::Closed>()) {
 			ventana.close();
@@ -51,5 +53,17 @@ void MenuPrincipal::inicializarBotones() {
 	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado*2, vboton.anchoBoton, vboton.altoBoton, "RANKING", FuenteMenu));
 	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado*3, vboton.anchoBoton, vboton.altoBoton, "MANUAL", FuenteMenu));
 	BotonesMenuPrincipal.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado*4, vboton.anchoBoton, vboton.altoBoton, "SALIR", FuenteMenu));
-
+	//ESTOS SON LOS BOTONES PARA INICIAR PARTIDA
+	BotonesSeleccionModo.push_back(Boton(vboton.centroMenu_x, 250.0f, vboton.anchoBoton, vboton.altoBoton, "JUGADOR VS JUGADOR", FuenteMenu));
+	BotonesSeleccionModo.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado, vboton.anchoBoton, vboton.altoBoton, "JUGADOR VS IA", FuenteMenu));
+	BotonesSeleccionModo.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado * 2, vboton.anchoBoton, vboton.altoBoton, "VOLVER", FuenteMenu));
+	//ESTOS SON LOS BOTONES PARA LAS SKINS
+	BotonesSeleccionSkin.push_back(Boton(vboton.centroMenu_x, 250.0f, vboton.anchoBoton, vboton.altoBoton, "ARCHON", FuenteMenu));
+	BotonesSeleccionSkin.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado, vboton.anchoBoton, vboton.altoBoton, "HARRY POTTER", FuenteMenu));
+	BotonesSeleccionSkin.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado * 2, vboton.anchoBoton, vboton.altoBoton, "STAR WARS", FuenteMenu));
+	BotonesSeleccionSkin.push_back(Boton(vboton.centroMenu_x, 250.0f + vboton.espaciado * 3, vboton.anchoBoton, vboton.altoBoton, "VOLVER", FuenteMenu));
+	//BOTON DE VOLVER DE LA IA
+	BotonVolverIA.push_back(Boton(vboton.centroMenu_x, 250.0f, vboton.anchoBoton, vboton.altoBoton, "ARCHON", FuenteMenu));
+	//BOTON PARA VOLVER DEL RANKING
+	BotonesRanking.push_back(Boton(vboton.centroMenu_x, 250.0f, vboton.anchoBoton, vboton.altoBoton, "ARCHON", FuenteMenu));
 }
