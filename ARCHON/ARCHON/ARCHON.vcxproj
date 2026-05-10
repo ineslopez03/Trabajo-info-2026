@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
+    <ClInclude Include="Boton.h" />
     <ClInclude Include="Casilla.h" />
     <ClInclude Include="Fenix.h" />
     <ClInclude Include="GestorArchivos.h" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="Boton.cpp" />
     <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="Fenix.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />

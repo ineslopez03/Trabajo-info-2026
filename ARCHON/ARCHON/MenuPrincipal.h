@@ -1,9 +1,14 @@
 #pragma once
 #include "InterfazUsuario.h"
 #include <SFML/Graphics.hpp>
+enum class OpcionesMenu{PRINCIPAL,SELECCION_MODO,SELECCION_SKIN};
 
 class MenuPrincipal:public InterfazUsuario{
 
+	struct boton{
+		sf::RectangleShape forma;
+		sf::Text texto;
+	};
 public:
 
 	MenuPrincipal();

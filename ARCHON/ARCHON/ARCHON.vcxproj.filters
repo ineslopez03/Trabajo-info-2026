@@ -69,6 +69,9 @@
     <ClInclude Include="Fenix.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Boton.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MotorArchon.cpp">
@@ -123,6 +126,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Fenix.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Boton.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
