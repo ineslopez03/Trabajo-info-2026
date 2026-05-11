@@ -1,36 +1,23 @@
 #include "Peon.h"
 #include <iostream>
 
-sf::Texture& Peon::obtenerTexturaHP(Bando b) {
-    // static asegura que la textura viva durante todo el programa
-    static sf::Texture tLuz;
-    static sf::Texture tOsc;
-    static bool cargadaLuz = false;
-    static bool cargadaOsc = false;
-
-    if (b == Bando::LUZ) {
-        if (!cargadaLuz) {
-            if (!tLuz.loadFromFile("imagenes/Dobby.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/Dobby.png" << std::endl;
-            }
-            cargadaLuz = true;
-        }
-        return tLuz;
+std::string obtenerRutaPeon(Bando b, std::string skin) {
+    if (skin == "HARRY_POTTER") {
+        // Carpeta HP + nombres específicos
+        return (b == Bando::LUZ) ? "imagenes/HP/Dobby.png" : "imagenes/HP/Scabbers.png";
+    }
+    else if (skin == "STAR_WARS") {
+        // Carpeta SW + nombres específicos
+        return (b == Bando::LUZ) ? "imagenes/SW/R2D2.png" : "imagenes/SW/Stormtrooper.png";
     }
     else {
-        if (!cargadaOsc) {
-            if (!tOsc.loadFromFile("imagenes/Scabbers.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/Scabbers.png" << std::endl;
-            }
-            cargadaOsc = true;
-        }
-        return tOsc;
+        // Carpeta CLASSIC + nombres estándar
+        return (b == Bando::LUZ) ? "imagenes/Classic/Knight.png" : "imagenes/Classic/Goblin.png";
     }
 }
 
-Peon::Peon(Bando b)
-    : PiezaTerrestre(8, 2, 3, 0, obtenerTexturaHP(b), b)
+Peon::Peon(Bando b, std::string skin)
+    : PiezaTerrestre(8, 2, 3, 0, PiezaTerrestre::obtenerTexturaDesdeRuta(obtenerRutaPeon(b, skin)), b)
 {
-    this->rangoMovimiento = 3; // El Peón camina 3 casillas
-    sprite.setTexture(obtenerTexturaHP(b));
+    this->rangoMovimiento = 3;
 }

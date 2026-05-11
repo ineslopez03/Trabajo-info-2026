@@ -34,5 +34,5 @@ public:
 
 	// Si se da la condición de cambiar de estado llamamos a esta función y gestiona el cambio 
 	// Permite opcionalmente pasar punteros a piezas para las transiciones a la Arena de combate
-	void cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1 = nullptr, Pieza* p2 = nullptr);
+	void cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1 = nullptr, Pieza* p2 = nullptr, std::string skinSeleccionada= " ");
 };

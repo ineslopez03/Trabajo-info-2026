@@ -2,8 +2,7 @@
 #include "PiezaTerrestre.h"
 
 class Peon : public PiezaTerrestre {
+private: static std::string obtenerRuta(Bando b, std::string skin);
 public:
-    Peon(Bando b);
-    static sf::Texture& obtenerTexturaHP(Bando b);
-   
+	Peon(Bando b, std::string skin);
 };

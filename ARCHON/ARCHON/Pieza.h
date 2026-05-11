@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include"Constantes.h"
+#include<map>
 class Casilla;
 class Jugador;
 class Pieza {
@@ -18,8 +19,17 @@ public:
         : vida(_v),vidaMaxima(_v), danio(_d), velMov(_vm), velAta(_va), bando(_b),
         textura(_tex), sprite(_tex), posicion(nullptr), rangoMovimiento(0){
     }
-
+    static sf::Texture& obtenerTexturaDesdeRuta(std::string ruta) {
+        static std::map<std::string, sf::Texture> diccionario;
+        if (diccionario.find(ruta) == diccionario.end()) {
+            if (!diccionario[ruta].loadFromFile(ruta)) {
+                std::cerr << "ERROR: Archivo no encontrado en " << ruta << std::endl;
+            }
+        }
+        return diccionario[ruta];
+    }
     virtual ~Pieza() {}
+
     void resetVida() {
         vida = vidaMaxima;
         std::cout << "Pieza curada: " << vida << " HP" << std::endl;

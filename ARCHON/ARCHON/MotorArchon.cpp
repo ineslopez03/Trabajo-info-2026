@@ -22,7 +22,7 @@ MotorArchon::~MotorArchon() {
     if (jugador2 != nullptr) delete jugador2;
 }
 
-void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2) {
+void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, std::string skinSeleccionada) {
   
     if (pantallaActiva != nullptr) {
         delete pantallaActiva;
@@ -38,7 +38,7 @@ void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2) {
         break;
 
     case EstadoJuego::TABLERO:
-        pantallaActiva = new Tablero();
+        pantallaActiva = new Tablero(95.0f, skinSeleccionada);
         break;
 
     case EstadoJuego::ARENA:
@@ -74,7 +74,7 @@ void MotorArchon::bucle() {
                 if (menu != nullptr && menu->getIniciarJuego())
                 {
                     std::string SKIN = menu->getSkinSeleccionada();//luego pensar en como lo voy a usar para pasarlo
-                    cambiarEstado(EstadoJuego::TABLERO);
+                    cambiarEstado(EstadoJuego::TABLERO, nullptr, nullptr, SKIN);
                 }
             }
 

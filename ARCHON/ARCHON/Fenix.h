@@ -2,10 +2,8 @@
 #include "PiezaVoladora.h"
 
 class Fenix : public PiezaVoladora {
-private:
-    // Función estática para cargar las texturas una sola vez
-    static sf::Texture& obtenerTexturaHP(Bando b);
-
+private: static std::string obtenerRuta(Bando b, std::string skin);
 public:
-    Fenix(Bando b);
+	Fenix(Bando b, std::string skin);
 };
+

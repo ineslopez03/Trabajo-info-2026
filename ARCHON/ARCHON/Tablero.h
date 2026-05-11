@@ -3,9 +3,11 @@
 #include "Casilla.h"
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include<string>
 
 class Tablero : public InterfazUsuario {
 private:
+    std::string skinActual;
     Casilla* matriz[9][9];
     sf::View vistaEstatica;
     float tamCasilla;
@@ -28,7 +30,7 @@ private:
 
 public:
     Tablero(); 
-    Tablero(float _tamano);
+    Tablero(float tam, std::string skin);
     virtual ~Tablero() override; //
 
     void inicializarTablero(); //

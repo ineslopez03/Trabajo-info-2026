@@ -150,8 +150,8 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
 					}//Seleccion de skin
 					else if (EstadoInterno == OpcionesMenu::SELECCION_SKIN) {
 						if (BotonesSeleccionSkin[0].botonContieneRaton(PosRaton)) { SkinSeleccionada = "ARCHON"; IniciarJuego = true; }
-						if (BotonesSeleccionSkin[1].botonContieneRaton(PosRaton)) { SkinSeleccionada = "HARRY POTTER"; IniciarJuego = true; }
-						if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) { SkinSeleccionada = "STAR WARS"; IniciarJuego = true; }
+						if (BotonesSeleccionSkin[1].botonContieneRaton(PosRaton)) { SkinSeleccionada = "HARRY_POTTER"; IniciarJuego = true; }
+						if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) { SkinSeleccionada = "STAR_WARS"; IniciarJuego = true; }
 						if (BotonesSeleccionSkin[3].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::SELECCION_MODO;
 					}
 					

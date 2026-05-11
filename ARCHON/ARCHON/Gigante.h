@@ -2,8 +2,8 @@
 #include "PiezaTerrestre.h"
 
 class Gigante : public PiezaTerrestre {
+private: static std::string obtenerRuta(Bando b, std::string skin);
 public:
-    Gigante(Bando b);
-    static sf::Texture& obtenerTexturaHP(Bando b);
-
+	Gigante(Bando b, std::string skin);
 };
+

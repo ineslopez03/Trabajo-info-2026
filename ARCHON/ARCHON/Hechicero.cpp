@@ -1,38 +1,23 @@
 #include "Hechicero.h"
 #include <iostream>
 
-sf::Texture& Hechicero::obtenerTexturaHP(Bando b) {
-    static sf::Texture tLuz;
-    static sf::Texture tOsc;
-    static bool cargadaLuz = false;
-    static bool cargadaOsc = false;
-
-    if (b == Bando::LUZ) {
-        if (!cargadaLuz) {
-            if (!tLuz.loadFromFile("imagenes/Dumbledore.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/Dumbledore.png" << std::endl;
-            }
-            cargadaLuz = true;
-        }
-        return tLuz;
+std::string Hechicero::obtenerRuta(Bando b, std::string skin) {
+    if (skin == "HARRY_POTTER") {
+        return (b == Bando::LUZ) ? "imagenes/HP/Dumbledore.png" : "imagenes/HP/Voldemort.png";
+    }
+    else if (skin == "STAR_WARS") {
+        return (b == Bando::LUZ) ? "imagenes/SW/Yoda.png" : "imagenes/SW/Palpatine.png";
     }
     else {
-        if (!cargadaOsc) {
-
-            if (!tOsc.loadFromFile("imagenes/Voldemort.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/Voldemort.png" << std::endl;
-            }
-            cargadaOsc = true;
-        }
-        return tOsc;
+        return (b == Bando::LUZ) ? "imagenes/Classic/Wizard.png" : "imagenes/Classic/Sorceress.png";
     }
 }
 
-Hechicero::Hechicero(Bando b)
-    : PiezaTeletransporte(20, 8, 5, 2, obtenerTexturaHP(b), b)
+Hechicero::Hechicero(Bando b, std::string skin)
+    : PiezaTeletransporte(20, 8, 5, 2, Pieza::obtenerTexturaDesdeRuta(Hechicero::obtenerRuta(b, skin)), b)
 {
     this->velMov = 5;
-    sprite.setTexture(obtenerTexturaHP(b));
+
     for (int i = 0; i < 7; i++) {
         hechizosDisponibles[i] = true;
     }

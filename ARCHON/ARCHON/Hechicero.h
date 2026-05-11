@@ -5,8 +5,9 @@
 
 class Hechicero : public PiezaTeletransporte {
 private:
-    // Función estática para cargar las texturas una sola vez
-    static sf::Texture& obtenerTexturaHP(Bando b);
+    
+    static std::string obtenerRuta(Bando b, std::string skin);
+
 
     bool hechizosDisponibles[7];
 
@@ -22,7 +23,8 @@ private:
 
 
 public:
-    Hechicero(Bando b);
+    Hechicero(Bando b, std::string skin);
+
     bool puedeLanzar(int indice) const { return hechizosDisponibles[indice]; }
     void gastarHechizo(int indice) { hechizosDisponibles[indice] = false; }
 };

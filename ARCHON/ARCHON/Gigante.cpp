@@ -1,36 +1,24 @@
 #include "Gigante.h"
 #include <iostream>
-
-sf::Texture& Gigante::obtenerTexturaHP(Bando b) {
-    // static asegura que la textura viva durante todo el programa
-    static sf::Texture tLuz;
-    static sf::Texture tOsc;
-    static bool cargadaLuz = false;
-    static bool cargadaOsc = false;
-
-    if (b == Bando::LUZ) {
-        if (!cargadaLuz) {
-            if (!tLuz.loadFromFile("imagenes/Hagrid.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/Dobby.png" << std::endl;
-            }
-            cargadaLuz = true;
-        }
-        return tLuz;
+std::string obtenerRutaGigante(Bando b, std::string skin) {
+    if (skin == "HARRY_POTTER") {
+        // Carpeta HP + nombres específicos
+        return (b == Bando::LUZ) ? "imagenes/HP/Hagrid.png" : "imagenes/HP/Troll.png";
+    }
+    else if (skin == "STAR_WARS") {
+        // Carpeta SW + nombres específicos
+        return (b == Bando::LUZ) ? "imagenes/SW/Chewbacca.png" : "imagenes/SW/Rancor.png";
     }
     else {
-        if (!cargadaOsc) {
-            if (!tOsc.loadFromFile("imagenes/Troll.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/Scabbers.png" << std::endl;
-            }
-            cargadaOsc = true;
-        }
-        return tOsc;
+        // Carpeta CLASSIC + nombres estándar
+        return (b == Bando::LUZ) ? "imagenes/Classic/Golem.png" : "imagenes/Classic/Troll.png";
     }
 }
 
-Gigante::Gigante(Bando b)
-    : PiezaTerrestre(15, 5, 2, 0, obtenerTexturaHP(b), b)
+
+
+Gigante::Gigante(Bando b, std::string skin)
+    : PiezaTerrestre(15, 5, 2, 0, PiezaTerrestre::obtenerTexturaDesdeRuta(obtenerRutaGigante(b, skin)), b)
 {
-    this->rangoMovimiento = 2; // El Gigante camina 2 casillas
-    sprite.setTexture(obtenerTexturaHP(b));
+    this->rangoMovimiento = 2;
 }

@@ -9,10 +9,11 @@
 #include"Rango.h"
 #include"Hechicero.h"
 // Constructor por defecto
-Tablero::Tablero() : Tablero(95.0f) {}
+Tablero::Tablero() : Tablero(95.0f, " ") {}
 
-Tablero::Tablero(float _tamano) {
-    tamCasilla = _tamano;
+Tablero::Tablero(float _tamano, std::string skin) {
+    this->tamCasilla = _tamano;
+    this->skinActual = skin; 
     turnoActual = Bando::LUZ;
     primerClicRealizado = false;
     origenSeleccionado = nullptr;
@@ -55,31 +56,31 @@ Tablero::~Tablero() {
 
 void Tablero::inicializarTablero() {
     for (int j = 0; j < 9; j++) {
-        matriz[1][j]->setPieza(new Peon(Bando::LUZ));
-        matriz[7][j]->setPieza(new Peon(Bando::OSCURIDAD));
+        matriz[1][j]->setPieza(new Peon(Bando::LUZ,skinActual));
+        matriz[7][j]->setPieza(new Peon(Bando::OSCURIDAD, skinActual));
     }
-    matriz[0][2]->setPieza(new Gigante(Bando::LUZ));
-    matriz[0][6]->setPieza(new Gigante(Bando::LUZ));
-    matriz[8][2]->setPieza(new Gigante(Bando::OSCURIDAD));
-    matriz[8][6]->setPieza(new Gigante(Bando::OSCURIDAD));
+    matriz[0][2]->setPieza(new Gigante(Bando::LUZ, skinActual));
+    matriz[0][6]->setPieza(new Gigante(Bando::LUZ, skinActual));
+    matriz[8][2]->setPieza(new Gigante(Bando::OSCURIDAD, skinActual));
+    matriz[8][6]->setPieza(new Gigante(Bando::OSCURIDAD, skinActual));
 
-    matriz[0][1]->setPieza(new Fenix(Bando::LUZ));
-    matriz[8][1]->setPieza(new Fenix(Bando::OSCURIDAD));
-    matriz[0][7]->setPieza(new Fenix(Bando::LUZ));
-    matriz[8][7]->setPieza(new Fenix(Bando::OSCURIDAD));
+    matriz[0][1]->setPieza(new Fenix(Bando::LUZ, skinActual));
+    matriz[8][1]->setPieza(new Fenix(Bando::OSCURIDAD, skinActual));
+    matriz[0][7]->setPieza(new Fenix(Bando::LUZ, skinActual));
+    matriz[8][7]->setPieza(new Fenix(Bando::OSCURIDAD, skinActual));
 
-    matriz[0][0]->setPieza(new Rango(Bando::LUZ));
-    matriz[0][3]->setPieza(new Rango(Bando::LUZ));
-    matriz[0][5]->setPieza(new Rango(Bando::LUZ));
-    matriz[0][8]->setPieza(new Rango(Bando::LUZ));
+    matriz[0][0]->setPieza(new Rango(Bando::LUZ, skinActual));
+    matriz[0][3]->setPieza(new Rango(Bando::LUZ, skinActual));
+    matriz[0][5]->setPieza(new Rango(Bando::LUZ, skinActual));
+    matriz[0][8]->setPieza(new Rango(Bando::LUZ, skinActual));
   
-    matriz[8][0]->setPieza(new Rango(Bando::OSCURIDAD));
-    matriz[8][3]->setPieza(new Rango(Bando::OSCURIDAD));
-    matriz[8][5]->setPieza(new Rango(Bando::OSCURIDAD));
-    matriz[8][8]->setPieza(new Rango(Bando::OSCURIDAD));
+    matriz[8][0]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
+    matriz[8][3]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
+    matriz[8][5]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
+    matriz[8][8]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
 
-    matriz[0][4]->setPieza(new Hechicero(Bando::LUZ));
-    matriz[8][4]->setPieza(new Hechicero(Bando::OSCURIDAD));
+    matriz[0][4]->setPieza(new Hechicero(Bando::LUZ, skinActual));
+    matriz[8][4]->setPieza(new Hechicero(Bando::OSCURIDAD, skinActual));
 
 
 }

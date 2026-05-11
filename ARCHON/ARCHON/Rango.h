@@ -2,8 +2,8 @@
 #include "PiezaVoladora.h"
 
 class Rango : public PiezaVoladora {
-private:
-    static sf::Texture& obtenerTexturaHP(Bando b);
+private: static std::string obtenerRuta(Bando b, std::string skin);
 public:
-    Rango(Bando b);
+	Rango(Bando b, std::string skin);
 };
+

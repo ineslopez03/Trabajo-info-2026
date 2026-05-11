@@ -1,38 +1,21 @@
 #include "Rango.h"
 #include <iostream>
-
-sf::Texture& Rango::obtenerTexturaHP(Bando b) {
-    static sf::Texture tLuz;
-    static sf::Texture tOsc;
-    static bool cargadaLuz = false;
-    static bool cargadaOsc = false;
-
-    if (b == Bando::LUZ) {
-        if (!cargadaLuz) {
-            if (!tLuz.loadFromFile("imagenes/Ginny.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/.png" << std::endl;
-            }
-            cargadaLuz = true;
-        }
-        return tLuz;
+std::string obtenerRutaRango(Bando b, std::string skin) {
+    if (skin == "HARRY_POTTER") {
+        // Carpeta HP + nombres específicos
+        return (b == Bando::LUZ) ? "imagenes/HP/Ginny.png" : "imagenes/HP/Bellatrix.png";
+    }
+    else if (skin == "STAR_WARS") {
+        // Carpeta SW + nombres específicos
+        return (b == Bando::LUZ) ? "imagenes/SW/Han Solo.png" : "imagenes/SW/Boba Fett.png";
     }
     else {
-        if (!cargadaOsc) {
-
-            if (!tOsc.loadFromFile("imagenes/Bellatrix.png")) {
-                std::cerr << "ERROR: No se encuentra imagenes/.png" << std::endl;
-            }
-            cargadaOsc = true;
-        }
-        return tOsc;
+        // Carpeta CLASSIC + nombres estándar
+        return (b == Bando::LUZ) ? "imagenes/Classic/Archer.png" : "imagenes/Classic/Basilisk.png";
     }
 }
-
-Rango::Rango(Bando b)
-    : PiezaVoladora(10, 3, 3, 1, obtenerTexturaHP(b), b)
+Rango::Rango(Bando b, std::string skin)
+    : PiezaVoladora(10, 3, 3, 1, PiezaVoladora::obtenerTexturaDesdeRuta(obtenerRutaRango(b, skin)), b)
 {
-
-  
-    this->velMov = 3;
-    sprite.setTexture(obtenerTexturaHP(b));
+    this->rangoMovimiento = 3;
 }
