@@ -35,16 +35,14 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
 
  
    if (esOscilante) {
-       int fase = turno % 4;
+       int fase = turno %6;
        switch (fase) {
        case 0:Color = ColorCasilla::NEGRO;break;
        case 1:Color = ColorCasilla::GRIS_OSCURO;break;
        case 2:Color = ColorCasilla::GRIS_CLARO;break;
        case 3:Color = ColorCasilla::BLANCO;break;
-       }
-
-       if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-           Color = ColorCasilla::GRIS_CLARO;
+       case 4:Color = ColorCasilla::GRIS_CLARO;break;
+       case 5:Color = ColorCasilla::GRIS_OSCURO;break;
        }
 
        switch (Color)
@@ -76,6 +74,7 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
        else {
            colorRelleno = ((x + y) % 2 == 1) ? sf::Color::White : sf::Color::Black;
        }
+       
        if (colorRelleno == sf::Color::White) {
            Color = ColorCasilla::BLANCO;
        }

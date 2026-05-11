@@ -138,7 +138,11 @@ void Tablero::gestionarTurno(Casilla* casillaClicada) {
                 // ¡ES UN ATAQUE! Preparamos las variables para que MotorArchon lo detecte
                 atacante = origenSeleccionado->getPieza();
                 defensor = casillaClicada->getPieza();
+                ColorCasilla colorDeCombate = casillaClicada->getColorActual();
+                float vEfectivaDefensor = defensor->getVidaEfectiva(colorDeCombate);
+                float vEfectivaAtacante = atacante->getVidaEfectiva(colorDeCombate);
                 hayCombatePendiente = true;
+                turnosContados++;
 
                 std::cout << "¡Combate iniciado! Pasando a la Arena..." << std::endl;
 
@@ -195,6 +199,7 @@ void Tablero::resetCombate() {
     hayCombatePendiente = false;
     atacante = nullptr;
     defensor = nullptr;
+    turnosContados++;
     turnoActual = (turnoActual == Bando::LUZ) ? Bando::OSCURIDAD : Bando::LUZ;
 }
 

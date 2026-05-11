@@ -21,12 +21,13 @@ public:
     }
 
     virtual ~Pieza() {}
-
+    float getVidaEfectiva(ColorCasilla colorActual);
     virtual void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) = 0;
 
     void setPosicion(Casilla* c) { posicion = c; }
     Casilla* getPosicion() { return posicion; }
     Bando getBando() { return bando; }
+    int getVidaBase() const { return vida; }
 
     virtual void setJugador(Jugador* j) {}
     virtual bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9])=0;

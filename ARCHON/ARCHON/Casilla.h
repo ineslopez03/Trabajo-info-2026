@@ -20,7 +20,7 @@ public:
     void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano);
 	int getX() const { return x; }
 	int getY() const { return y; }
-	int getColor() const { return static_cast<int>(Color); }
+    ColorCasilla getColorActual()const { return Color; }
    bool getEsPuntoDePoder() const { return esPuntoDePoder; } 
    bool getEsOscilante() const { return esOscilante; } 
 };
