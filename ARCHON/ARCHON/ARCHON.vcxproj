@@ -134,6 +134,7 @@
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Boton.h" />
     <ClInclude Include="Casilla.h" />
+    <ClInclude Include="Constantes.h" />
     <ClInclude Include="Fenix.h" />
     <ClInclude Include="GestorArchivos.h" />
     <ClInclude Include="Gigante.h" />

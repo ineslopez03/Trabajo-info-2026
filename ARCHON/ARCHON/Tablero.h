@@ -14,13 +14,17 @@ private:
     Bando turnoActual;
     bool primerClicRealizado;
     Casilla* origenSeleccionado;
-
+    Casilla* piezaAuxiliar= nullptr;
     
     bool hayCombatePendiente;
     Pieza* atacante;
     Pieza* defensor;
     int turnosContados;
     
+    bool modoHechizoActivo = false;
+    int hechizoSeleccionado = 0;
+    bool hechizosLuzUsados[8] = { false };
+    bool hechizosOscurosUsados[8] = { false };
 
 public:
     Tablero(); 
@@ -39,4 +43,6 @@ public:
     Pieza* getAtacante() const { return atacante; }
     Pieza* getDefensor() const { return defensor; }
     void resetCombate(); //
+    void procesarMagia(Casilla* objetivo);
+    void finalizarTurno();
 };

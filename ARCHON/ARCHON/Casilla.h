@@ -1,8 +1,7 @@
 #pragma once
 #include "Pieza.h" 
 #include<SFML/Graphics.hpp>
-enum class ColorCasilla { NEGRO, GRIS_OSCURO, GRIS_CLARO, BLANCO };
-
+#include"Constantes.h"
 class Casilla {
 private:
     int x, y;  

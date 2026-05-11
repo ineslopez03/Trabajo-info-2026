@@ -5,7 +5,14 @@
 
 void PiezaVoladora::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) {
     if (posicion == nullptr) return;
-
+    if (this->estaEncarcelada()) {
+        // Tinte azulado y un poco transparente para que parezca un bloque de hielo/magia
+        sprite.setColor(sf::Color(100, 100, 255, 180));
+    }
+    else {
+        // Color original
+        sprite.setColor(sf::Color::White);
+    }
     // 1. Coordenadas de la casilla donde debería estar (Destino Lógico)
     float destinoX = (float)posicion->getX() * tamano;
     float destinoY = (float)posicion->getY() * tamano;
@@ -47,7 +54,12 @@ void PiezaVoladora::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, in
 
 bool PiezaVoladora::mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) {
     if (!origen || !destino) return false;
-
+    // --- BLOQUE PARA HECHIZO IMPRISON ---
+    // Si la pieza está encarcelada, no permitimos que se ejecute ninguna lógica de movimiento
+    if (this->estaEncarcelada()) {
+        std::cout << "DEBUG: La pieza esta encarcelada y no puede moverse." << std::endl;
+        return false;
+    }
     if (destino->estaOcupada() && destino->getPieza()->getBando() == this->bando) {
         return false;
     }

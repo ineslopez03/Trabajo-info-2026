@@ -3,10 +3,14 @@
 #include <iostream>
 
 void PiezaTerrestre::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) {
-    if (posicion == nullptr) {
-        // Si ves esto en la consola, es que setPieza() no se llamó bien
-        // std::cout << "DEBUG: Pieza sin posicion asignada!" << std::endl;
-        return;
+    if (posicion == nullptr)return;
+    if (this->estaEncarcelada()) {
+        // Tinte azulado y un poco transparente para que parezca un bloque de hielo/magia
+        sprite.setColor(sf::Color(100, 100, 255, 180));
+    }
+    else {
+        // Color original
+        sprite.setColor(sf::Color::White);
     }
 
     float posX = (float)posicion->getX() * tamano;
@@ -27,7 +31,12 @@ void PiezaTerrestre::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, i
 }
 bool PiezaTerrestre::mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) {
     if (!origen || !destino) return false;
-
+    // --- BLOQUE PARA HECHIZO IMPRISON ---
+    // Si la pieza está encarcelada, no permitimos que se ejecute ninguna lógica de movimiento
+    if (this->estaEncarcelada()) {
+        std::cout << "DEBUG: La pieza esta encarcelada y no puede moverse." << std::endl;
+        return false;
+    }
     // 1. No podemos movernos a una casilla ocupada por nosotros mismos
     if (destino->estaOcupada() && destino->getPieza()->getBando() == this->bando) {
         return false;

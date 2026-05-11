@@ -1,26 +1,35 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
-enum class Bando { LUZ, OSCURIDAD };
+#include"Constantes.h"
 class Casilla;
 class Jugador;
-
 class Pieza {
 protected:
-    int vida, danio, velMov, velAta;
+    int vida,vidaMaxima, danio, velMov, velAta;
     Bando bando;
     sf::Texture& textura;
     sf::Sprite sprite;
     Casilla* posicion;
     int rangoMovimiento;
+    int turnosBloqueado = 0;
 public:
     Pieza(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b)
-        : vida(_v), danio(_d), velMov(_vm), velAta(_va), bando(_b),
-        textura(_tex), sprite(_tex), posicion(nullptr), rangoMovimiento(0) {
+        : vida(_v),vidaMaxima(_v), danio(_d), velMov(_vm), velAta(_va), bando(_b),
+        textura(_tex), sprite(_tex), posicion(nullptr), rangoMovimiento(0){
     }
 
     virtual ~Pieza() {}
+    void resetVida() {
+        vida = vidaMaxima;
+        std::cout << "Pieza curada: " << vida << " HP" << std::endl;
+    }
+    void pasarTurnoBloqueo() {
+        if (turnosBloqueado > 0) turnosBloqueado--;
+    }
+    void setEncarcelada(int cantidad) { turnosBloqueado = cantidad; }
+    bool estaEncarcelada() const { return turnosBloqueado > 0; }
+   
     float getVidaEfectiva(ColorCasilla colorActual);
     virtual void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) = 0;
 
@@ -31,4 +40,5 @@ public:
 
     virtual void setJugador(Jugador* j) {}
     virtual bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9])=0;
+   
 };
