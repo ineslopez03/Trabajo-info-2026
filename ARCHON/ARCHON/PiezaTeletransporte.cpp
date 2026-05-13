@@ -77,7 +77,7 @@ void PiezaTeletransporte::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f
         sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
         sprite.setPosition(pos);
 
-        float escala = 100.f / bounds.size.x;
+        float escala = 65.f / bounds.size.x;
         sprite.setScale({ mirandoDerecha ? escala : -escala, escala });
 
         ventana.draw(sprite);

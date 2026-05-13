@@ -23,21 +23,17 @@ void Peon::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mira
     if (skin == "HARRY_POTTER" && bando == Bando::LUZ) {
         sf::Texture& sheet = Pieza::obtenerTexturaDesdeRuta("imagenes/HP/Arena/Harry_Sheet.png");
         sprite.setTexture(sheet);
-
-        // Extracción del rectángulo correspondiente a la pose 'Idle'
         sprite.setTextureRect(sf::IntRect({ 15, 252 }, { 28, 42 }));
 
         sf::FloatRect bounds = sprite.getLocalBounds();
         sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
         sprite.setPosition(pos);
 
-        // Escala adaptada a las proporciones del pixel art
-        sprite.setScale({ mirandoDerecha ? 2.5f : -2.5f, 2.5f });
-
+        // Escala reducida para la arena
+        sprite.setScale({ mirandoDerecha ? 1.5f : -1.5f, 1.5f });
         ventana.draw(sprite);
     }
     else {
-        // Ejecución del comportamiento gráfico por defecto
         PiezaTerrestre::dibujarEnArena(ventana, pos, mirandoDerecha, skin);
     }
 }

@@ -97,7 +97,7 @@ void PiezaTerrestre::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos,
 
         // 3. Cálculo del factor de escala. 
         // Forzamos un tamaño visual de aproximadamente 100 píxeles para que destaquen en la arena 800x800.
-        float escala = 100.f / bounds.size.x;
+        float escala = 65.f / bounds.size.x;
 
         // 4. Transformación matricial: Invertimos el eje X si la pieza debe mirar hacia la izquierda (defensor).
         sprite.setScale({ mirandoDerecha ? escala : -escala, escala });

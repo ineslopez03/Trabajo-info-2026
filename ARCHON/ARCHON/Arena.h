@@ -8,24 +8,32 @@
 
 class Arena : public InterfazUsuario {
 private:
-    // Punteros para identificar las piezas por bando/posición
-    Pieza* piezaIzquierda; // Normalmente Bando::LUZ
-    Pieza* piezaDerecha;   // Normalmente Bando::OSCURIDAD
+    Pieza* piezaIzquierda;
+    Pieza* piezaDerecha;
 
     std::list<Proyectiles*> lista_proyectiles;
     sf::Texture texturaFondoArena;
     sf::Sprite* spriteFondoArena;
 
-    // Vectores de posición independientes
     sf::Vector2f posIzquierda;
     sf::Vector2f posDerecha;
 
     sf::Clock relojArena;
     std::string skinArena;
 
-    // Variables para controlar la cadencia de disparo (teclas libres)
     bool teclaDisparoIzquierdaLibre = true;
     bool teclaDisparoDerechaLibre = true;
+
+    // --- Motor del HUD y Cuenta Atrás ---
+    sf::Font fuenteArena;
+    sf::Text textoCuentaAtras;
+    sf::Text textoEtiquetaIzq;
+    sf::Text textoEtiquetaDer;
+    int faseCuentaAtras;
+    sf::Clock relojCuentaAtras;
+
+    sf::RectangleShape marcoIzq, barraFondoIzq, barraVidaIzq;
+    sf::RectangleShape marcoDer, barraFondoDer, barraVidaDer;
 
 public:
     Arena(Pieza* p1, Pieza* p2, const std::string& skin);
