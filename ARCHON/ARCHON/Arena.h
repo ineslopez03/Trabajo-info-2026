@@ -8,17 +8,24 @@
 
 class Arena : public InterfazUsuario {
 private:
-    Pieza* atacante;
-    Pieza* defensor;
+    // Punteros para identificar las piezas por bando/posición
+    Pieza* piezaIzquierda; // Normalmente Bando::LUZ
+    Pieza* piezaDerecha;   // Normalmente Bando::OSCURIDAD
+
     std::list<Proyectiles*> lista_proyectiles;
     sf::Texture texturaFondoArena;
     sf::Sprite* spriteFondoArena;
-    sf::Vector2f posAtacante;
-    sf::Vector2f posDefensor;
-    sf::Clock relojArena;
 
-    // Nueva variable para almacenar la temática actual de la batalla
+    // Vectores de posición independientes
+    sf::Vector2f posIzquierda;
+    sf::Vector2f posDerecha;
+
+    sf::Clock relojArena;
     std::string skinArena;
+
+    // Variables para controlar la cadencia de disparo (teclas libres)
+    bool teclaDisparoIzquierdaLibre = true;
+    bool teclaDisparoDerechaLibre = true;
 
 public:
     Arena(Pieza* p1, Pieza* p2, const std::string& skin);
