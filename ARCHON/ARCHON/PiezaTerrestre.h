@@ -9,4 +9,7 @@ public:
 
     void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) override;
     bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) override;
+
+    // Nueva firma para el renderizado por defecto en el estado de combate
+    void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };

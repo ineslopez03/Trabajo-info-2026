@@ -11,13 +11,14 @@ private:
     Pieza* atacante;
     Pieza* defensor;
     std::list<Proyectiles*> lista_proyectiles;
-
     sf::Texture texturaFondoArena;
-    sf::Sprite* spriteFondoArena;  // Usamos puntero para construir más tarde
-
+    sf::Sprite* spriteFondoArena;
     sf::Vector2f posAtacante;
     sf::Vector2f posDefensor;
     sf::Clock relojArena;
+
+    // Nueva variable para almacenar la temática actual de la batalla
+    std::string skinArena;
 
 public:
     Arena(Pieza* p1, Pieza* p2, const std::string& skin);
@@ -25,7 +26,6 @@ public:
 
     void procesarEntrada(sf::RenderWindow& ventana) override;
     void dibujarPantalla(sf::RenderWindow& ventana) override;
-
     void iniciarBatalla(Pieza* p1, Pieza* p2);
     void gestionarColisiones();
 };

@@ -4,14 +4,17 @@
 Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin) : spriteFondoArena(nullptr) {
     iniciarBatalla(p1, p2);
 
+    // Almacenamos la temática para propagarla a las piezas en dibujarPantalla()
+    this->skinArena = skin;
+
     std::string rutaFondo;
-    if (skin == "ARCHON") {
+    if (skinArena == "ARCHON") {
         rutaFondo = "imagenes/CLASSIC/suelo_clss_2.png";
     }
-    else if (skin == "HARRY_POTTER") {
+    else if (skinArena == "HARRY_POTTER") {
         rutaFondo = "imagenes/HP/suelo_hp_2.png";
     }
-    else if (skin == "STAR_WARS") {
+    else if (skinArena == "STAR_WARS") {
         rutaFondo = "imagenes/SW/suelo_sw_2.png";
     }
     else {
@@ -24,7 +27,6 @@ Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin) : spriteFondoArena(n
 
     spriteFondoArena = new sf::Sprite(texturaFondoArena);
 
-    // Casting explícito a float para garantizar precisión en la división y evitar truncamientos
     float escalaX = 800.f / static_cast<float>(texturaFondoArena.getSize().x);
     float escalaY = 800.f / static_cast<float>(texturaFondoArena.getSize().y);
     spriteFondoArena->setScale(sf::Vector2f(escalaX, escalaY));
@@ -46,7 +48,6 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
 void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     float dt = relojArena.restart().asSeconds();
 
-    // Cinemática básica del atacante
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)) posAtacante.y -= 400.f * dt;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)) posAtacante.y += 400.f * dt;
 
@@ -64,7 +65,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     for (auto it = lista_proyectiles.begin(); it != lista_proyectiles.end();) {
         (*it)->mover();
 
-        // Limpieza de proyectiles fuera del rango de la pantalla
         if ((*it)->getPosicion().x > 800 || (*it)->getPosicion().x < 0) {
             delete* it;
             it = lista_proyectiles.erase(it);
@@ -78,23 +78,21 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 }
 
 void Arena::gestionarColisiones() {
-    // Lógica de colisiones (Pendiente de implementación)
+    // Lógica de colisiones
 }
 
 void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
-    // Restauración del estado de la vista gráfica.
-    // Esto garantiza que el sistema de coordenadas sea de 800x800 píxeles,
-    // sobrescribiendo cualquier View modificada por otra clase como el Tablero.
+    // Restablecimiento del viewport para prevenir solapamientos de coordenadas
     ventana.setView(ventana.getDefaultView());
-
-    // Renderizado del escenario y las entidades
     ventana.draw(*spriteFondoArena);
 
+    // Inyección de dependencias gráficas a través de enlace dinámico (polimorfismo)
     if (atacante) {
-        atacante->dibujar(ventana, nullptr, 0, 50.f);
+        atacante->dibujarEnArena(ventana, posAtacante, true, skinArena);
     }
+
     if (defensor) {
-        defensor->dibujar(ventana, nullptr, 0, 50.f);
+        defensor->dibujarEnArena(ventana, posDefensor, false, skinArena);
     }
 
     for (auto p : lista_proyectiles) {
