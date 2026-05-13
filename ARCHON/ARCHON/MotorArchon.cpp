@@ -2,28 +2,25 @@
 #include "Tablero.h"
 #include "Arena.h"
 #include "MenuPrincipal.h"
-#include <optional> 
+#include <optional>
+
 MotorArchon::MotorArchon() {
-    
-  //  ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON - Informatica Industrial 2026");
     estadoActual = EstadoJuego::MENU;
 
-   
     pantallaActiva = nullptr;
     jugador1 = nullptr;
     jugador2 = nullptr;
     ejecutando = true;
+    skinActual = "ARCHON"; // Valor por defecto
 }
 
 MotorArchon::~MotorArchon() {
-    
     if (pantallaActiva != nullptr) delete pantallaActiva;
     if (jugador1 != nullptr) delete jugador1;
     if (jugador2 != nullptr) delete jugador2;
 }
 
 void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, std::string skinSeleccionada) {
-  
     if (pantallaActiva != nullptr) {
         delete pantallaActiva;
         pantallaActiva = nullptr;
@@ -31,23 +28,24 @@ void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, s
 
     estadoActual = nuevoEstado;
 
-    
+    if (!skinSeleccionada.empty()) {
+        skinActual = skinSeleccionada;
+    }
+
     switch (estadoActual) {
     case EstadoJuego::MENU:
         pantallaActiva = new MenuPrincipal();
         break;
 
     case EstadoJuego::TABLERO:
-        pantallaActiva = new Tablero(95.0f, skinSeleccionada);
+        pantallaActiva = new Tablero(95.0f, skinActual);
         break;
 
     case EstadoJuego::ARENA:
-       
         if (p1 != nullptr && p2 != nullptr) {
-            pantallaActiva = new Arena(p1, p2);
+            pantallaActiva = new Arena(p1, p2, skinActual);
         }
         else {
-            
             estadoActual = EstadoJuego::TABLERO;
             pantallaActiva = new Tablero();
         }
@@ -61,20 +59,13 @@ void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, s
 
 void MotorArchon::bucle() {
     while (ejecutando && ventana.isOpen()) {
-
-
         if (pantallaActiva != nullptr) {
-            // 1. EL TABLERO PROCESA LA ENTRADA
             pantallaActiva->procesarEntrada(ventana);
 
-            // 2. LÓGICA DE TRANSICIÓN
             if (estadoActual == EstadoJuego::MENU) {
                 MenuPrincipal* menu = dynamic_cast<MenuPrincipal*>(pantallaActiva);
-                //Hago el dynamic cast para que pueda usar los metodos de Menu
-                if (menu != nullptr && menu->getIniciarJuego())
-                {
-                    std::string SKIN = menu->getSkinSeleccionada();//luego pensar en como lo voy a usar para pasarlo
-                    cambiarEstado(EstadoJuego::TABLERO, nullptr, nullptr, SKIN);
+                if (menu != nullptr && menu->getIniciarJuego()) {
+                    cambiarEstado(EstadoJuego::TABLERO, nullptr, nullptr, menu->getSkinSeleccionada());
                 }
             }
 
@@ -83,26 +74,25 @@ void MotorArchon::bucle() {
                 if (tab != nullptr && tab->getHaycombate()) {
                     Pieza* pAtacante = tab->getAtacante();
                     Pieza* pDefensor = tab->getDefensor();
+                    std::string currentSkin = tab->getSkin();
                     tab->resetCombate();
-                    cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor);
+                    cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, currentSkin);
                 }
             }
 
-            // 3. RENDERIZADO
             ventana.clear();
             pantallaActiva->dibujarPantalla(ventana);
             ventana.display();
         }
     }
 }
+
 void MotorArchon::inicializar() {
-    
     ventana.create(sf::VideoMode({ 800, 800 }), "ARCHON 2026");
 
-   
     jugador1 = new JugadorHumano("Heroe de la Luz", Bando::LUZ);
     jugador2 = new JugadorIA("Senor de la Oscuridad", Bando::OSCURIDAD);
 
-
     cambiarEstado(EstadoJuego::MENU);
 }
+

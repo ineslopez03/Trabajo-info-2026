@@ -7,32 +7,31 @@
 #include "JugadorHumano.h"
 #include "JugadorIA.h"
 
-// Se hace enum class para que no se puedan comparar con enteros, y para que no haya confusión con otros estados de otras partes del programa
 enum class EstadoJuego { MENU, TABLERO, ARENA, FIN };
 
 class MotorArchon
 {
 private:
-	sf::RenderWindow ventana; // Creo la ventana que voy a ir pasando 
+    sf::RenderWindow ventana;
 
-	EstadoJuego estadoActual; // Variable para almacenar/conocer el estado actual del juego
-	InterfazUsuario* pantallaActiva; // Puntero general para la pantalla activa, que se asignará a cada pantalla concreta según el estado del juego
-	GestorArchivos guardado; // Objeto que guardará los datos del juego.
+    EstadoJuego estadoActual;
+    InterfazUsuario* pantallaActiva;
+    GestorArchivos guardado;
 
-	// Composición con la clase base abstracta Jugador según el esquema de clases
-	Jugador* jugador1; // Punteros que apuntan a los dos jugadores sean reales o IA.
-	Jugador* jugador2;
+    Jugador* jugador1;
+    Jugador* jugador2;
 
-	bool ejecutando; // En caso de estar jugando vale 1, si terminamos/salimos vale 0.
+    bool ejecutando;
+
+    std::string skinActual;  // Guardar skin seleccionada
 
 public:
-	MotorArchon(); // Constructor genérico 
-	~MotorArchon(); // Destructor genérico 
+    MotorArchon();
+    ~MotorArchon();
 
-	void inicializar(); // Inicializamos todo lo necesario para el juego.
-	void bucle(); // Es el bucle principal del juego, se procesan entradas, se dibuja, etc.
+    void inicializar();
+    void bucle();
 
-	// Si se da la condición de cambiar de estado llamamos a esta función y gestiona el cambio 
-	// Permite opcionalmente pasar punteros a piezas para las transiciones a la Arena de combate
-	void cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1 = nullptr, Pieza* p2 = nullptr, std::string skinSeleccionada= " ");
+    void cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1 = nullptr, Pieza* p2 = nullptr, std::string skinSeleccionada = " ");
 };
+
