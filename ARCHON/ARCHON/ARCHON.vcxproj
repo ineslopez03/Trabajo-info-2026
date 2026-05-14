@@ -138,6 +138,7 @@
     <ClInclude Include="Fenix.h" />
     <ClInclude Include="GestorArchivos.h" />
     <ClInclude Include="Gigante.h" />
+    <ClInclude Include="GraficosArena.h" />
     <ClInclude Include="Hechicero.h" />
     <ClInclude Include="InterfazUsuario.h" />
     <ClInclude Include="Jugador.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="JugadorIA.h" />
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
+    <ClInclude Include="Obstaculos.h" />
     <ClInclude Include="Peon.h" />
     <ClInclude Include="Pieza.h" />
     <ClInclude Include="PiezaTeletransporte.h" />
@@ -161,6 +163,7 @@
     <ClCompile Include="Fenix.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />
     <ClCompile Include="Gigante.cpp" />
+    <ClCompile Include="GraficosArena.cpp" />
     <ClCompile Include="Hechicero.cpp" />
     <ClCompile Include="Jugador.cpp" />
     <ClCompile Include="JugadorHumano.cpp" />
@@ -168,6 +171,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
+    <ClCompile Include="Obstaculos.cpp" />
     <ClCompile Include="Peon.cpp" />
     <ClCompile Include="Pieza.cpp" />
     <ClCompile Include="PiezaTeletransporte.cpp" />
