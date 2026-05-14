@@ -1,12 +1,11 @@
 #pragma once
-#include "PiezaTerrestre.h"
+#include "PiezaVoladora.h"
+#include <string>
 
-class Peon : public PiezaTerrestre {
+class Valquiria : public PiezaVoladora {
 private:
     static std::string obtenerRuta(Bando b, std::string skin);
 public:
-    Peon(Bando b, std::string skin);
-
-    // Sobrescritura para inyectar la hoja de sprites en combate
+    Valquiria(Bando b, std::string skin);
     void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };

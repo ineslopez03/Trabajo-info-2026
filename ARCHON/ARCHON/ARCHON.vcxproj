@@ -132,12 +132,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
+    <ClInclude Include="Arquero.h" />
     <ClInclude Include="Boton.h" />
+    <ClInclude Include="Caballero.h" />
     <ClInclude Include="Casilla.h" />
     <ClInclude Include="Constantes.h" />
     <ClInclude Include="Fenix.h" />
+    <ClInclude Include="Genio.h" />
     <ClInclude Include="GestorArchivos.h" />
-    <ClInclude Include="Gigante.h" />
+    <ClInclude Include="Golem.h" />
     <ClInclude Include="GraficosArena.h" />
     <ClInclude Include="Hechicero.h" />
     <ClInclude Include="InterfazUsuario.h" />
@@ -147,7 +150,6 @@
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
     <ClInclude Include="Obstaculos.h" />
-    <ClInclude Include="Peon.h" />
     <ClInclude Include="Pieza.h" />
     <ClInclude Include="PiezaTeletransporte.h" />
     <ClInclude Include="PiezaTerrestre.h" />
@@ -155,14 +157,19 @@
     <ClInclude Include="Proyectiles.h" />
     <ClInclude Include="Rango.h" />
     <ClInclude Include="Tablero.h" />
+    <ClInclude Include="Unicornio.h" />
+    <ClInclude Include="Valquiria.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="Arquero.cpp" />
     <ClCompile Include="Boton.cpp" />
+    <ClCompile Include="Caballero.cpp" />
     <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="Fenix.cpp" />
+    <ClCompile Include="Genio.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />
-    <ClCompile Include="Gigante.cpp" />
+    <ClCompile Include="Golem.cpp" />
     <ClCompile Include="GraficosArena.cpp" />
     <ClCompile Include="Hechicero.cpp" />
     <ClCompile Include="Jugador.cpp" />
@@ -172,7 +179,6 @@
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
     <ClCompile Include="Obstaculos.cpp" />
-    <ClCompile Include="Peon.cpp" />
     <ClCompile Include="Pieza.cpp" />
     <ClCompile Include="PiezaTeletransporte.cpp" />
     <ClCompile Include="PiezaTerrestre.cpp" />
@@ -180,6 +186,8 @@
     <ClCompile Include="Proyectiles.cpp" />
     <ClCompile Include="Rango.cpp" />
     <ClCompile Include="Tablero.cpp" />
+    <ClCompile Include="Unicornio.cpp" />
+    <ClCompile Include="Valquiria.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-audio-3.dll" />

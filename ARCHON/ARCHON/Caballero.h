@@ -1,11 +1,10 @@
 #pragma once
-#include "PiezaVoladora.h"
-#include <string>
+#include "PiezaTerrestre.h"
 
-class Fenix : public PiezaVoladora {
+class Caballero : public PiezaTerrestre {
 private:
     static std::string obtenerRuta(Bando b, std::string skin);
 public:
-    Fenix(Bando b, std::string skin);
+    Caballero(Bando b, std::string skin);
     void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };

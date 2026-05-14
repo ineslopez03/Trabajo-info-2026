@@ -2,10 +2,10 @@
 #include "PiezaVoladora.h"
 #include <string>
 
-class Fenix : public PiezaVoladora {
+class Genio : public PiezaVoladora {
 private:
     static std::string obtenerRuta(Bando b, std::string skin);
 public:
-    Fenix(Bando b, std::string skin);
+    Genio(Bando b, std::string skin);
     void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };

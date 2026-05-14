@@ -48,5 +48,5 @@ public:
     void procesarMagia(Casilla* objetivo);
     void finalizarTurno();
 
-    std::string getSkin() const { return skinActual; } // accesor para skin
+    std::string getSkin() const { return skinActual; }
 };

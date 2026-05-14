@@ -2,11 +2,16 @@
 #include <iostream>
 #include <optional>
 #include <cmath>
-#include "Peon.h"
+
+// Inclusión de la nueva topología de entidades
 #include "Casilla.h"
-#include "Gigante.h"
+#include "Caballero.h"
+#include "Golem.h"
+#include "Valquiria.h"
+#include "Unicornio.h"
+#include "Arquero.h"
+#include "Genio.h"
 #include "Fenix.h"
-#include "Rango.h"
 #include "Hechicero.h"
 
 Tablero::Tablero() : Tablero(95.0f, " ") {}
@@ -51,28 +56,44 @@ Tablero::~Tablero() {
 }
 
 void Tablero::inicializarTablero() {
-    for (int j = 0; j < 9; j++) {
-        matriz[1][j]->setPieza(new Peon(Bando::LUZ, skinActual));
-        matriz[7][j]->setPieza(new Peon(Bando::OSCURIDAD, skinActual));
+    // --- BANDO DE LA LUZ (Flanco Izquierdo) ---
+    // Columna 0: Retaguardia
+    matriz[0][0]->setPieza(new Valquiria(Bando::LUZ, skinActual));
+    matriz[0][1]->setPieza(new Golem(Bando::LUZ, skinActual));
+    matriz[0][2]->setPieza(new Unicornio(Bando::LUZ, skinActual));
+    matriz[0][3]->setPieza(new Genio(Bando::LUZ, skinActual));
+    matriz[0][4]->setPieza(new Hechicero(Bando::LUZ, skinActual)); // Nodo central de poder
+    matriz[0][5]->setPieza(new Fenix(Bando::LUZ, skinActual));
+    matriz[0][6]->setPieza(new Unicornio(Bando::LUZ, skinActual));
+    matriz[0][7]->setPieza(new Golem(Bando::LUZ, skinActual));
+    matriz[0][8]->setPieza(new Valquiria(Bando::LUZ, skinActual));
+
+    // Columna 1: Vanguardia e Infantería Ligera
+    matriz[1][0]->setPieza(new Arquero(Bando::LUZ, skinActual));
+    for (int j = 1; j <= 7; j++) {
+        matriz[1][j]->setPieza(new Caballero(Bando::LUZ, skinActual));
     }
-    matriz[0][2]->setPieza(new Gigante(Bando::LUZ, skinActual));
-    matriz[0][6]->setPieza(new Gigante(Bando::LUZ, skinActual));
-    matriz[8][2]->setPieza(new Gigante(Bando::OSCURIDAD, skinActual));
-    matriz[8][6]->setPieza(new Gigante(Bando::OSCURIDAD, skinActual));
-    matriz[0][1]->setPieza(new Fenix(Bando::LUZ, skinActual));
-    matriz[8][1]->setPieza(new Fenix(Bando::OSCURIDAD, skinActual));
-    matriz[0][7]->setPieza(new Fenix(Bando::LUZ, skinActual));
-    matriz[8][7]->setPieza(new Fenix(Bando::OSCURIDAD, skinActual));
-    matriz[0][0]->setPieza(new Rango(Bando::LUZ, skinActual));
-    matriz[0][3]->setPieza(new Rango(Bando::LUZ, skinActual));
-    matriz[0][5]->setPieza(new Rango(Bando::LUZ, skinActual));
-    matriz[0][8]->setPieza(new Rango(Bando::LUZ, skinActual));
-    matriz[8][0]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
-    matriz[8][3]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
-    matriz[8][5]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
-    matriz[8][8]->setPieza(new Rango(Bando::OSCURIDAD, skinActual));
-    matriz[0][4]->setPieza(new Hechicero(Bando::LUZ, skinActual));
-    matriz[8][4]->setPieza(new Hechicero(Bando::OSCURIDAD, skinActual));
+    matriz[1][8]->setPieza(new Arquero(Bando::LUZ, skinActual));
+
+
+    // --- BANDO DE LA OSCURIDAD (Flanco Derecho) ---
+    // Columna 8: Retaguardia
+    matriz[8][0]->setPieza(new Valquiria(Bando::OSCURIDAD, skinActual));
+    matriz[8][1]->setPieza(new Golem(Bando::OSCURIDAD, skinActual));
+    matriz[8][2]->setPieza(new Unicornio(Bando::OSCURIDAD, skinActual));
+    matriz[8][3]->setPieza(new Genio(Bando::OSCURIDAD, skinActual));
+    matriz[8][4]->setPieza(new Hechicero(Bando::OSCURIDAD, skinActual)); // Nodo central de poder
+    matriz[8][5]->setPieza(new Fenix(Bando::OSCURIDAD, skinActual));
+    matriz[8][6]->setPieza(new Unicornio(Bando::OSCURIDAD, skinActual));
+    matriz[8][7]->setPieza(new Golem(Bando::OSCURIDAD, skinActual));
+    matriz[8][8]->setPieza(new Valquiria(Bando::OSCURIDAD, skinActual));
+
+    // Columna 7: Vanguardia e Infantería Ligera
+    matriz[7][0]->setPieza(new Arquero(Bando::OSCURIDAD, skinActual));
+    for (int j = 1; j <= 7; j++) {
+        matriz[7][j]->setPieza(new Caballero(Bando::OSCURIDAD, skinActual));
+    }
+    matriz[7][8]->setPieza(new Arquero(Bando::OSCURIDAD, skinActual));
 }
 
 void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
@@ -319,7 +340,6 @@ void Tablero::procesarMagia(Casilla* objetivo) {
         finalizarTurno();
     }
 }
-
 void Tablero::finalizarTurno() {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -339,4 +359,3 @@ void Tablero::finalizarTurno() {
 
     std::cout << "Turno finalizado. Tiempo actual: " << turnosContados << std::endl;
 }
-

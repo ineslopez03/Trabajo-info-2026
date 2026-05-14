@@ -1,23 +1,23 @@
 #include "Fenix.h"
-#include <iostream>
 
-std::string obtenerRutaFenix(Bando b, std::string skin) {
+std::string Fenix::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
-        // Carpeta HP + nombres específicos
-        return (b == Bando::LUZ) ? "imagenes/HP/Fawkes.png" : "imagenes/HP/Dementor.png";
+        return (b == Bando::LUZ) ? "imagenes/HP/Placeholder_Fenix.png" : "imagenes/HP/Placeholder_Dragon.png";
     }
     else if (skin == "STAR_WARS") {
-        // Carpeta SW + nombres específicos
-        return (b == Bando::LUZ) ? "imagenes/SW/X-Wing.png" : "imagenes/SW/Tie Fighter.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Placeholder_Fenix.png" : "imagenes/SW/Placeholder_Dragon.png";
     }
     else {
-        // Carpeta CLASSIC + nombres estándar
-        return (b == Bando::LUZ) ? "imagenes/Classic/Phoenix.png" : "imagenes/Classic/Shapeshifter.png";
+        return (b == Bando::LUZ) ? "imagenes/Classic/Phoenix.png" : "imagenes/Classic/Dragon.png";
     }
 }
 
 Fenix::Fenix(Bando b, std::string skin)
-    : PiezaVoladora(12, 4, 5, 2, PiezaVoladora::obtenerTexturaDesdeRuta(obtenerRutaFenix(b, skin)), b)
+    : PiezaVoladora(16, 8, 4, 1, Pieza::obtenerTexturaDesdeRuta(obtenerRuta(b, skin)), b)
 {
     this->rangoMovimiento = 5;
+}
+
+void Fenix::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {
+    PiezaVoladora::dibujarEnArena(ventana, pos, mirandoDerecha, skin);
 }
