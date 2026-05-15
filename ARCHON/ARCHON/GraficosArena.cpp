@@ -51,8 +51,11 @@ GraficosArena::GraficosArena()
 }
 
 void GraficosArena::actualizar(float ratioIzq, float ratioDer, int faseCuenta) {
-    barraVidaIzq.setSize({ 250.f * ratioIzq, 25.f });
-    barraVidaDer.setSize({ 250.f * ratioDer, 25.f });
+    float rIzqClamped = (ratioIzq > 1.0f) ? 1.0f : ratioIzq;
+    float rDerClamped = (ratioDer > 1.0f) ? 1.0f : ratioDer;
+
+    barraVidaIzq.setSize({ 250.f * rIzqClamped, 25.f });
+    barraVidaDer.setSize({ 250.f * rDerClamped, 25.f });
 
     if (faseCuenta > 0) textoCuentaAtras.setString(std::to_string(faseCuenta));
     else if (faseCuenta == 0) textoCuentaAtras.setString("YA");

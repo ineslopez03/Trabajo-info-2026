@@ -5,9 +5,10 @@
 #include <cmath> 
 
 // Instanciación del módulo de obstáculos en la lista de inicialización
-Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin)
-    : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 400.f), sf::Vector2f(700.f, 400.f))
+Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
+    : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f))
 {
+    this->atacanteOriginal = atacante;
     this->skinArena = skin;
     iniciarBatalla(p1, p2);
     faseCuentaAtras = 3;
@@ -22,7 +23,7 @@ Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin)
     }
 
     spriteFondoArena = new sf::Sprite(texturaFondoArena);
-    spriteFondoArena->setScale(sf::Vector2f(800.f / texturaFondoArena.getSize().x, 800.f / texturaFondoArena.getSize().y));
+    spriteFondoArena->setScale(sf::Vector2f(1100.f / texturaFondoArena.getSize().x, 855.f / texturaFondoArena.getSize().y));
 }
 
 Arena::~Arena() {
@@ -40,8 +41,8 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
         piezaIzquierda = p2;
         piezaDerecha = p1;
     }
-    posIzquierda = sf::Vector2f(100.f, 400.f);
-    posDerecha = sf::Vector2f(700.f, 400.f);
+    posIzquierda = sf::Vector2f(100.f, 427.f);
+    posDerecha = sf::Vector2f(1000.f, 400.f);
 
     // Reinicio forzado del ciclo temporal de los orbes para evitar asimetrías
     obstaculos.reiniciar(posIzquierda, posDerecha);
@@ -70,8 +71,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     auto calcularMovimientoSeguro = [&](Pieza* pieza, sf::Vector2f posActual, sf::Vector2f dir) -> sf::Vector2f {
         sf::Vector2f posNueva = posActual + sf::Vector2f(dir.x * velocidad * dt, dir.y * velocidad * dt);
 
-        posNueva.x = std::clamp(posNueva.x, margen, 800.f - margen);
-        posNueva.y = std::clamp(posNueva.y, margen, 800.f - margen);
+        posNueva.x = std::clamp(posNueva.x, margen, 1100.f - margen);
+        posNueva.y = std::clamp(posNueva.y, margen, 855.f - margen);
 
         bool esVoladora = (dynamic_cast<PiezaVoladora*>(pieza) != nullptr);
 
@@ -127,7 +128,7 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
     for (auto it = lista_proyectiles.begin(); it != lista_proyectiles.end();) {
         (*it)->mover(dt);
-        if ((*it)->getPosicion().x > 800 || (*it)->getPosicion().x < 0) {
+        if ((*it)->getPosicion().x > 1100 || (*it)->getPosicion().x < 0) {
             delete* it;
             it = lista_proyectiles.erase(it);
         }
@@ -185,11 +186,24 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     if (piezaDerecha) piezaDerecha->dibujarEnArena(ventana, posDerecha, false, skinArena);
 
     for (auto p : lista_proyectiles) p->dibujar(ventana);
+    float rIzq = 0.f;
+    if (piezaIzquierda) {
+        rIzq = (float)piezaIzquierda->getVidaBase() / (float)piezaIzquierda->getVidaMaxima();
+        // Limitamos a 1.0 para que la barra no se salga del marco si tiene bono
+        if (rIzq > 1.0f) rIzq = 1.0f; 
+        if (rIzq < 0.0f) rIzq = 0.0f;
+    }
 
-    // Normalización del porcentaje de vida para evitar renderizado inverso
-    float rIzq = piezaIzquierda ? std::max(0.0f, (float)piezaIzquierda->getVidaBase() / piezaIzquierda->getVidaMaxima()) : 0.f;
-    float rDer = piezaDerecha ? std::max(0.0f, (float)piezaDerecha->getVidaBase() / piezaDerecha->getVidaMaxima()) : 0.f;
+    // 2. Calculamos el ratio para el Jugador Derecha
+    float rDer = 0.f;
+    if (piezaDerecha) {
+        rDer = (float)piezaDerecha->getVidaBase() / (float)piezaDerecha->getVidaMaxima();
+        // Limitamos a 1.0 para que la barra no se salga del marco si tiene bono
+        if (rDer > 1.0f) rDer = 1.0f;
+        if (rDer < 0.0f) rDer = 0.0f;
+    }
 
+    // 3. Enviamos los ratios corregidos a la clase de graficos
     graficos.actualizar(rIzq, rDer, faseCuentaAtras);
     graficos.dibujar(ventana, faseCuentaAtras >= 0);
 }

@@ -7,6 +7,7 @@
 #include "JugadorHumano.h"
 #include "JugadorIA.h"
 
+class Tablero;
 enum class EstadoJuego { MENU, TABLERO, ARENA, FIN };
 
 class MotorArchon
@@ -17,6 +18,7 @@ private:
     EstadoJuego estadoActual;
     InterfazUsuario* pantallaActiva;
     GestorArchivos guardado;
+    Tablero* miTablero;
 
     Jugador* jugador1;
     Jugador* jugador2;
@@ -24,7 +26,7 @@ private:
     bool ejecutando;
 
     std::string skinActual;  // Guardar skin seleccionada
-
+    sf::Vector2i casillaDestinoCombate;
 public:
     MotorArchon();
     ~MotorArchon();
