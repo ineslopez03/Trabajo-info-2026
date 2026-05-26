@@ -60,26 +60,26 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     float dt = relojArena.restart().asSeconds();
     obstaculos.actualizar(dt, posIzquierda, posDerecha);
 
+    // Descenso de los acumuladores de parálisis
+    if (tiempoRestanteCooldownIzq > 0.f) tiempoRestanteCooldownIzq -= dt;
+    if (tiempoRestanteCooldownDer > 0.f) tiempoRestanteCooldownDer -= dt;
+
     const float velocidad = 400.f;
     const float margen = 30.f;
 
-    // Refactorización: Motor de físicas reactivo para colisiones curvas
+    // Motor de físicas reactivo para colisiones curvas
     auto aplicarFisica = [&](Pieza* pieza, sf::Vector2f& pos, sf::Vector2f dir, sf::Vector2f posEnemigo) {
-        // 1. Movimiento libre inicial (Integración de Euler)
         pos.x += dir.x * velocidad * dt;
         pos.y += dir.y * velocidad * dt;
 
-        // 2. Colisión con los límites de la ventana (cajas planas)
         pos.x = std::clamp(pos.x, margen, 1100.f - margen);
         pos.y = std::clamp(pos.y, margen, 855.f - margen);
 
-        // 3. Resolución reactiva contra los obstáculos del mapa
         bool esVoladora = (dynamic_cast<PiezaVoladora*>(pieza) != nullptr);
         if (!esVoladora) {
             obstaculos.expulsarDeColision(pos, 20.f);
         }
 
-        // 4. Resolución reactiva de contacto cuerpo a cuerpo con el rival
         float radioHitboxCuerpo = 30.f;
         float dx = pos.x - posEnemigo.x;
         float dy = pos.y - posEnemigo.y;
@@ -88,49 +88,53 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
         if (distancia < radioCombinado && distancia > 0.0001f) {
             float solapamiento = radioCombinado - distancia;
-            // Deslizamiento vectorial del cuerpo al chocar entre sí
             pos.x += (dx / distancia) * solapamiento;
             pos.y += (dy / distancia) * solapamiento;
         }
         };
 
+    // Procesamiento del Flanco Izquierdo
     sf::Vector2f dirIzq(0.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) dirIzq.y -= 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) dirIzq.y += 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) dirIzq.x -= 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) dirIzq.x += 1.0f;
+    if (tiempoRestanteCooldownIzq <= 0.f) { // Solo permite interacción si no está paralizado
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) dirIzq.y -= 1.0f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) dirIzq.y += 1.0f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) dirIzq.x -= 1.0f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) dirIzq.x += 1.0f;
 
-    // Se modifica la variable directamente por referencia
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad2)) {
+            if (teclaDisparoIzquierdaLibre) {
+                lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, piezaIzquierda->getDanio(), 600.0f, { 1.f, 0.f }, piezaIzquierda->getBando(), skinArena));
+                teclaDisparoIzquierdaLibre = false;
+                // Ecuación de enfriamiento: (Velocidad de ataque afecta el tiempo de parálisis)
+                tiempoRestanteCooldownIzq = 1.4f - (piezaIzquierda->getVelAta() * 0.2f);
+            }
+        }
+        else {
+            teclaDisparoIzquierdaLibre = true;
+        }
+    }
     aplicarFisica(piezaIzquierda, posIzquierda, dirIzq, posDerecha);
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad2)) {
-        if (teclaDisparoIzquierdaLibre) {
-            lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, 10, 600.0f, { 1.f, 0.f }, piezaIzquierda->getBando(), skinArena));
-            teclaDisparoIzquierdaLibre = false;
-        }
-    }
-    else {
-        teclaDisparoIzquierdaLibre = true;
-    }
-
+    // Procesamiento del Flanco Derecho
     sf::Vector2f dirDer(0.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) dirDer.y -= 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) dirDer.y += 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) dirDer.x -= 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) dirDer.x += 1.0f;
+    if (tiempoRestanteCooldownDer <= 0.f) { // Solo permite interacción si no está paralizado
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) dirDer.y -= 1.0f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) dirDer.y += 1.0f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) dirDer.x -= 1.0f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) dirDer.x += 1.0f;
 
-    // Se modifica la variable directamente por referencia
-    aplicarFisica(piezaDerecha, posDerecha, dirDer, posIzquierda);
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0)) {
-        if (teclaDisparoDerechaLibre) {
-            lista_proyectiles.push_back(new Proyectiles(posDerecha.x, posDerecha.y, 10, 600.0f, { -1.f, 0.f }, piezaDerecha->getBando(), skinArena));
-            teclaDisparoDerechaLibre = false;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0)) {
+            if (teclaDisparoDerechaLibre) {
+                lista_proyectiles.push_back(new Proyectiles(posDerecha.x, posDerecha.y, piezaDerecha->getDanio(), 600.0f, { -1.f, 0.f }, piezaDerecha->getBando(), skinArena));
+                teclaDisparoDerechaLibre = false;
+                tiempoRestanteCooldownDer = 1.4f - (piezaDerecha->getVelAta() * 0.2f);
+            }
+        }
+        else {
+            teclaDisparoDerechaLibre = true;
         }
     }
-    else {
-        teclaDisparoDerechaLibre = true;
-    }
+    aplicarFisica(piezaDerecha, posDerecha, dirDer, posIzquierda);
 
     gestionarColisiones();
 

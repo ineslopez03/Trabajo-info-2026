@@ -21,6 +21,11 @@ private:
     int faseCuentaAtras;
     bool teclaDisparoIzquierdaLibre = true;
     bool teclaDisparoDerechaLibre = true;
+
+    // Acumuladores lógicos para la parálisis cinética post-ataque
+    float tiempoRestanteCooldownIzq = 0.f;
+    float tiempoRestanteCooldownDer = 0.f;
+
     Obstaculos obstaculos;
     GraficosArena graficos;
     Pieza* atacanteOriginal;

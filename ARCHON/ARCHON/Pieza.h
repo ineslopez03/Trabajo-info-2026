@@ -20,7 +20,8 @@ protected:
 public:
     Pieza(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b)
         : vida(_v), vidaMaxima(_v), danio(_d), velMov(_vm), velAta(_va), bando(_b),
-        textura(_tex), sprite(_tex), posicion(nullptr), rangoMovimiento(0) {}
+        textura(_tex), sprite(_tex), posicion(nullptr), rangoMovimiento(0) {
+    }
 
     static sf::Texture& obtenerTexturaDesdeRuta(std::string ruta) {
         static std::map<std::string, sf::Texture> diccionario;
@@ -34,14 +35,14 @@ public:
 
     virtual ~Pieza() {}
 
-
     void resetVida() { vida = vidaMaxima; }
-
     void setVida(int nuevaVida) { this->vida = nuevaVida; }
-
     int getVidaBase() const { return vida; }
-
     int getVidaMaxima() const { return vidaMaxima; }
+
+    // Métodos inyectados para alimentar la física de latencia en la Arena
+    int getVelAta() const { return velAta; }
+    int getDanio() const { return danio; }
 
     void recibirDanyo(int cantidad) {
         vida -= cantidad;
@@ -50,7 +51,7 @@ public:
 
     void aplicarBonoColor(int porcentaje);
     void restaurarValoresOriginales(int vidaAntesDelCombate);
-    int getVidaMaximaOriginal()const { return vidaMaxima; }
+    int getVidaMaximaOriginal() const { return vidaMaxima; }
 
     void pasarTurnoBloqueo() { if (turnosBloqueado > 0) turnosBloqueado--; }
     void setEncarcelada(int cantidad) { turnosBloqueado = cantidad; }
@@ -61,8 +62,6 @@ public:
     Bando getBando() { return bando; }
 
     virtual void setJugador(Jugador* j) {}
-
-
     virtual bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) = 0;
     virtual void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) = 0;
     virtual void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) = 0;
