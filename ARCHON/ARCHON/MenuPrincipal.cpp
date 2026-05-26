@@ -33,8 +33,8 @@ MenuPrincipal::MenuPrincipal() : SpriteFondo(FondoMenu), Titulos(FuenteMenu) {
 
     // Configuración inicial del sprite de fondo
     SpriteFondo.setTexture(FondoMenu, true);
-    float EscalaX = 800.0f / FondoMenu.getSize().x;
-    float EscalaY = 800.0f / FondoMenu.getSize().y;
+    float EscalaX = 1100.0f / FondoMenu.getSize().x;
+    float EscalaY = 855.0f / FondoMenu.getSize().y;
     SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 
     inicializarBotones();
@@ -59,7 +59,7 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
         else if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) texturaPuntero = &FondoStarWars;
 
         SpriteFondo.setTexture(*texturaPuntero, true);
-        SpriteFondo.setScale(sf::Vector2f(800.0f / texturaPuntero->getSize().x, 800.0f / texturaPuntero->getSize().y));
+        SpriteFondo.setScale(sf::Vector2f(1100.0f / texturaPuntero->getSize().x, 1100.0f / texturaPuntero->getSize().y));
     }
 
     switch (EstadoInterno) {
@@ -117,11 +117,12 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
     case OpcionesMenu::SELECCION_SKIN: Titulos.setCharacterSize(100); titulo = "TEMATICA"; break;
     }
 
-    Titulos.setString(titulo);
+    
+    Titulos.setString(titulo); 
     sf::FloatRect limites = Titulos.getLocalBounds();
-    Titulos.setPosition({ (800.0f - limites.size.x) / 2.0f, 50.0f - limites.position.y });
+    Titulos.setPosition({ (1100.0f - limites.size.x) / 2.0f, 50.0f - limites.position.y });
     ventana.draw(Titulos);
-
+   
     auto dibujarLista = [&](std::vector<Boton>& lista) { for (auto& b : lista) b.dibujar(ventana); };
     switch (EstadoInterno) {
     case OpcionesMenu::PRINCIPAL: dibujarLista(BotonesMenuPrincipal); break;
@@ -133,23 +134,30 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
 }
 
 void MenuPrincipal::inicializarBotones() {
-    float cx = 250.0f, ancho = 300.0f, alto = 50.0f, esp = 80.0f;
-
+    float anchoVentana = 1100.0f;
+    float ancho = 300.0f;
+    float cx = 400.0f;
+    float alto = 50.0f, esp = 80.0f;
+    BotonesMenuPrincipal.clear();
     BotonesMenuPrincipal.push_back(Boton(cx, 250.0f, ancho, alto, "INICIAR PARTIDA", FuenteMenu));
     BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp, ancho, alto, "CARGAR PARTIDA", FuenteMenu));
     BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp * 2, ancho, alto, "RANKING", FuenteMenu));
     BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp * 3, ancho, alto, "MANUAL", FuenteMenu));
     BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp * 4, ancho, alto, "SALIR", FuenteMenu));
 
+    BotonesSeleccionModo.clear();
     BotonesSeleccionModo.push_back(Boton(cx, 250.0f, ancho, alto, "JUGADOR VS JUGADOR", FuenteMenu));
     BotonesSeleccionModo.push_back(Boton(cx, 250.0f + esp, ancho, alto, "JUGADOR VS IA", FuenteMenu));
     BotonesSeleccionModo.push_back(Boton(cx, 250.0f + esp * 2, ancho, alto, "VOLVER", FuenteMenu));
 
+    BotonesSeleccionSkin.clear();
     BotonesSeleccionSkin.push_back(Boton(cx, 250.0f, ancho, alto, "ARCHON", FuenteMenu));
     BotonesSeleccionSkin.push_back(Boton(cx, 250.0f + esp, ancho, alto, "HARRY POTTER", FuenteMenu));
     BotonesSeleccionSkin.push_back(Boton(cx, 250.0f + esp * 2, ancho, alto, "STAR WARS", FuenteMenu));
     BotonesSeleccionSkin.push_back(Boton(cx, 250.0f + esp * 3, ancho, alto, "VOLVER", FuenteMenu));
 
+    BotonVolverIA.clear();
     BotonVolverIA.push_back(Boton(cx, 250.0f, ancho, alto, "NO DISPONIBLE-VOLVER", FuenteMenu));
+    BotonesRanking.clear();
     BotonesRanking.push_back(Boton(cx, 250.0f, ancho, alto, "VOLVER", FuenteMenu));
 }

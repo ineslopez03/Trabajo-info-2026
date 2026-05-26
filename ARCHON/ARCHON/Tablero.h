@@ -4,7 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <string>
-
+#include"Boton.h"
+#include<vector>
 class Tablero : public InterfazUsuario {
 private:
     std::string skinActual;
@@ -26,7 +27,12 @@ private:
     int hechizoSeleccionado = 0;
     bool hechizosLuzUsados[8] = { false };
     bool hechizosOscurosUsados[8] = { false };
-
+    sf::Font fuente;                      
+    std::vector<Boton*> botonesHechizos;  
+    void inicializarBotones(); 
+    std::vector<Pieza*> piezasMuertasLuz;
+    std::vector<Pieza*> piezasMuertasOscuridad;
+    sf::Vector2i coordenadasCombate;
 public:
     Tablero();
     Tablero(float tam, std::string skin);
@@ -49,4 +55,9 @@ public:
     void finalizarTurno();
 
     std::string getSkin() const { return skinActual; }
+    void registrarMuerte(Pieza* p);
+    void eliminarPiezaDelMapa(Pieza* p);
+    void moverPiezaACasilla(Pieza* p, sf::Vector2i destino);
+    sf::Vector2i getCoordenadasCombate() const { return coordenadasCombate; }
+    int getColorCasilla(int x, int y);
 };
