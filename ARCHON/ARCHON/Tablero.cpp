@@ -2,8 +2,6 @@
 #include <iostream>
 #include <optional>
 #include <cmath>
-
-// Inclusión de la nueva topología de entidades
 #include "Casilla.h"
 #include "Caballero.h"
 #include "Golem.h"
@@ -111,7 +109,7 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
             ventanaJuego.close();
         }
 
-        // 1. Cancelar selección con Escape
+    // Cancelar selección con Escape
         if (const auto* teclaPresionada = evento->getIf<sf::Event::KeyPressed>()) {
             if (teclaPresionada->code == sf::Keyboard::Key::Escape) {
                 primerClicRealizado = false;
@@ -122,20 +120,20 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
             }
         }
 
-        // 2. Lógica de Clic Izquierdo
+        
         if (const auto* mouseClick = evento->getIf<sf::Event::MouseButtonPressed>()) {
             if (mouseClick->button == sf::Mouse::Button::Left) {
                 sf::Vector2i posRaton = sf::Mouse::getPosition(ventanaJuego);
                 sf::Vector2f posMapeada = ventanaJuego.mapPixelToCoords(posRaton, vistaEstatica);
 
-                // --- CLIC EN BOTONES DE HECHIZOS ---
+                
                 if (primerClicRealizado && origenSeleccionado != nullptr) {
                     Pieza* p = origenSeleccionado->getPieza();
                     if (p != nullptr && dynamic_cast<Hechicero*>(p) != nullptr) {
 
                         bool* registro = (turnoActual == Bando::LUZ) ? hechizosLuzUsados : hechizosOscurosUsados;
 
-                        // COMPROBACIÓN: ¿Ya ha usado algún hechizo este bando?
+                       
                         bool yaUsoMagia = false;
                         for (int j = 0; j < 8; j++) { if (registro[j]) yaUsoMagia = true; }
 
@@ -147,17 +145,17 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
 
                                     std::cout << "Hechizo " << hechizoSeleccionado << " seleccionado." << std::endl;
 
-                                    if (hechizoSeleccionado == 3) { // Shift Time es instantáneo
+                                    if (hechizoSeleccionado == 3) { 
                                         procesarMagia(nullptr);
                                     }
-                                    return; // Salimos para evitar clickear el tablero a la vez
+                                    return; 
                                 }
                             }
                         }
                     }
                 }
 
-                // --- CLIC EN EL TABLERO ---
+                
                 int celdaX = static_cast<int>(std::floor(posMapeada.x / tamCasilla));
                 int celdaY = static_cast<int>(std::floor(posMapeada.y / tamCasilla));
 
@@ -178,7 +176,7 @@ void Tablero::gestionarTurno(Casilla* casillaClicada) {
             origenSeleccionado = casillaClicada;
             primerClicRealizado = true;
 
-            // Feedback visual en consola sobre la magia
+           
             if (dynamic_cast<Hechicero*>(p) != nullptr) {
                 bool* registro = (turnoActual == Bando::LUZ) ? hechizosLuzUsados : hechizosOscurosUsados;
                 bool yaUsoMagia = false;
@@ -206,26 +204,16 @@ void Tablero::gestionarTurno(Casilla* casillaClicada) {
 
         if (esMovimientoValido(origenSeleccionado, casillaClicada)) {
             if (casillaClicada->estaOcupada()) {
-
-                // 1. Guardamos la posición usando los atributos de la casilla
-                // Asegúrate de que tu clase Casilla tenga las variables fila y columna (o i, j)
                 this->coordenadasCombate = sf::Vector2i(casillaClicada->getX(), casillaClicada->getY());
-
-                // 2. Seteamos los combatientes
                 this->atacante = origenSeleccionado->getPieza();
                 this->defensor = casillaClicada->getPieza();
-
-                // 3. Activamos el flag de combate
                 this->hayCombatePendiente = true;
-
-                // IMPORTANTE: Limpiamos la selección para que el motor pueda cambiar de estado
                 primerClicRealizado = false;
                 origenSeleccionado = nullptr;
 
                 std::cout << "¡Combate iniciado! Destino guardado." << std::endl;
             }
             else {
-                // Movimiento normal a casilla vacía
                 casillaClicada->setPieza(origenSeleccionado->getPieza());
                 origenSeleccionado->setPieza(nullptr);
                 finalizarTurno();
@@ -259,12 +247,12 @@ void Tablero::resetCombate() {
 void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
     ventanaJuego.setView(vistaEstatica);
 
-    // Dibujar Tablero y Casillas
+    
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             matriz[i][j]->dibujar(ventanaJuego, origenSeleccionado, turnosContados, tamCasilla);
 
-            // Dibujar marcador amarillo si hay piezaAuxiliar (para Teleport/Exchange)
+           
             if (matriz[i][j] == piezaAuxiliar) {
                 sf::RectangleShape marcador(sf::Vector2f(tamCasilla - 10, tamCasilla - 10));
                 marcador.setPosition({ i * tamCasilla + 5, j * tamCasilla + 5 });
@@ -276,11 +264,11 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
         }
     }
 
-    // Dibujar Botones solo si el Hechicero está seleccionado
+    
     if (primerClicRealizado && dynamic_cast<Hechicero*>(origenSeleccionado->getPieza())) {
         bool* registro = (turnoActual == Bando::LUZ) ? hechizosLuzUsados : hechizosOscurosUsados;
 
-        // Comprobar si ya se gastó el único uso
+       
         bool yaSeUso = false;
         for (int j = 0; j < 8; j++) { if (registro[j]) yaSeUso = true; }
 
@@ -333,21 +321,21 @@ void Tablero::procesarMagia(Casilla* objetivo) {
         }
         break;
 
-    case 2: // HEAL
+    case 2: 
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == turnoActual) {
             Pieza* p = objetivo->getPieza();
 
-            // Comprobamos si está herido (incluso si es el propio Hechicero)
+            
             if (p->getVidaBase() < p->getVidaMaxima()) {
                 p->resetVida();
                 registro[2] = true;
 
-                // Limpiamos piezaAuxiliar por si acaso estaba activa
+               
                 piezaAuxiliar = nullptr;
                 std::cout << "Hechizo Heal aplicado con exito." << std::endl;
             }
             else {
-                // Si tiene la vida llena, no hacemos nada (no gasta turno)
+               
                 std::cout << "La pieza ya tiene salud maxima." << std::endl;
             }
         }
@@ -375,10 +363,9 @@ void Tablero::procesarMagia(Casilla* objetivo) {
             }
         }
         break;
-    case 5: // SUMMON
+    case 5:
     {
         if (piezaAuxiliar == nullptr) {
-            // Primer clic: Seleccionar la pieza aliada que queremos "invocar" (traer hacia nosotros)
             if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == turnoActual) {
                 piezaAuxiliar = objetivo;
                 std::cout << "Pieza seleccionada para invocar. Elige casilla vacia junto al Hechicero." << std::endl;
@@ -386,9 +373,8 @@ void Tablero::procesarMagia(Casilla* objetivo) {
             }
         }
         else {
-            // Segundo clic: Casilla de destino
+            
             if (!objetivo->estaOcupada()) {
-                // Movemos la pieza de su sitio original al nuevo
                 objetivo->setPieza(piezaAuxiliar->getPieza());
                 piezaAuxiliar->setPieza(nullptr);
 
@@ -403,9 +389,9 @@ void Tablero::procesarMagia(Casilla* objetivo) {
         }
     }
     break;
-    case 6: // REVIVE
+    case 6: 
     {
-        // 1. Obtener la lista de muertos del bando actual
+       
         std::vector<Pieza*>& cementerio = (turnoActual == Bando::LUZ) ? piezasMuertasLuz : piezasMuertasOscuridad;
 
         if (cementerio.empty()) {
@@ -415,11 +401,11 @@ void Tablero::procesarMagia(Casilla* objetivo) {
         }
 
         if (!objetivo->estaOcupada()) {
-            // 2. Sacamos la última pieza que murió
+            
             Pieza* pRevivida = cementerio.back();
             cementerio.pop_back();
 
-            // 3. Restauramos su vida y la ponemos en el tablero
+          
             pRevivida->resetVida();
             objetivo->setPieza(pRevivida);
 
@@ -475,7 +461,7 @@ void Tablero::inicializarBotones() {
 }
 
 void Tablero::registrarMuerte(Pieza* p) {
-    if (p == nullptr) return; // Si no hay pieza, no hacemos nada. Evita el crash.
+    if (p == nullptr) return; 
 
     if (p->getBando() == Bando::LUZ) {
         piezasMuertasLuz.push_back(p);
@@ -490,7 +476,7 @@ void Tablero::eliminarPiezaDelMapa(Pieza* p) {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             if (matriz[i][j]->getPieza() == p) {
-                matriz[i][j]->setPieza(nullptr); // Quitamos la pieza del tablero
+                matriz[i][j]->setPieza(nullptr); 
                 return;
             }
         }
@@ -498,7 +484,7 @@ void Tablero::eliminarPiezaDelMapa(Pieza* p) {
 }
 
 void Tablero::moverPiezaACasilla(Pieza* p, sf::Vector2i destino) {
-    // 1. Primero buscamos dónde estaba el ganador antes y limpiamos esa casilla
+    
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             if (matriz[i][j]->getPieza() == p) {
@@ -507,38 +493,35 @@ void Tablero::moverPiezaACasilla(Pieza* p, sf::Vector2i destino) {
         }
     }
 
-    // 2. Lo ponemos en la casilla de destino (donde estaba el que murió)
+   
     matriz[destino.x][destino.y]->setPieza(p);
 }
 
 int Tablero::getColorCasilla(int x, int y) {
-    // 1. Validación de seguridad
+    
     if (x < 0 || x >= 9 || y < 0 || y >= 9) return 0;
 
     Casilla* c = matriz[x][y];
 
-    // 2. Si la casilla es OSCILANTE, sigue el ciclo de turnos
+    
     if (c->getEsOscilante()) {
-        // El ciclo de Archon suele avanzar cada pocos turnos
-        // fase 0: Blanco, fase 1: Gris, fase 2: Negro, fase 3: Gris
+        
         int fase = (turnosContados / 4) % 4;
 
-        if (fase == 0) return 1;  // LUZ (Blanco)
-        if (fase == 2) return -1; // OSCURIDAD (Negro)
-        return 0;                 // NEUTRAL (Gris)
+        if (fase == 0) return 1;  
+        if (fase == 2) return -1; 
+        return 0;               
     }
 
-    // 3. Si NO es oscilante, determinamos su color por posición o tipo
+    
     if (c->getEsPuntoDePoder()) {
-        // Los puntos de poder suelen ser neutrales o favorables al que los ocupa,
-        // pero en el Archon clásico suelen ser fijos o seguir un ciclo aparte.
-        // Aquí los dejaremos como neutrales (0) a menos que quieras darles color.
+        
         return 0;
     }
 
-    // Lógica por columnas para el resto (Fijas)
-    if (x <= 1) return 1;  // Blanco fijo
-    if (x >= 7) return -1; // Negro fijo
+   
+    if (x <= 1) return 1;  
+    if (x >= 7) return -1; 
 
-    return 0; // Gris por defecto
+    return 0; 
 }

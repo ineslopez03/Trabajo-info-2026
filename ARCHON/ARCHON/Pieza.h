@@ -48,6 +48,8 @@ public:
         if (vida < 0) vida = 0;
     }
 
+    void aplicarBonoColor(int porcentaje);
+    void restaurarValoresOriginales(int vidaAntesDelCombate);
 
     void pasarTurnoBloqueo() { if (turnosBloqueado > 0) turnosBloqueado--; }
     void setEncarcelada(int cantidad) { turnosBloqueado = cantidad; }

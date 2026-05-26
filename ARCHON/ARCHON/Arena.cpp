@@ -1,10 +1,10 @@
 #include "Arena.h"
-#include "PiezaVoladora.h" // Dependencia crítica para ignorar colisiones
+#include "PiezaVoladora.h" 
 #include <iostream>
 #include <algorithm> 
 #include <cmath> 
 
-// Instanciación del módulo de obstáculos en la lista de inicialización
+
 Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
     : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f))
 {
@@ -44,7 +44,7 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
     posIzquierda = sf::Vector2f(100.f, 427.f);
     posDerecha = sf::Vector2f(1000.f, 400.f);
 
-    // Reinicio forzado del ciclo temporal de los orbes para evitar asimetrías
+    
     obstaculos.reiniciar(posIzquierda, posDerecha);
 }
 
@@ -61,13 +61,13 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
     float dt = relojArena.restart().asSeconds();
 
-    // El subsistema topológico gestiona de forma autónoma su reloj de crecimiento
+   
     obstaculos.actualizar(dt, posIzquierda, posDerecha);
 
     const float velocidad = 400.f;
     const float margen = 30.f;
 
-    // Función Lambda: Encapsula el cálculo euclidiano y la validación de vuelo
+    
     auto calcularMovimientoSeguro = [&](Pieza* pieza, sf::Vector2f posActual, sf::Vector2f dir) -> sf::Vector2f {
         sf::Vector2f posNueva = posActual + sf::Vector2f(dir.x * velocidad * dt, dir.y * velocidad * dt);
 
@@ -77,7 +77,7 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         bool esVoladora = (dynamic_cast<PiezaVoladora*>(pieza) != nullptr);
 
         if (!esVoladora) {
-            // Estimación de hitbox circular del personaje a 20 px
+           
             if (obstaculos.hayColisionCircular(posNueva, 20.f)) {
                 return posActual;
             }
@@ -86,7 +86,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         return posNueva;
         };
 
-    // --- Lectura de Input: Jugador Izquierda ---
     sf::Vector2f dirIzq(0.f, 0.f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) dirIzq.y -= 1.0f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) dirIzq.y += 1.0f;
@@ -105,7 +104,7 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         teclaDisparoIzquierdaLibre = true;
     }
 
-    // --- Lectura de Input: Jugador Derecha ---
+    
     sf::Vector2f dirDer(0.f, 0.f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))    dirDer.y -= 1.0f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))  dirDer.y += 1.0f;
@@ -145,12 +144,12 @@ void Arena::gestionarColisiones() {
         bool proyectilDestruido = false;
         sf::Vector2f posP = (*it)->getPosicion();
 
-        // 1. Intercepción de balística por obstáculos (Radio del láser estimado en 5px)
+        
         if (obstaculos.hayColisionCircular(posP, 5.f)) {
             proyectilDestruido = true;
         }
 
-        // 2. Cálculo de daño a las piezas
+        
         if (!proyectilDestruido && piezaDerecha && (*it)->getBando() != piezaDerecha->getBando()) {
             if (std::hypot(posP.x - posDerecha.x, posP.y - posDerecha.y) < radioHitbox) {
                 piezaDerecha->recibirDanyo((*it)->getDanyo());
@@ -179,7 +178,7 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     ventana.setView(ventana.getDefaultView());
     ventana.draw(*spriteFondoArena);
 
-    // Pintado en profundidad (Z-Index): Fondo -> Obstáculos -> Piezas -> HUD
+    
     obstaculos.dibujar(ventana);
 
     if (piezaIzquierda) piezaIzquierda->dibujarEnArena(ventana, posIzquierda, true, skinArena);
@@ -189,21 +188,21 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     float rIzq = 0.f;
     if (piezaIzquierda) {
         rIzq = (float)piezaIzquierda->getVidaBase() / (float)piezaIzquierda->getVidaMaxima();
-        // Limitamos a 1.0 para que la barra no se salga del marco si tiene bono
+        
         if (rIzq > 1.0f) rIzq = 1.0f; 
         if (rIzq < 0.0f) rIzq = 0.0f;
     }
 
-    // 2. Calculamos el ratio para el Jugador Derecha
+  
     float rDer = 0.f;
     if (piezaDerecha) {
         rDer = (float)piezaDerecha->getVidaBase() / (float)piezaDerecha->getVidaMaxima();
-        // Limitamos a 1.0 para que la barra no se salga del marco si tiene bono
+        
         if (rDer > 1.0f) rDer = 1.0f;
         if (rDer < 0.0f) rDer = 0.0f;
     }
 
-    // 3. Enviamos los ratios corregidos a la clase de graficos
+  
     graficos.actualizar(rIzq, rDer, faseCuentaAtras);
     graficos.dibujar(ventana, faseCuentaAtras >= 0);
 }

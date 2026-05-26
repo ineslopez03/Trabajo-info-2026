@@ -59,7 +59,7 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
         else if (BotonesSeleccionSkin[2].botonContieneRaton(PosRaton)) texturaPuntero = &FondoStarWars;
 
         SpriteFondo.setTexture(*texturaPuntero, true);
-        SpriteFondo.setScale(sf::Vector2f((float)ventana.getSize().x / texturaPuntero->getSize().x, (float)ventana.getSize().y / texturaPuntero->getSize().y));
+        SpriteFondo.setScale(sf::Vector2f(1100.0f / texturaPuntero->getSize().x, 1100.0f / texturaPuntero->getSize().y));
     }
 
     switch (EstadoInterno) {
@@ -118,12 +118,9 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
     }
 
     
-    Titulos.setString(titulo); // 1. Primero asignas el texto
-
-    // 2. Ahora mides cuánto ocupa ese texto específico
+    Titulos.setString(titulo); 
     sf::FloatRect limites = Titulos.getLocalBounds();
-    float posX = (1100.0f / 2.0f) - (limites.size.x / 2.0f);
-    Titulos.setPosition({ posX, 50.0f - limites.position.y });
+    Titulos.setPosition({ (1100.0f - limites.size.x) / 2.0f, 50.0f - limites.position.y });
     ventana.draw(Titulos);
    
     auto dibujarLista = [&](std::vector<Boton>& lista) { for (auto& b : lista) b.dibujar(ventana); };
