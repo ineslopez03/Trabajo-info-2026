@@ -60,17 +60,18 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     float dt = relojArena.restart().asSeconds();
     obstaculos.actualizar(dt, posIzquierda, posDerecha);
 
-    // Descenso de los acumuladores de parálisis
     if (tiempoRestanteCooldownIzq > 0.f) tiempoRestanteCooldownIzq -= dt;
     if (tiempoRestanteCooldownDer > 0.f) tiempoRestanteCooldownDer -= dt;
 
-    const float velocidad = 400.f;
     const float margen = 30.f;
 
-    // Motor de físicas reactivo para colisiones curvas
+    // Motor de físicas reactivo vinculado a las métricas del personaje
     auto aplicarFisica = [&](Pieza* pieza, sf::Vector2f& pos, sf::Vector2f dir, sf::Vector2f posEnemigo) {
-        pos.x += dir.x * velocidad * dt;
-        pos.y += dir.y * velocidad * dt;
+        // Mapeo del atributo lógico a velocidad cinemática (80 píxeles/seg por cada unidad de estadística)
+        float velocidadPx = pieza->getVelMov() * 80.f;
+
+        pos.x += dir.x * velocidadPx * dt;
+        pos.y += dir.y * velocidadPx * dt;
 
         pos.x = std::clamp(pos.x, margen, 1100.f - margen);
         pos.y = std::clamp(pos.y, margen, 855.f - margen);
@@ -93,9 +94,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         }
         };
 
-    // Procesamiento del Flanco Izquierdo
     sf::Vector2f dirIzq(0.f, 0.f);
-    if (tiempoRestanteCooldownIzq <= 0.f) { // Solo permite interacción si no está paralizado
+    if (tiempoRestanteCooldownIzq <= 0.f) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) dirIzq.y -= 1.0f;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) dirIzq.y += 1.0f;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) dirIzq.x -= 1.0f;
@@ -105,7 +105,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
             if (teclaDisparoIzquierdaLibre) {
                 lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, piezaIzquierda->getDanio(), 600.0f, { 1.f, 0.f }, piezaIzquierda->getBando(), skinArena));
                 teclaDisparoIzquierdaLibre = false;
-                // Ecuación de enfriamiento: (Velocidad de ataque afecta el tiempo de parálisis)
                 tiempoRestanteCooldownIzq = 1.4f - (piezaIzquierda->getVelAta() * 0.2f);
             }
         }
@@ -115,9 +114,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     }
     aplicarFisica(piezaIzquierda, posIzquierda, dirIzq, posDerecha);
 
-    // Procesamiento del Flanco Derecho
     sf::Vector2f dirDer(0.f, 0.f);
-    if (tiempoRestanteCooldownDer <= 0.f) { // Solo permite interacción si no está paralizado
+    if (tiempoRestanteCooldownDer <= 0.f) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) dirDer.y -= 1.0f;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) dirDer.y += 1.0f;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) dirDer.x -= 1.0f;

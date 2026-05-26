@@ -40,9 +40,10 @@ public:
     int getVidaBase() const { return vida; }
     int getVidaMaxima() const { return vidaMaxima; }
 
-    // Métodos inyectados para alimentar la física de latencia en la Arena
+    // Métodos de acceso para inyectar datos en el motor físico
     int getVelAta() const { return velAta; }
     int getDanio() const { return danio; }
+    int getVelMov() const { return velMov; }
 
     void recibirDanyo(int cantidad) {
         vida -= cantidad;
