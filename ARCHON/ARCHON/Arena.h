@@ -13,17 +13,14 @@ private:
     Pieza* piezaIzquierda;
     Pieza* piezaDerecha;
     std::list<Proyectiles*> lista_proyectiles;
-
     sf::Texture texturaFondoArena;
     sf::Sprite* spriteFondoArena;
     sf::Vector2f posIzquierda, posDerecha;
-
     sf::Clock relojArena, relojCuentaAtras;
     std::string skinArena;
     int faseCuentaAtras;
     bool teclaDisparoIzquierdaLibre = true;
     bool teclaDisparoDerechaLibre = true;
-
     Obstaculos obstaculos;
     GraficosArena graficos;
     Pieza* atacanteOriginal;
@@ -36,6 +33,7 @@ public:
     void dibujarPantalla(sf::RenderWindow& ventana) override;
     void iniciarBatalla(Pieza* p1, Pieza* p2);
     void gestionarColisiones();
+
     Pieza* getPiezaIzquierda() { return piezaIzquierda; }
     Pieza* getPiezaDerecha() { return piezaDerecha; }
     Pieza* getPiezaAtacanteReal() const { return atacanteOriginal; }

@@ -4,7 +4,6 @@
 #include <algorithm> 
 #include <cmath> 
 
-
 Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
     : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f))
 {
@@ -41,10 +40,9 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
         piezaIzquierda = p2;
         piezaDerecha = p1;
     }
+
     posIzquierda = sf::Vector2f(100.f, 427.f);
     posDerecha = sf::Vector2f(1000.f, 400.f);
-
-    
     obstaculos.reiniciar(posIzquierda, posDerecha);
 }
 
@@ -60,27 +58,31 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     }
 
     float dt = relojArena.restart().asSeconds();
-
-   
     obstaculos.actualizar(dt, posIzquierda, posDerecha);
 
     const float velocidad = 400.f;
     const float margen = 30.f;
 
-    
-    auto calcularMovimientoSeguro = [&](Pieza* pieza, sf::Vector2f posActual, sf::Vector2f dir) -> sf::Vector2f {
+    // Se expande la firma de la lambda para inyectar las coordenadas del adversario
+    auto calcularMovimientoSeguro = [&](Pieza* pieza, sf::Vector2f posActual, sf::Vector2f dir, sf::Vector2f posEnemigo) -> sf::Vector2f {
         sf::Vector2f posNueva = posActual + sf::Vector2f(dir.x * velocidad * dt, dir.y * velocidad * dt);
 
         posNueva.x = std::clamp(posNueva.x, margen, 1100.f - margen);
         posNueva.y = std::clamp(posNueva.y, margen, 855.f - margen);
 
         bool esVoladora = (dynamic_cast<PiezaVoladora*>(pieza) != nullptr);
-
         if (!esVoladora) {
-           
             if (obstaculos.hayColisionCircular(posNueva, 20.f)) {
                 return posActual;
             }
+        }
+
+        // Bloque de código inyectado para la interrupción cinética entre cuerpos (Hitbox)
+        float radioHitboxCuerpo = 30.f;
+        float distanciaAEnemigo = std::hypot(posNueva.x - posEnemigo.x, posNueva.y - posEnemigo.y);
+
+        if (distanciaAEnemigo < (radioHitboxCuerpo * 2.f)) {
+            return posActual; // Actúa como una pared invisible impidiendo el traspaso
         }
 
         return posNueva;
@@ -92,7 +94,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) dirIzq.x -= 1.0f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) dirIzq.x += 1.0f;
 
-    posIzquierda = calcularMovimientoSeguro(piezaIzquierda, posIzquierda, dirIzq);
+    // Pasamos posDerecha a la subrutina para que el jugador izquierdo reconozca al adversario
+    posIzquierda = calcularMovimientoSeguro(piezaIzquierda, posIzquierda, dirIzq, posDerecha);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad2)) {
         if (teclaDisparoIzquierdaLibre) {
@@ -104,14 +107,14 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         teclaDisparoIzquierdaLibre = true;
     }
 
-    
     sf::Vector2f dirDer(0.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))    dirDer.y -= 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))  dirDer.y += 1.0f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))  dirDer.x -= 1.0f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) dirDer.y -= 1.0f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) dirDer.y += 1.0f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) dirDer.x -= 1.0f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) dirDer.x += 1.0f;
 
-    posDerecha = calcularMovimientoSeguro(piezaDerecha, posDerecha, dirDer);
+    // Pasamos posIzquierda a la subrutina para que el jugador derecho reconozca al adversario
+    posDerecha = calcularMovimientoSeguro(piezaDerecha, posDerecha, dirDer, posIzquierda);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0)) {
         if (teclaDisparoDerechaLibre) {
@@ -140,16 +143,14 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 void Arena::gestionarColisiones() {
     float radioHitbox = 35.f;
 
-    for (auto it = lista_proyectiles.begin(); it != lista_proyectiles.end(); ) {
+    for (auto it = lista_proyectiles.begin(); it != lista_proyectiles.end();) {
         bool proyectilDestruido = false;
         sf::Vector2f posP = (*it)->getPosicion();
 
-        
         if (obstaculos.hayColisionCircular(posP, 5.f)) {
             proyectilDestruido = true;
         }
 
-        
         if (!proyectilDestruido && piezaDerecha && (*it)->getBando() != piezaDerecha->getBando()) {
             if (std::hypot(posP.x - posDerecha.x, posP.y - posDerecha.y) < radioHitbox) {
                 piezaDerecha->recibirDanyo((*it)->getDanyo());
@@ -177,30 +178,25 @@ void Arena::gestionarColisiones() {
 void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     ventana.setView(ventana.getDefaultView());
     ventana.draw(*spriteFondoArena);
-
-    
     obstaculos.dibujar(ventana);
 
     if (piezaIzquierda) piezaIzquierda->dibujarEnArena(ventana, posIzquierda, true, skinArena);
     if (piezaDerecha) piezaDerecha->dibujarEnArena(ventana, posDerecha, false, skinArena);
 
     for (auto p : lista_proyectiles) p->dibujar(ventana);
+
     float rIzq = 0.f;
     if (piezaIzquierda) {
         rIzq = (float)piezaIzquierda->getVidaBase() / (float)piezaIzquierda->getVidaMaximaOriginal();
-
         if (rIzq < 0.0f) rIzq = 0.0f;
     }
 
-  
     float rDer = 0.f;
     if (piezaDerecha) {
         rDer = (float)piezaDerecha->getVidaBase() / (float)piezaDerecha->getVidaMaximaOriginal();
-        
         if (rDer < 0.0f) rDer = 0.0f;
     }
 
-  
     graficos.actualizar(rIzq, rDer, faseCuentaAtras);
     graficos.dibujar(ventana, faseCuentaAtras >= 0);
 }
