@@ -208,6 +208,21 @@ void Tablero::gestionarTurno(Casilla* casillaClicada) {
                 this->atacante = origenSeleccionado->getPieza();
                 this->defensor = casillaClicada->getPieza();
                 this->hayCombatePendiente = true;
+
+                int colorCasilla = getColorCasilla(coordenadasCombate.x, coordenadasCombate.y);
+                int porcentajeBono = 30;
+                if (colorCasilla == 1)
+                {
+                    if (atacante->getBando() == Bando::LUZ) atacante->aplicarBonoColor(porcentajeBono);
+                    if (atacante->getBando() == Bando::LUZ) defensor->aplicarBonoColor(porcentajeBono);
+                }
+                else if (colorCasilla == -1)
+                {
+                    if (atacante->getBando() == Bando::OSCURIDAD) atacante->aplicarBonoColor(porcentajeBono);
+                    if (atacante->getBando() == Bando::OSCURIDAD) defensor->aplicarBonoColor(porcentajeBono);
+                }
+
+
                 primerClicRealizado = false;
                 origenSeleccionado = nullptr;
 
@@ -237,6 +252,31 @@ bool Tablero::esAtaqueValido(Casilla* origen, Casilla* destino) {
 }
 
 void Tablero::resetCombate() {
+    int colorCasilla = getColorCasilla(coordenadasCombate.x, coordenadasCombate.y);
+    int porcentajeBono = 30;
+    Pieza* superviviente = nullptr;
+    if (atacante && atacante->getVidaBase() > 0)
+    {
+        superviviente = atacante;
+    }
+    else if (defensor && defensor->getVidaBase() > 0)
+    {
+        superviviente = defensor;
+    }
+    if (superviviente)
+    {
+        bool teniaBono = (colorCasilla == 1 && superviviente->getBando() == Bando::LUZ) || (colorCasilla == -1 && superviviente->getBando() == Bando::OSCURIDAD);
+        if (teniaBono)
+        {
+            int vidaConBono = superviviente->getVidaBase();
+            int vidaOriginal = static_cast<int>(vidaConBono / (1.0f + (porcentajeBono / 100.0f)));
+            if (vidaOriginal <= 0 && vidaConBono > 0)
+            {
+                vidaOriginal = 1;
+            }
+            superviviente->restaurarValoresOriginales(vidaOriginal);
+       }
+    }
     hayCombatePendiente = false;
     atacante = nullptr;
     defensor = nullptr;

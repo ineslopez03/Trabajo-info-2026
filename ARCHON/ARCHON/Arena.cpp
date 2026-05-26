@@ -187,18 +187,16 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     for (auto p : lista_proyectiles) p->dibujar(ventana);
     float rIzq = 0.f;
     if (piezaIzquierda) {
-        rIzq = (float)piezaIzquierda->getVidaBase() / (float)piezaIzquierda->getVidaMaxima();
-        
-        if (rIzq > 1.0f) rIzq = 1.0f; 
+        rIzq = (float)piezaIzquierda->getVidaBase() / (float)piezaIzquierda->getVidaMaximaOriginal();
+
         if (rIzq < 0.0f) rIzq = 0.0f;
     }
 
   
     float rDer = 0.f;
     if (piezaDerecha) {
-        rDer = (float)piezaDerecha->getVidaBase() / (float)piezaDerecha->getVidaMaxima();
+        rDer = (float)piezaDerecha->getVidaBase() / (float)piezaDerecha->getVidaMaximaOriginal();
         
-        if (rDer > 1.0f) rDer = 1.0f;
         if (rDer < 0.0f) rDer = 0.0f;
     }
 

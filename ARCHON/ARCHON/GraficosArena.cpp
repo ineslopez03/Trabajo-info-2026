@@ -24,12 +24,12 @@ GraficosArena::GraficosArena()
     textoEtiquetaIzq.setCharacterSize(20);
     textoEtiquetaIzq.setFillColor(sf::Color::White);
     textoEtiquetaIzq.setPosition({ 30.f, 15.f });
-
+    float posX_Derecha = 820.0f;
     textoEtiquetaDer.setFont(fuenteArena);
     textoEtiquetaDer.setString("JUGADOR 2");
     textoEtiquetaDer.setCharacterSize(20);
     textoEtiquetaDer.setFillColor(sf::Color::White);
-    textoEtiquetaDer.setPosition({ 770.f - textoEtiquetaDer.getLocalBounds().size.x, 15.f });
+    textoEtiquetaDer.setPosition({ posX_Derecha + 250.f - textoEtiquetaDer.getLocalBounds().size.x, 15.f });
 
     marcoIzq.setSize(tamanoBarra); marcoIzq.setFillColor(sf::Color::Transparent);
     marcoIzq.setOutlineThickness(3.f); marcoIzq.setPosition({ 30.f, 45.f });
@@ -51,18 +51,29 @@ GraficosArena::GraficosArena()
 }
 
 void GraficosArena::actualizar(float ratioIzq, float ratioDer, int faseCuenta) {
-    float rIzqClamped = (ratioIzq > 1.0f) ? 1.0f : ratioIzq;
-    float rDerClamped = (ratioDer > 1.0f) ? 1.0f : ratioDer;
+    
 
-    barraVidaIzq.setSize({ 250.f * rIzqClamped, 25.f });
-    barraVidaDer.setSize({ 250.f * rDerClamped, 25.f });
+    barraVidaIzq.setSize({ 250.f * ratioIzq, 25.f });
+    barraVidaDer.setSize({ 250.f * ratioDer, 25.f });
+    if (ratioIzq > 1.0f) {
+        barraVidaIzq.setFillColor(sf::Color(0, 191, 255)); // Azul brillante / Celestial
+    }
+    else {
+        barraVidaIzq.setFillColor(sf::Color(50, 205, 50)); // Verde normal
+    }
 
+    if (ratioDer > 1.0f) {
+        barraVidaDer.setFillColor(sf::Color(0, 191, 255)); // Azul brillante / Celestial
+    }
+    else {
+        barraVidaDer.setFillColor(sf::Color(50, 205, 50)); // Verde normal
+    }
     if (faseCuenta > 0) textoCuentaAtras.setString(std::to_string(faseCuenta));
     else if (faseCuenta == 0) textoCuentaAtras.setString("YA");
 
     sf::FloatRect limites = textoCuentaAtras.getLocalBounds();
     textoCuentaAtras.setOrigin({ limites.size.x / 2.0f, limites.size.y / 2.0f });
-    textoCuentaAtras.setPosition({ 400.f, 400.f });
+    textoCuentaAtras.setPosition({ 550.f, 427.f });
 }
 
 void GraficosArena::dibujar(sf::RenderWindow& ventana, bool mostrarCuentaAtras) const {

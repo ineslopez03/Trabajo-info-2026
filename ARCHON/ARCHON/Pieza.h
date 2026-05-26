@@ -50,6 +50,7 @@ public:
 
     void aplicarBonoColor(int porcentaje);
     void restaurarValoresOriginales(int vidaAntesDelCombate);
+    int getVidaMaximaOriginal()const { return vidaMaxima; }
 
     void pasarTurnoBloqueo() { if (turnosBloqueado > 0) turnosBloqueado--; }
     void setEncarcelada(int cantidad) { turnosBloqueado = cantidad; }
