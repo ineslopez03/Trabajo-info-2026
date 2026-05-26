@@ -17,7 +17,7 @@ GraficosArena::GraficosArena()
     textoCuentaAtras.setOutlineThickness(6.f);
     textoCuentaAtras.setOutlineColor(sf::Color::Black);
 
-    sf::Vector2f tamanoBarra(250.f, 25.f);
+  
 
     textoEtiquetaIzq.setFont(fuenteArena);
     textoEtiquetaIzq.setString("JUGADOR 1");
@@ -25,6 +25,7 @@ GraficosArena::GraficosArena()
     textoEtiquetaIzq.setFillColor(sf::Color::White);
     textoEtiquetaIzq.setPosition({ 30.f, 15.f });
     float posX_Derecha = 820.0f;
+    sf::Vector2f tamanoBarra(250.f, 25.f);
     textoEtiquetaDer.setFont(fuenteArena);
     textoEtiquetaDer.setString("JUGADOR 2");
     textoEtiquetaDer.setCharacterSize(20);
@@ -41,10 +42,11 @@ GraficosArena::GraficosArena()
     barraVidaIzq.setPosition({ 30.f, 45.f });
 
     marcoDer.setSize(tamanoBarra); marcoDer.setFillColor(sf::Color::Transparent);
-    marcoDer.setOutlineThickness(3.f); marcoDer.setPosition({ 520.f, 45.f });
-
+    marcoDer.setOutlineThickness(3.f);
+    marcoDer.setOutlineColor(sf::Color::White); 
+    marcoDer.setPosition({ posX_Derecha, 45.f });
     barraFondoDer.setSize(tamanoBarra); barraFondoDer.setFillColor(sf::Color(80, 20, 20, 200));
-    barraFondoDer.setPosition({ 520.f, 45.f });
+    barraFondoDer.setPosition({posX_Derecha, 45.f });
 
     barraVidaDer.setFillColor(sf::Color(50, 205, 50));
     barraVidaDer.setPosition({ 520.f, 45.f });
@@ -52,22 +54,32 @@ GraficosArena::GraficosArena()
 
 void GraficosArena::actualizar(float ratioIzq, float ratioDer, int faseCuenta) {
     
+    float rIzqClamped = (ratioIzq > 1.0f) ? 1.0f : ratioIzq;
+    float rDerClamped = (ratioDer > 1.0f) ? 1.0f : ratioDer;
 
-    barraVidaIzq.setSize({ 250.f * ratioIzq, 25.f });
-    barraVidaDer.setSize({ 250.f * ratioDer, 25.f });
+    if (rIzqClamped < 0.f) rIzqClamped = 0.f;
+    if (rDerClamped < 0.f) rDerClamped = 0.f;
+    float posX_Derecha = 820.f;
+    barraVidaIzq.setSize({ 250.f * rIzqClamped, 25.f });
+    float anchoActualDer = 250.f * rDerClamped;
+    barraVidaDer.setSize({ anchoActualDer, 25.f });
+    barraVidaDer.setPosition({ posX_Derecha + (250.f - anchoActualDer), 45.f });
+
+    
     if (ratioIzq > 1.0f) {
-        barraVidaIzq.setFillColor(sf::Color(0, 191, 255)); // Azul brillante / Celestial
+        barraVidaIzq.setFillColor(sf::Color(0, 191, 255)); // Azul 
     }
     else {
-        barraVidaIzq.setFillColor(sf::Color(50, 205, 50)); // Verde normal
+        barraVidaIzq.setFillColor(sf::Color(50, 205, 50)); // Verde 
     }
 
     if (ratioDer > 1.0f) {
-        barraVidaDer.setFillColor(sf::Color(0, 191, 255)); // Azul brillante / Celestial
+        barraVidaDer.setFillColor(sf::Color(0, 191, 255)); // Azul 
     }
     else {
         barraVidaDer.setFillColor(sf::Color(50, 205, 50)); // Verde normal
     }
+  
     if (faseCuenta > 0) textoCuentaAtras.setString(std::to_string(faseCuenta));
     else if (faseCuenta == 0) textoCuentaAtras.setString("YA");
 
@@ -77,7 +89,13 @@ void GraficosArena::actualizar(float ratioIzq, float ratioDer, int faseCuenta) {
 }
 
 void GraficosArena::dibujar(sf::RenderWindow& ventana, bool mostrarCuentaAtras) const {
-    ventana.draw(textoEtiquetaIzq); ventana.draw(barraFondoIzq); ventana.draw(barraVidaIzq); ventana.draw(marcoIzq);
-    ventana.draw(textoEtiquetaDer); ventana.draw(barraFondoDer); ventana.draw(barraVidaDer); ventana.draw(marcoDer);
+    ventana.draw(textoEtiquetaIzq);
+    ventana.draw(barraFondoIzq);
+    ventana.draw(barraVidaIzq);
+    ventana.draw(marcoIzq);
+    ventana.draw(textoEtiquetaDer); 
+    ventana.draw(barraFondoDer);
+    ventana.draw(barraVidaDer); 
+    ventana.draw(marcoDer);
     if (mostrarCuentaAtras) ventana.draw(textoCuentaAtras);
 }
