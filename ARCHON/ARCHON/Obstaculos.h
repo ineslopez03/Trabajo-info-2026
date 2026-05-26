@@ -27,4 +27,7 @@ public:
     void dibujar(sf::RenderWindow& ventana) const;
     void reiniciar(const sf::Vector2f& p1, const sf::Vector2f& p2);
     bool hayColisionCircular(const sf::Vector2f& posEntidad, float radioEntidad) const;
+
+    // Nuevo método para la resolución reactiva de física
+    void expulsarDeColision(sf::Vector2f& posEntidad, float radioEntidad) const;
 };

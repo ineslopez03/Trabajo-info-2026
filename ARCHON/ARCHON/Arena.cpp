@@ -63,29 +63,35 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     const float velocidad = 400.f;
     const float margen = 30.f;
 
-    // Se expande la firma de la lambda para inyectar las coordenadas del adversario
-    auto calcularMovimientoSeguro = [&](Pieza* pieza, sf::Vector2f posActual, sf::Vector2f dir, sf::Vector2f posEnemigo) -> sf::Vector2f {
-        sf::Vector2f posNueva = posActual + sf::Vector2f(dir.x * velocidad * dt, dir.y * velocidad * dt);
+    // Refactorización: Motor de físicas reactivo para colisiones curvas
+    auto aplicarFisica = [&](Pieza* pieza, sf::Vector2f& pos, sf::Vector2f dir, sf::Vector2f posEnemigo) {
+        // 1. Movimiento libre inicial (Integración de Euler)
+        pos.x += dir.x * velocidad * dt;
+        pos.y += dir.y * velocidad * dt;
 
-        posNueva.x = std::clamp(posNueva.x, margen, 1100.f - margen);
-        posNueva.y = std::clamp(posNueva.y, margen, 855.f - margen);
+        // 2. Colisión con los límites de la ventana (cajas planas)
+        pos.x = std::clamp(pos.x, margen, 1100.f - margen);
+        pos.y = std::clamp(pos.y, margen, 855.f - margen);
 
+        // 3. Resolución reactiva contra los obstáculos del mapa
         bool esVoladora = (dynamic_cast<PiezaVoladora*>(pieza) != nullptr);
         if (!esVoladora) {
-            if (obstaculos.hayColisionCircular(posNueva, 20.f)) {
-                return posActual;
-            }
+            obstaculos.expulsarDeColision(pos, 20.f);
         }
 
-        // Bloque de código inyectado para la interrupción cinética entre cuerpos (Hitbox)
+        // 4. Resolución reactiva de contacto cuerpo a cuerpo con el rival
         float radioHitboxCuerpo = 30.f;
-        float distanciaAEnemigo = std::hypot(posNueva.x - posEnemigo.x, posNueva.y - posEnemigo.y);
+        float dx = pos.x - posEnemigo.x;
+        float dy = pos.y - posEnemigo.y;
+        float distancia = std::hypot(dx, dy);
+        float radioCombinado = radioHitboxCuerpo * 2.f;
 
-        if (distanciaAEnemigo < (radioHitboxCuerpo * 2.f)) {
-            return posActual; // Actúa como una pared invisible impidiendo el traspaso
+        if (distancia < radioCombinado && distancia > 0.0001f) {
+            float solapamiento = radioCombinado - distancia;
+            // Deslizamiento vectorial del cuerpo al chocar entre sí
+            pos.x += (dx / distancia) * solapamiento;
+            pos.y += (dy / distancia) * solapamiento;
         }
-
-        return posNueva;
         };
 
     sf::Vector2f dirIzq(0.f, 0.f);
@@ -94,8 +100,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) dirIzq.x -= 1.0f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) dirIzq.x += 1.0f;
 
-    // Pasamos posDerecha a la subrutina para que el jugador izquierdo reconozca al adversario
-    posIzquierda = calcularMovimientoSeguro(piezaIzquierda, posIzquierda, dirIzq, posDerecha);
+    // Se modifica la variable directamente por referencia
+    aplicarFisica(piezaIzquierda, posIzquierda, dirIzq, posDerecha);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad2)) {
         if (teclaDisparoIzquierdaLibre) {
@@ -113,8 +119,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) dirDer.x -= 1.0f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) dirDer.x += 1.0f;
 
-    // Pasamos posIzquierda a la subrutina para que el jugador derecho reconozca al adversario
-    posDerecha = calcularMovimientoSeguro(piezaDerecha, posDerecha, dirDer, posIzquierda);
+    // Se modifica la variable directamente por referencia
+    aplicarFisica(piezaDerecha, posDerecha, dirDer, posIzquierda);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0)) {
         if (teclaDisparoDerechaLibre) {

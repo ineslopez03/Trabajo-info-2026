@@ -97,12 +97,32 @@ bool Obstaculos::hayColisionCircular(const sf::Vector2f& posEntidad, float radio
     for (const auto& orbe : lista_orbes) {
         float dx = posEntidad.x - orbe.posicion.x;
         float dy = posEntidad.y - orbe.posicion.y;
-        float distancia = std::sqrt(dx * dx + dy * dy);
+        float distancia = std::hypot(dx, dy);
 
         // Ecuación de intersección de circunferencias
         if (distancia < (orbe.radio + radioEntidad)) return true;
     }
     return false;
+}
+
+void Obstaculos::expulsarDeColision(sf::Vector2f& posEntidad, float radioEntidad) const {
+    for (const auto& orbe : lista_orbes) {
+        float dx = posEntidad.x - orbe.posicion.x;
+        float dy = posEntidad.y - orbe.posicion.y;
+        float distancia = std::hypot(dx, dy);
+        float distanciaMinima = orbe.radio + radioEntidad;
+
+        // Si hay penetración, calculamos la fuerza normal de expulsión
+        if (distancia < distanciaMinima && distancia > 0.0001f) {
+            float solapamiento = distanciaMinima - distancia;
+            float nx = dx / distancia; // Vector director normalizado X
+            float ny = dy / distancia; // Vector director normalizado Y
+
+            // Reposicionamos la entidad empujándola hacia afuera
+            posEntidad.x += nx * solapamiento;
+            posEntidad.y += ny * solapamiento;
+        }
+    }
 }
 
 void Obstaculos::dibujar(sf::RenderWindow& ventana) const {
