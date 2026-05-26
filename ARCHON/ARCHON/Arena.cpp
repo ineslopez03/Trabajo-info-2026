@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm> 
 #include <cmath> 
+#include <typeinfo> // Inyección de librería para evaluación de clases en tiempo real
 
 Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
     : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f))
@@ -28,6 +29,7 @@ Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
 Arena::~Arena() {
     for (auto p : lista_proyectiles) delete p;
     lista_proyectiles.clear();
+    lista_ondas.clear();
     delete spriteFondoArena;
 }
 
@@ -40,6 +42,20 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
         piezaIzquierda = p2;
         piezaDerecha = p1;
     }
+
+    // RTTI: Analizador léxico para forzar el estado Cuerpo a Cuerpo por herencia sin tocar archivos
+    auto forzarMelee = [](Pieza* p) {
+        std::string nombreClase = typeid(*p).name();
+        if (nombreClase.find("Caballero") != std::string::npos ||
+            nombreClase.find("Golem") != std::string::npos ||
+            nombreClase.find("Goblin") != std::string::npos ||
+            nombreClase.find("Troll") != std::string::npos) {
+            p->setAtaqueCuerpoACuerpo(true);
+        }
+        };
+
+    forzarMelee(piezaIzquierda);
+    forzarMelee(piezaDerecha);
 
     posIzquierda = sf::Vector2f(100.f, 427.f);
     posDerecha = sf::Vector2f(1000.f, 400.f);
@@ -63,11 +79,26 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     if (tiempoRestanteCooldownIzq > 0.f) tiempoRestanteCooldownIzq -= dt;
     if (tiempoRestanteCooldownDer > 0.f) tiempoRestanteCooldownDer -= dt;
 
+    // Procesamiento de las ondas visuales de impacto
+    for (auto it = lista_ondas.begin(); it != lista_ondas.end();) {
+        it->radio += 300.f * dt; // Tasa de expansión radial
+        it->opacidad -= 600.f * dt; // Tasa de difuminación
+
+        if (it->opacidad <= 0.f || it->radio >= 85.f) {
+            it = lista_ondas.erase(it);
+        }
+        else {
+            it->forma.setRadius(it->radio);
+            // Corrección C2660: Se encapsulan los argumentos en un sf::Vector2f implícito
+            it->forma.setOrigin({ it->radio, it->radio });
+            it->forma.setOutlineColor(sf::Color(it->colorBando.r, it->colorBando.g, it->colorBando.b, std::max(0, (int)it->opacidad)));
+            ++it;
+        }
+    }
+
     const float margen = 30.f;
 
-    // Motor de físicas reactivo vinculado a las métricas del personaje
     auto aplicarFisica = [&](Pieza* pieza, sf::Vector2f& pos, sf::Vector2f dir, sf::Vector2f posEnemigo) {
-        // Mapeo del atributo lógico a velocidad cinemática (80 píxeles/seg por cada unidad de estadística)
         float velocidadPx = pieza->getVelMov() * 80.f;
 
         pos.x += dir.x * velocidadPx * dt;
@@ -94,6 +125,17 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         }
         };
 
+    auto generarOndaChoque = [&](sf::Vector2f pos, Bando b) {
+        EfectoOnda onda;
+        onda.radio = 20.f;
+        onda.opacidad = 255.f;
+        onda.forma.setFillColor(sf::Color::Transparent);
+        onda.forma.setOutlineThickness(4.f);
+        onda.colorBando = (b == Bando::LUZ) ? sf::Color::Cyan : sf::Color::Red;
+        onda.forma.setPosition(pos);
+        lista_ondas.push_back(onda);
+        };
+
     sf::Vector2f dirIzq(0.f, 0.f);
     if (tiempoRestanteCooldownIzq <= 0.f) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) dirIzq.y -= 1.0f;
@@ -103,7 +145,17 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad2)) {
             if (teclaDisparoIzquierdaLibre) {
-                lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, piezaIzquierda->getDanio(), 600.0f, { 1.f, 0.f }, piezaIzquierda->getBando(), skinArena));
+                if (piezaIzquierda->esCuerpoACuerpo()) {
+                    generarOndaChoque(posIzquierda, piezaIzquierda->getBando());
+                    float distanciaAlObjetivo = std::hypot(posIzquierda.x - posDerecha.x, posIzquierda.y - posDerecha.y);
+                    if (distanciaAlObjetivo <= 85.f) {
+                        piezaDerecha->recibirDanyo(piezaIzquierda->getDanio());
+                    }
+                }
+                else {
+                    lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, piezaIzquierda->getDanio(), 600.0f, { 1.f, 0.f }, piezaIzquierda->getBando(), skinArena));
+                }
+
                 teclaDisparoIzquierdaLibre = false;
                 tiempoRestanteCooldownIzq = 1.4f - (piezaIzquierda->getVelAta() * 0.2f);
             }
@@ -123,7 +175,17 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0)) {
             if (teclaDisparoDerechaLibre) {
-                lista_proyectiles.push_back(new Proyectiles(posDerecha.x, posDerecha.y, piezaDerecha->getDanio(), 600.0f, { -1.f, 0.f }, piezaDerecha->getBando(), skinArena));
+                if (piezaDerecha->esCuerpoACuerpo()) {
+                    generarOndaChoque(posDerecha, piezaDerecha->getBando());
+                    float distanciaAlObjetivo = std::hypot(posDerecha.x - posIzquierda.x, posDerecha.y - posIzquierda.y);
+                    if (distanciaAlObjetivo <= 85.f) {
+                        piezaIzquierda->recibirDanyo(piezaDerecha->getDanio());
+                    }
+                }
+                else {
+                    lista_proyectiles.push_back(new Proyectiles(posDerecha.x, posDerecha.y, piezaDerecha->getDanio(), 600.0f, { -1.f, 0.f }, piezaDerecha->getBando(), skinArena));
+                }
+
                 teclaDisparoDerechaLibre = false;
                 tiempoRestanteCooldownDer = 1.4f - (piezaDerecha->getVelAta() * 0.2f);
             }
@@ -188,8 +250,33 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     ventana.draw(*spriteFondoArena);
     obstaculos.dibujar(ventana);
 
-    if (piezaIzquierda) piezaIzquierda->dibujarEnArena(ventana, posIzquierda, true, skinArena);
-    if (piezaDerecha) piezaDerecha->dibujarEnArena(ventana, posDerecha, false, skinArena);
+    // Renderizado de ondas expansivas en el suelo
+    for (const auto& onda : lista_ondas) {
+        ventana.draw(onda.forma);
+    }
+
+    // Método auxiliar para garantizar la visibilidad del daño crítico (Fondo sangriento)
+    auto dibujarAuraDanyo = [&](Pieza* p, sf::Vector2f pos) {
+        if (p && p->estaParpadeandoDanyo()) {
+            sf::CircleShape auraImpacto(45.f);
+            // Corrección C2660: Se encapsulan los argumentos en un sf::Vector2f implícito
+            auraImpacto.setOrigin({ 45.f, 45.f });
+            auraImpacto.setPosition(pos);
+            auraImpacto.setFillColor(sf::Color(255, 0, 0, 130)); // Resplandor rojo base
+            ventana.draw(auraImpacto);
+        }
+        };
+
+    if (piezaIzquierda) {
+        dibujarAuraDanyo(piezaIzquierda, posIzquierda);
+        piezaIzquierda->procesarEfectoVisual();
+        piezaIzquierda->dibujarEnArena(ventana, posIzquierda, true, skinArena);
+    }
+    if (piezaDerecha) {
+        dibujarAuraDanyo(piezaDerecha, posDerecha);
+        piezaDerecha->procesarEfectoVisual();
+        piezaDerecha->dibujarEnArena(ventana, posDerecha, false, skinArena);
+    }
 
     for (auto p : lista_proyectiles) p->dibujar(ventana);
 

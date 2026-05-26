@@ -10,9 +10,19 @@
 
 class Arena : public InterfazUsuario {
 private:
+    // Estructura de renderizado para el área de efecto (Hitbox visual)
+    struct EfectoOnda {
+        sf::CircleShape forma;
+        float radio;
+        float opacidad;
+        sf::Color colorBando;
+    };
+
     Pieza* piezaIzquierda;
     Pieza* piezaDerecha;
     std::list<Proyectiles*> lista_proyectiles;
+    std::list<EfectoOnda> lista_ondas; // Gestor de partículas de choque
+
     sf::Texture texturaFondoArena;
     sf::Sprite* spriteFondoArena;
     sf::Vector2f posIzquierda, posDerecha;

@@ -17,6 +17,13 @@ protected:
     int rangoMovimiento;
     int turnosBloqueado = 0;
 
+    // Parámetro de cinemática de ataque
+    bool ataqueCuerpoACuerpo = false;
+
+    // Subsistema temporal para el cálculo de daño
+    sf::Clock relojDanyo;
+    bool mostrandoDanyo = false;
+
 public:
     Pieza(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b)
         : vida(_v), vidaMaxima(_v), danio(_d), velMov(_vm), velAta(_va), bando(_b),
@@ -40,14 +47,45 @@ public:
     int getVidaBase() const { return vida; }
     int getVidaMaxima() const { return vidaMaxima; }
 
-    // Métodos de acceso para inyectar datos en el motor físico
     int getVelAta() const { return velAta; }
     int getDanio() const { return danio; }
     int getVelMov() const { return velMov; }
 
+    // Métodos de control para la arena
+    bool esCuerpoACuerpo() const { return ataqueCuerpoACuerpo; }
+    void setAtaqueCuerpoACuerpo(bool estado) { ataqueCuerpoACuerpo = estado; }
+
     void recibirDanyo(int cantidad) {
         vida -= cantidad;
         if (vida < 0) vida = 0;
+
+        mostrandoDanyo = true;
+        relojDanyo.restart();
+    }
+
+    // Máquina de estados temporal: Evalúa dos destellos asíncronos en 0.5s
+    bool estaParpadeandoDanyo() {
+        if (mostrandoDanyo) {
+            float t = relojDanyo.getElapsedTime().asSeconds();
+            if (t < 0.5f) {
+                // Fases activas del parpadeo (ON - OFF - ON - OFF)
+                return ((t > 0.0f && t < 0.15f) || (t > 0.25f && t < 0.40f));
+            }
+            else {
+                mostrandoDanyo = false;
+            }
+        }
+        return false;
+    }
+
+    // Función de tinte de shader
+    void procesarEfectoVisual() {
+        if (estaParpadeandoDanyo()) {
+            sprite.setColor(sf::Color(255, 30, 30, 220)); // Rojo severo
+        }
+        else {
+            sprite.setColor(sf::Color::White);
+        }
     }
 
     void aplicarBonoColor(int porcentaje);
