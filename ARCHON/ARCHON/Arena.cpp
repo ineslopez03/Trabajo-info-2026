@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm> 
 #include <cmath> 
-#include <typeinfo> // Inyección de librería para evaluación de clases en tiempo real
+#include <typeinfo>
 
 Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
     : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f))
@@ -43,7 +43,6 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
         piezaDerecha = p1;
     }
 
-    // RTTI: Analizador léxico para forzar el estado Cuerpo a Cuerpo por herencia sin tocar archivos
     auto forzarMelee = [](Pieza* p) {
         std::string nombreClase = typeid(*p).name();
         if (nombreClase.find("Caballero") != std::string::npos ||
@@ -79,17 +78,15 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     if (tiempoRestanteCooldownIzq > 0.f) tiempoRestanteCooldownIzq -= dt;
     if (tiempoRestanteCooldownDer > 0.f) tiempoRestanteCooldownDer -= dt;
 
-    // Procesamiento de las ondas visuales de impacto
     for (auto it = lista_ondas.begin(); it != lista_ondas.end();) {
-        it->radio += 300.f * dt; // Tasa de expansión radial
-        it->opacidad -= 600.f * dt; // Tasa de difuminación
+        it->radio += 300.f * dt;
+        it->opacidad -= 600.f * dt;
 
         if (it->opacidad <= 0.f || it->radio >= 85.f) {
             it = lista_ondas.erase(it);
         }
         else {
             it->forma.setRadius(it->radio);
-            // Corrección C2660: Se encapsulan los argumentos en un sf::Vector2f implícito
             it->forma.setOrigin({ it->radio, it->radio });
             it->forma.setOutlineColor(sf::Color(it->colorBando.r, it->colorBando.g, it->colorBando.b, std::max(0, (int)it->opacidad)));
             ++it;
@@ -148,7 +145,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
                 if (piezaIzquierda->esCuerpoACuerpo()) {
                     generarOndaChoque(posIzquierda, piezaIzquierda->getBando());
                     float distanciaAlObjetivo = std::hypot(posIzquierda.x - posDerecha.x, posIzquierda.y - posDerecha.y);
-                    if (distanciaAlObjetivo <= 85.f) {
+                    // Hitbox dinámica ampliada a 95px, conservando el renderizado en 85px
+                    if (distanciaAlObjetivo <= 95.f) {
                         piezaDerecha->recibirDanyo(piezaIzquierda->getDanio());
                     }
                 }
@@ -178,7 +176,8 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
                 if (piezaDerecha->esCuerpoACuerpo()) {
                     generarOndaChoque(posDerecha, piezaDerecha->getBando());
                     float distanciaAlObjetivo = std::hypot(posDerecha.x - posIzquierda.x, posDerecha.y - posIzquierda.y);
-                    if (distanciaAlObjetivo <= 85.f) {
+                    // Hitbox dinámica ampliada a 95px, conservando el renderizado en 85px
+                    if (distanciaAlObjetivo <= 95.f) {
                         piezaIzquierda->recibirDanyo(piezaDerecha->getDanio());
                     }
                 }
@@ -250,19 +249,16 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     ventana.draw(*spriteFondoArena);
     obstaculos.dibujar(ventana);
 
-    // Renderizado de ondas expansivas en el suelo
     for (const auto& onda : lista_ondas) {
         ventana.draw(onda.forma);
     }
 
-    // Método auxiliar para garantizar la visibilidad del daño crítico (Fondo sangriento)
     auto dibujarAuraDanyo = [&](Pieza* p, sf::Vector2f pos) {
         if (p && p->estaParpadeandoDanyo()) {
             sf::CircleShape auraImpacto(45.f);
-            // Corrección C2660: Se encapsulan los argumentos en un sf::Vector2f implícito
             auraImpacto.setOrigin({ 45.f, 45.f });
             auraImpacto.setPosition(pos);
-            auraImpacto.setFillColor(sf::Color(255, 0, 0, 130)); // Resplandor rojo base
+            auraImpacto.setFillColor(sf::Color(255, 0, 0, 130));
             ventana.draw(auraImpacto);
         }
         };

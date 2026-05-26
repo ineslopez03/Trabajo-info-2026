@@ -1,12 +1,21 @@
-#include"Pieza.h"
-#include"Casilla.h"
+#include "Pieza.h"
+#include "Casilla.h"
+#include <algorithm>
+
 void Pieza::aplicarBonoColor(int porcentaje)
 {
-	int incremento = (vidaMaxima * porcentaje) / 100;
-	this->vidaMaxima += incremento;
-	this->vida += incremento;
+    // el incremento se calcula de forma estricta sobre la vida base de diseño
+    int incremento = (vidaMaximaBase * porcentaje) / 100;
+    this->vidaMaxima = vidaMaximaBase + incremento;
+    this->vida += incremento;
 }
+
 void Pieza::restaurarValoresOriginales(int vidaAntesDelCombate)
 {
-	this->vida = vidaAntesDelCombate;
+    // se restituye el tope físico y se asimila el daño sufrido en la arena
+    this->vidaMaxima = vidaMaximaBase;
+    this->vida = vidaAntesDelCombate;
+    if (this->vida > this->vidaMaxima) {
+        this->vida = this->vidaMaxima; 
+    }
 }

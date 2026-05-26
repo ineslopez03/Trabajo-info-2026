@@ -6,13 +6,12 @@
 
 MotorArchon::MotorArchon() {
     estadoActual = EstadoJuego::MENU;
-
     pantallaActiva = nullptr;
     jugador1 = nullptr;
     jugador2 = nullptr;
     ejecutando = true;
     miTablero = nullptr;
-    skinActual = "ARCHON"; // Valor por defecto
+    skinActual = "ARCHON";
 }
 
 MotorArchon::~MotorArchon() {
@@ -20,39 +19,33 @@ MotorArchon::~MotorArchon() {
     if (jugador1 != nullptr) delete jugador1;
     if (jugador2 != nullptr) delete jugador2;
 }
+
 void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, std::string skinSeleccionada) {
     if (pantallaActiva != nullptr && pantallaActiva != miTablero) {
         delete pantallaActiva;
     }
     pantallaActiva = nullptr;
-
     estadoActual = nuevoEstado;
-
     if (!skinSeleccionada.empty()) {
         skinActual = skinSeleccionada;
     }
-
     switch (estadoActual) {
     case EstadoJuego::MENU:
         ventana.setView(ventana.getDefaultView());
         pantallaActiva = new MenuPrincipal();
         break;
-
     case EstadoJuego::TABLERO:
         if (miTablero == nullptr) {
             miTablero = new Tablero(95.0f, skinActual);
         }
-        
         ventana.setView(sf::View(sf::FloatRect({ 0.f, 0.f }, { 1100.f, 855.f })));
         pantallaActiva = miTablero;
         break;
-
     case EstadoJuego::ARENA:
         if (p1 != nullptr && p2 != nullptr) {
-            pantallaActiva = new Arena(p1, p2, skinActual,p1);
+            pantallaActiva = new Arena(p1, p2, skinActual, p1);
         }
         break;
-
     case EstadoJuego::FIN:
         ejecutando = false;
         break;
@@ -63,7 +56,6 @@ void MotorArchon::bucle() {
     while (ejecutando && ventana.isOpen()) {
         if (pantallaActiva != nullptr) {
             pantallaActiva->procesarEntrada(ventana);
-
             if (estadoActual == EstadoJuego::MENU) {
                 MenuPrincipal* menu = dynamic_cast<MenuPrincipal*>(pantallaActiva);
                 if (menu != nullptr && menu->getIniciarJuego()) {
@@ -71,6 +63,7 @@ void MotorArchon::bucle() {
                 }
             }
 
+            // FASE DE INYECCIÓN (Pre-Arena)
             if (estadoActual == EstadoJuego::TABLERO) {
                 Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva);
                 if (tab != nullptr && tab->getHaycombate()) {
@@ -78,54 +71,51 @@ void MotorArchon::bucle() {
                     Pieza* pAtacante = tab->getAtacante();
                     Pieza* pDefensor = tab->getDefensor();
                     std::string currentSkin = tab->getSkin();
-                    int colorSuelo = tab->getColorCasilla(casillaDestinoCombate.x, casillaDestinoCombate.y);
-                    int bonoVida = 20.0f;
-                    if (colorSuelo == 1) { 
-                        if (pAtacante->getBando() == Bando::LUZ)
-                            pAtacante->setVida(pAtacante->getVidaBase() + bonoVida);
-                        if (pDefensor->getBando() == Bando::LUZ)
-                            pDefensor->setVida(pDefensor->getVidaBase() + bonoVida);
+
+                    ColorCasilla colorSuelo = tab->getColorCasilla(casillaDestinoCombate.x, casillaDestinoCombate.y);
+                    int porcentajeBono = 0;
+                    Bando bandoFavorecido = Bando::LUZ;
+
+                    if (colorSuelo == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
+                    else if (colorSuelo == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
+                    else if (colorSuelo == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
+                    else if (colorSuelo == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
+
+                    if (porcentajeBono > 0) {
+                        if (pAtacante->getBando() == bandoFavorecido) {
+                            pAtacante->aplicarBonoColor(porcentajeBono);
+                        }
+                        if (pDefensor->getBando() == bandoFavorecido) {
+                            pDefensor->aplicarBonoColor(porcentajeBono);
+                        }
                     }
-                    else if (colorSuelo == -1) { 
-                        if (pAtacante->getBando() == Bando::OSCURIDAD)
-                            pAtacante->setVida(pAtacante->getVidaBase() + bonoVida);
-                        if (pDefensor->getBando() == Bando::OSCURIDAD)
-                            pDefensor->setVida(pDefensor->getVidaBase() + bonoVida);
-                    }
-                    tab->resetCombate();
+
+                    // Corrección de la subrutina: Ahora solo limpia la bandera de bloqueo, sin tocar datos.
+                    tab->limpiarBanderaCombate();
                     cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, currentSkin);
                 }
             }
-            
+
+            // FASE DE RESOLUCIÓN (Post-Arena)
             if (estadoActual == EstadoJuego::ARENA) {
                 Arena* arena = dynamic_cast<Arena*>(pantallaActiva);
                 if (arena != nullptr) {
                     Pieza* pIzq = arena->getPiezaIzquierda();
                     Pieza* pDer = arena->getPiezaDerecha();
 
-                   
                     if (pIzq->getVidaBase() <= 0 || pDer->getVidaBase() <= 0) {
                         Pieza* muerto = (pIzq->getVidaBase() <= 0) ? pIzq : pDer;
                         Pieza* ganador = (pIzq->getVidaBase() <= 0) ? pDer : pIzq;
 
+                        // Delegación de la limpieza, reubicación y reducción de vida al Tablero
                         if (miTablero != nullptr) {
-                            miTablero->registrarMuerte(muerto);
-                            miTablero->eliminarPiezaDelMapa(muerto);
-
-                            
-                            if (ganador == arena->getPiezaAtacanteReal()) {
-                                miTablero->moverPiezaACasilla(ganador, casillaDestinoCombate);
-                            }
-                            if (ganador->getVidaBase() > ganador->getVidaMaxima()) {
-                                ganador->resetVida();
-                            }
+                            miTablero->procesarResultadoCombate(ganador, muerto, arena->getPiezaAtacanteReal());
                         }
-                        
+
                         cambiarEstado(EstadoJuego::TABLERO);
                     }
                 }
             }
-
             ventana.clear();
             pantallaActiva->dibujarPantalla(ventana);
             ventana.display();
@@ -139,7 +129,5 @@ void MotorArchon::inicializar() {
     ventana.setView(vistaMenu);
     jugador1 = new JugadorHumano("Heroe de la Luz", Bando::LUZ);
     jugador2 = new JugadorIA("Senor de la Oscuridad", Bando::OSCURIDAD);
-
     cambiarEstado(EstadoJuego::MENU);
 }
-
