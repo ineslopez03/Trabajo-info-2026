@@ -15,7 +15,7 @@ std::string obtenerRutaRango(Bando b, std::string skin) {
     }
 }
 Rango::Rango(Bando b, std::string skin)
-    : PiezaVoladora(10, 3, 3, 1, PiezaVoladora::obtenerTexturaDesdeRuta(obtenerRutaRango(b, skin)), b)
+    : PiezaVoladora(30, 10, 3, 1, PiezaVoladora::obtenerTexturaDesdeRuta(obtenerRutaRango(b, skin)), b)
 {
     this->rangoMovimiento = 3;
 }

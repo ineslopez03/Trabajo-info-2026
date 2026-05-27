@@ -32,6 +32,8 @@ private:
     std::vector<Pieza*> piezasMuertasLuz;
     std::vector<Pieza*> piezasMuertasOscuridad;
     sf::Vector2i coordenadasCombate;
+    bool bandoLuzUsoMagia;
+    bool bandoOscuroUsoMagia;
 
     // Subsistema de máquina de estados para la cinemática de cierre
     sf::Clock relojTablero;

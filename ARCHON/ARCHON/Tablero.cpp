@@ -11,7 +11,7 @@
 #include "Genio.h"
 #include "Fenix.h"
 #include "Hechicero.h"
-
+#include"Rango.h"
 Tablero::Tablero() : Tablero(95.0f, " ") {}
 
 Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {
@@ -206,10 +206,8 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
                 if (primerClicRealizado && origenSeleccionado != nullptr) {
                     Pieza* p = origenSeleccionado->getPieza();
                     if (p != nullptr && dynamic_cast<Hechicero*>(p) != nullptr) {
-                        bool* registro = (turnoActual == Bando::LUZ) ? hechizosLuzUsados : hechizosOscurosUsados;
+                        bool yaUsoMagia = (turnoActual == Bando::LUZ) ? bandoLuzUsoMagia : bandoOscuroUsoMagia;
 
-                        bool yaUsoMagia = false;
-                        for (int j = 0; j < 8; j++) { if (registro[j]) yaUsoMagia = true; }
                         if (!yaUsoMagia) {
                             for (int i = 0; i < botonesHechizos.size(); i++) {
                                 if (botonesHechizos[i]->botonContieneRaton(posMapeada)) {
@@ -314,6 +312,7 @@ void Tablero::procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* a
         else {
             ganador->restaurarValoresOriginales(ganador->getVidaBase());
         }
+        hechizoSeleccionado = 0;
     }
     else {
 
@@ -395,14 +394,17 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
     }
 
     if (primerClicRealizado && dynamic_cast<Hechicero*>(origenSeleccionado->getPieza())) {
-        bool* registro = (turnoActual == Bando::LUZ) ? hechizosLuzUsados : hechizosOscurosUsados;
-
-        bool yaSeUso = false;
-        for (int j = 0; j < 8; j++) { if (registro[j]) yaSeUso = true; }
+        bool yaUsoMagia = (turnoActual == Bando::LUZ) ? bandoLuzUsoMagia : bandoOscuroUsoMagia;
         sf::Vector2f mousePos = ventanaJuego.mapPixelToCoords(sf::Mouse::getPosition(ventanaJuego), vistaEstatica);
+
+        std::string nombres[] = { "Teleport", "Heal", "Shift Time", "Exchange", "Summon", "Revive", "Imprison" };
+
         for (int i = 0; i < botonesHechizos.size(); i++) {
-            if (yaSeUso) {
+            if (yaUsoMagia) {
                 botonesHechizos[i]->setTexto("AGOTADO");
+            }
+            else {
+                botonesHechizos[i]->setTexto(nombres[i]);
             }
             botonesHechizos[i]->actualizarColorBoton(mousePos);
             botonesHechizos[i]->dibujar(ventanaJuego);
@@ -423,12 +425,7 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
 
 void Tablero::procesarMagia(Casilla* objetivo) {
     if (!modoHechizoActivo || !origenSeleccionado) return;
-    bool* registro = (turnoActual == Bando::LUZ) ? hechizosLuzUsados : hechizosOscurosUsados;
-    if (registro[hechizoSeleccionado]) {
-        std::cout << "Hechizo ya agotado para este bando." << std::endl;
-        modoHechizoActivo = false;
-        return;
-    }
+    Bando bandoLanzador = turnoActual;
     switch (hechizoSeleccionado) {
     case 1:
         if (piezaAuxiliar == nullptr) {
@@ -446,7 +443,7 @@ void Tablero::procesarMagia(Casilla* objetivo) {
             if (!objetivo->estaOcupada()) {
                 objetivo->setPieza(piezaAuxiliar->getPieza());
                 piezaAuxiliar->setPieza(nullptr);
-                registro[1] = true;
+                if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
                 std::cout << "¡Teletransporte completado!" << std::endl;
             }
             else {
@@ -460,7 +457,7 @@ void Tablero::procesarMagia(Casilla* objetivo) {
             Pieza* p = objetivo->getPieza();
             if (p->getVidaBase() < p->getVidaMaxima()) {
                 p->resetVida();
-                registro[2] = true;
+                if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
                 piezaAuxiliar = nullptr;
                 std::cout << "Hechizo Heal aplicado con exito." << std::endl;
             }
@@ -471,7 +468,7 @@ void Tablero::procesarMagia(Casilla* objetivo) {
         break;
     case 3:
         turnosContados += 3;
-        registro[3] = true;
+        if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
         break;
     case 4:
         if (objetivo->estaOcupada()) {
@@ -485,7 +482,7 @@ void Tablero::procesarMagia(Casilla* objetivo) {
                 Pieza* p2 = objetivo->getPieza();
                 piezaAuxiliar->setPieza(p2);
                 objetivo->setPieza(p1);
-                registro[4] = true;
+                if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
                 std::cout << "¡Intercambio completado!" << std::endl;
             }
         }
@@ -494,10 +491,10 @@ void Tablero::procesarMagia(Casilla* objetivo) {
     case 5:
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
             this->coordenadasCombate = sf::Vector2i(objetivo->getX(), objetivo->getY());
-            this->atacante = new Golem(turnoActual, skinActual);
+            this->atacante = new Rango(turnoActual, skinActual);
             this->defensor = objetivo->getPieza();
             this->hayCombatePendiente = true;
-            registro[5] = true;
+            if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
             std::cout << "¡Elemental invocado! Iniciando combate directo contra el enemigo." << std::endl;
         }
         else {
@@ -532,7 +529,7 @@ void Tablero::procesarMagia(Casilla* objetivo) {
             pRevivida->resetVida();
             objetivo->setPieza(pRevivida);
 
-            registro[6] = true;
+            if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
             std::cout << "¡Pieza revivida con exito junto al Hechicero!" << std::endl;
         }
         else {
@@ -544,11 +541,12 @@ void Tablero::procesarMagia(Casilla* objetivo) {
     case 7:
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
             objetivo->getPieza()->setEncarcelada(4);
-            registro[7] = true;
+            if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
         }
         break;
     }
-    if (registro[hechizoSeleccionado]) {
+    bool magiaCompletada = (bandoLanzador == Bando::LUZ) ? bandoLuzUsoMagia : bandoOscuroUsoMagia;
+    if (magiaCompletada) {
         finalizarTurno();
     }
 }
