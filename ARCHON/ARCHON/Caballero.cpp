@@ -2,13 +2,13 @@
 
 std::string Caballero::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
-        return (b == Bando::LUZ) ? "imagenes/HP/Dobby.png" : "imagenes/HP/Scabbers.png";
+        return (b == Bando::LUZ) ? "imagenes/HP/Dobby.png" : "imagenes/HP/Griphook.png";
     }
     else if (skin == "STAR_WARS") {
-        return (b == Bando::LUZ) ? "imagenes/SW/BobaFett.png" : "imagenes/SW/Stormtrooper.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Rebelde.png" : "imagenes/SW/Stormtrooper.png";
     }
     else {
-        return (b == Bando::LUZ) ? "imagenes/Classic/Knight.png" : "imagenes/Classic/Goblin.png";
+        return (b == Bando::LUZ) ? "imagenes/Classic/Caballero.png" : "imagenes/Classic/Goblin.png";
     }
 }
 

@@ -6,11 +6,10 @@ std::string Hechicero::obtenerRuta(Bando b, std::string skin) {
         return (b == Bando::LUZ) ? "imagenes/HP/Dumbledore.png" : "imagenes/HP/Voldemort.png";
     }
     else if (skin == "STAR_WARS") {
-        // Yoda asume el nodo de Luz. Se establece un placeholder para la Oscuridad por ausencia de asset.
-        return (b == Bando::LUZ) ? "imagenes/SW/Yoda.png" : "imagenes/SW/Placeholder_Hechicero_Oscuro.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Yoda.png" : "imagenes/SW/Palpatin.png";
     }
     else {
-        return (b == Bando::LUZ) ? "imagenes/Classic/Wizard.png" : "imagenes/Classic/Sorceress.png";
+        return (b == Bando::LUZ) ? "imagenes/Classic/Hechicero.png" : "imagenes/Classic/Hechicera.png";
     }
 }
 

@@ -2,13 +2,13 @@
 
 std::string Unicornio::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
-        return (b == Bando::LUZ) ? "imagenes/HP/Fawkes.png" : "imagenes/HP/Dementor.png";
+        return (b == Bando::LUZ) ? "imagenes/HP/Unicornio.png" : "imagenes/HP/Basilisco.png";
     }
     else if (skin == "STAR_WARS") {
-        return (b == Bando::LUZ) ? "imagenes/SW/HanSolo.png" : "imagenes/SW/Palpatine.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Lando.png" : "imagenes/SW/Bossk.png";
     }
     else {
-        return (b == Bando::LUZ) ? "imagenes/Classic/Unicorn.png" : "imagenes/Classic/Basilisk.png";
+        return (b == Bando::LUZ) ? "imagenes/Classic/Unicornio.png" : "imagenes/Classic/Basilisco.png";
     }
 }
 

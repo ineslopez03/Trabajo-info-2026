@@ -5,7 +5,7 @@ std::string Golem::obtenerRuta(Bando b, std::string skin) {
         return (b == Bando::LUZ) ? "imagenes/HP/Hagrid.png" : "imagenes/HP/Troll.png";
     }
     else if (skin == "STAR_WARS") {
-        return (b == Bando::LUZ) ? "imagenes/SW/Chewbacca.png" : "imagenes/SW/Rancor.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Chewbacca.png" : "imagenes/SW/Guardiarojo.png";
     }
     else {
         return (b == Bando::LUZ) ? "imagenes/Classic/Golem.png" : "imagenes/Classic/Troll.png";

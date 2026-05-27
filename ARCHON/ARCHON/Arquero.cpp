@@ -2,13 +2,13 @@
 
 std::string Arquero::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
-        return (b == Bando::LUZ) ? "imagenes/HP/Placeholder_Arquero.png" : "imagenes/HP/Placeholder_Manticora.png";
+        return (b == Bando::LUZ) ? "imagenes/HP/Harry.png" : "imagenes/HP/Dolores.png";
     }
     else if (skin == "STAR_WARS") {
-        return (b == Bando::LUZ) ? "imagenes/SW/R2D2.png" : "imagenes/SW/Placeholder_Arquero_Oscuro.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Hansolo.png" : "imagenes/SW/Bobbafet.png";
     }
     else {
-        return (b == Bando::LUZ) ? "imagenes/Classic/Archer.png" : "imagenes/Classic/Manticore.png";
+        return (b == Bando::LUZ) ? "imagenes/Classic/Archon.png" : "imagenes/Classic/Manticora.png";
     }
 }
 

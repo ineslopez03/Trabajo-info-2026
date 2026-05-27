@@ -2,13 +2,13 @@
 
 std::string Valquiria::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
-        return (b == Bando::LUZ) ? "imagenes/HP/Ginny.png" : "imagenes/HP/Bellatrix.png";
+        return (b == Bando::LUZ) ? "imagenes/HP/Hermion.png" : "imagenes/HP/Bellatrix.png";
     }
     else if (skin == "STAR_WARS") {
-        return (b == Bando::LUZ) ? "imagenes/SW/XWing.png" : "imagenes/SW/TieFighter.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Leia.png" : "imagenes/SW/Morador.png";
     }
     else {
-        return (b == Bando::LUZ) ? "imagenes/Classic/Valkyrie.png" : "imagenes/Classic/Banshee.png";
+        return (b == Bando::LUZ) ? "imagenes/Classic/Valkiria.png" : "imagenes/Classic/Banshee.png";
     }
 }
 

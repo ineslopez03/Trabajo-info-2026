@@ -2,13 +2,13 @@
 
 std::string Genio::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
-        return (b == Bando::LUZ) ? "imagenes/HP/Placeholder_Genio.png" : "imagenes/HP/Placeholder_Cambiaformas.png";
+        return (b == Bando::LUZ) ? "imagenes/HP/Nick.png" : "imagenes/HP/Boggart.png";
     }
     else if (skin == "STAR_WARS") {
-        return (b == Bando::LUZ) ? "imagenes/SW/Placeholder_Genio.png" : "imagenes/SW/Placeholder_Cambiaformas.png";
+        return (b == Bando::LUZ) ? "imagenes/SW/Obiwan.png" : "imagenes/SW/IG.png";
     }
     else {
-        return (b == Bando::LUZ) ? "imagenes/Classic/Djinni.png" : "imagenes/Classic/Shapeshifter.png";
+        return (b == Bando::LUZ) ? "imagenes/Classic/Genio.png" : "imagenes/Classic/Shapeshifter.png";
     }
 }
 
