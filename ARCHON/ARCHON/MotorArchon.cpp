@@ -63,7 +63,6 @@ void MotorArchon::bucle() {
                 }
             }
 
-            // FASE DE INYECCIÓN (Pre-Arena)
             if (estadoActual == EstadoJuego::TABLERO) {
                 Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva);
                 if (tab != nullptr && tab->getHaycombate()) {
@@ -90,24 +89,22 @@ void MotorArchon::bucle() {
                         }
                     }
 
-                    // Corrección de la subrutina: Ahora solo limpia la bandera de bloqueo, sin tocar datos.
                     tab->limpiarBanderaCombate();
                     cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, currentSkin);
                 }
             }
 
-            // FASE DE RESOLUCIÓN (Post-Arena)
             if (estadoActual == EstadoJuego::ARENA) {
                 Arena* arena = dynamic_cast<Arena*>(pantallaActiva);
                 if (arena != nullptr) {
-                    Pieza* pIzq = arena->getPiezaIzquierda();
-                    Pieza* pDer = arena->getPiezaDerecha();
+                    // Refactorización: La comprobación delega el salto al temporizador interno de la Arena
+                    if (arena->isTransicionLista()) {
+                        Pieza* pIzq = arena->getPiezaIzquierda();
+                        Pieza* pDer = arena->getPiezaDerecha();
 
-                    if (pIzq->getVidaBase() <= 0 || pDer->getVidaBase() <= 0) {
                         Pieza* muerto = (pIzq->getVidaBase() <= 0) ? pIzq : pDer;
                         Pieza* ganador = (pIzq->getVidaBase() <= 0) ? pDer : pIzq;
 
-                        // Delegación de la limpieza, reubicación y reducción de vida al Tablero
                         if (miTablero != nullptr) {
                             miTablero->procesarResultadoCombate(ganador, muerto, arena->getPiezaAtacanteReal());
                         }

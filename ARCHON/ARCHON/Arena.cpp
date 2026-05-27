@@ -5,8 +5,9 @@
 #include <cmath> 
 #include <typeinfo>
 
+// Corrección C2512 y E0291: Inyección de la fuente en la lista de inicialización
 Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
-    : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f))
+    : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f)), textoVictoria(fuenteVictoria)
 {
     this->atacanteOriginal = atacante;
     this->skinArena = skin;
@@ -24,6 +25,14 @@ Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
 
     spriteFondoArena = new sf::Sprite(texturaFondoArena);
     spriteFondoArena->setScale(sf::Vector2f(1100.f / texturaFondoArena.getSize().x, 855.f / texturaFondoArena.getSize().y));
+
+    if (!fuenteVictoria.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+        std::cerr << "Error cargando fuente para victoria" << std::endl;
+    }
+
+    textoVictoria.setCharacterSize(60);
+    textoVictoria.setOutlineThickness(4.f);
+    textoVictoria.setOutlineColor(sf::Color::Black);
 }
 
 Arena::~Arena() {
@@ -73,6 +82,12 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     }
 
     float dt = relojArena.restart().asSeconds();
+
+    if (combateFinalizado) {
+        temporizadorSalida -= dt;
+        return;
+    }
+
     obstaculos.actualizar(dt, posIzquierda, posDerecha);
 
     if (tiempoRestanteCooldownIzq > 0.f) tiempoRestanteCooldownIzq -= dt;
@@ -145,7 +160,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
                 if (piezaIzquierda->esCuerpoACuerpo()) {
                     generarOndaChoque(posIzquierda, piezaIzquierda->getBando());
                     float distanciaAlObjetivo = std::hypot(posIzquierda.x - posDerecha.x, posIzquierda.y - posDerecha.y);
-                    // Hitbox dinámica ampliada a 95px, conservando el renderizado en 85px
                     if (distanciaAlObjetivo <= 95.f) {
                         piezaDerecha->recibirDanyo(piezaIzquierda->getDanio());
                     }
@@ -176,7 +190,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
                 if (piezaDerecha->esCuerpoACuerpo()) {
                     generarOndaChoque(posDerecha, piezaDerecha->getBando());
                     float distanciaAlObjetivo = std::hypot(posDerecha.x - posIzquierda.x, posDerecha.y - posIzquierda.y);
-                    // Hitbox dinámica ampliada a 95px, conservando el renderizado en 85px
                     if (distanciaAlObjetivo <= 95.f) {
                         piezaIzquierda->recibirDanyo(piezaDerecha->getDanio());
                     }
@@ -206,6 +219,23 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         else {
             ++it;
         }
+    }
+
+    if (!combateFinalizado && (piezaIzquierda->getVidaBase() <= 0 || piezaDerecha->getVidaBase() <= 0)) {
+        combateFinalizado = true;
+        if (piezaIzquierda->getVidaBase() <= 0) {
+            textoVictoria.setString("GANADOR BANDO DE OSCURIDAD");
+            textoVictoria.setFillColor(sf::Color::Red);
+        }
+        else {
+            textoVictoria.setString("GANADOR BANDO DE LUZ");
+            textoVictoria.setFillColor(sf::Color::Cyan);
+        }
+
+        // Corrección E0135 / C2039: Adaptación a la nomenclatura vectorial de SFML 3.x
+        sf::FloatRect limitesTexto = textoVictoria.getLocalBounds();
+        textoVictoria.setOrigin({ limitesTexto.size.x / 2.f, limitesTexto.size.y / 2.f });
+        textoVictoria.setPosition({ 550.f, 427.f });
     }
 }
 
@@ -290,4 +320,8 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
 
     graficos.actualizar(rIzq, rDer, faseCuentaAtras);
     graficos.dibujar(ventana, faseCuentaAtras >= 0);
+
+    if (combateFinalizado) {
+        ventana.draw(textoVictoria);
+    }
 }

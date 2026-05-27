@@ -10,7 +10,6 @@
 
 class Arena : public InterfazUsuario {
 private:
-    // Estructura de renderizado para el área de efecto (Hitbox visual)
     struct EfectoOnda {
         sf::CircleShape forma;
         float radio;
@@ -21,7 +20,7 @@ private:
     Pieza* piezaIzquierda;
     Pieza* piezaDerecha;
     std::list<Proyectiles*> lista_proyectiles;
-    std::list<EfectoOnda> lista_ondas; // Gestor de partículas de choque
+    std::list<EfectoOnda> lista_ondas;
 
     sf::Texture texturaFondoArena;
     sf::Sprite* spriteFondoArena;
@@ -34,6 +33,11 @@ private:
 
     float tiempoRestanteCooldownIzq = 0.f;
     float tiempoRestanteCooldownDer = 0.f;
+
+    bool combateFinalizado = false;
+    float temporizadorSalida = 2.0f;
+    sf::Font fuenteVictoria;
+    sf::Text textoVictoria;
 
     Obstaculos obstaculos;
     GraficosArena graficos;
@@ -51,4 +55,6 @@ public:
     Pieza* getPiezaIzquierda() { return piezaIzquierda; }
     Pieza* getPiezaDerecha() { return piezaDerecha; }
     Pieza* getPiezaAtacanteReal() const { return atacanteOriginal; }
+
+    bool isTransicionLista() const { return combateFinalizado && temporizadorSalida <= 0.f; }
 };
