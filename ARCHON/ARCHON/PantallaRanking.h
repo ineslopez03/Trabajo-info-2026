@@ -9,10 +9,10 @@
 class PantallaRanking {
 private:
     sf::Font fuente;
-    sf::Text* titulo;             // Convertido a puntero
-    std::vector<sf::Text*> lineasRanking; // Vector de punteros para evitar el error en la carga dinámica
+    sf::Text* titulo;   
+    std::vector<sf::Text*> lineasRanking; 
     sf::RectangleShape botonVolver;
-    sf::Text* textoVolver;        // Convertido a puntero
+    sf::Text* textoVolver;      
     bool transicionMenu;
 
 public:
@@ -23,35 +23,29 @@ public:
             std::cout << "Error al cargar la fuente en Ranking." << std::endl;
         }
 
-        // Configurar Título pasando la fuente obligatoria al constructor
+ 
         titulo = new sf::Text(fuente);
         titulo->setString("TOP RANKING - ARCHON");
         titulo->setCharacterSize(45);
         titulo->setFillColor(sf::Color::Yellow);
         titulo->setPosition({ 350.f, 50.f });
 
-        // Configurar Botón Volver
+ 
         botonVolver.setSize({ 200.f, 60.f });
         botonVolver.setFillColor(sf::Color(50, 50, 50));
         botonVolver.setOutlineThickness(2.f);
         botonVolver.setOutlineColor(sf::Color::White);
         botonVolver.setPosition({ 450.f, 700.f });
-
-        // Configurar Texto del Botón pasando la fuente obligatoria al constructor
         textoVolver = new sf::Text(fuente);
         textoVolver->setString("VOLVER");
         textoVolver->setCharacterSize(25);
         textoVolver->setFillColor(sf::Color::White);
-
-        // Centrar texto en el botón
         sf::FloatRect bounds = textoVolver->getLocalBounds();
         textoVolver->setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
         textoVolver->setPosition({ 450.f + 100.f, 700.f + 30.f });
 
         cargarDatos();
     }
-
-    // Destructor para liberar la memoria de los punteros creados
     ~PantallaRanking() {
         if (titulo != nullptr) delete titulo;
         if (textoVolver != nullptr) delete textoVolver;
@@ -70,7 +64,6 @@ public:
         if (archivo.is_open()) {
             int puesto = 1;
             while (archivo >> nombre >> victorias && puesto <= 10) { // Mostramos el Top 10
-                // Creamos el texto pasando la fuente obligatoria
                 sf::Text* textoLinea = new sf::Text(fuente);
                 textoLinea->setString(std::to_string(puesto) + ". " + nombre + "  -  " + std::to_string(victorias) + " " + (victorias == 1 ? "Victoria" : "Victorias"));
                 textoLinea->setCharacterSize(30);
