@@ -11,7 +11,8 @@ enum class OpcionesMenu {
     RANKING,
     SELECCION_MODO,
     IA_NODISPONIBLE,
-    SELECCION_SKIN
+    SELECCION_SKIN,
+    MANUAL_GRAFICO
 };
 
 class MenuPrincipal : public InterfazUsuario {
@@ -30,6 +31,10 @@ private:
     std::vector<Boton> BotonesRanking;
     std::vector<Boton> BotonVolverIA;
 
+    std::vector<Boton> BotonesManual;
+    std::vector<sf::Text> lineasReglas;
+    std::vector<sf::Text> lineasHechizos;
+    void cargarTextoManual();
     bool IniciarJuego;
     bool ContraIA;
     std::string SkinSeleccionada;
@@ -47,4 +52,6 @@ public:
     bool getIniciarJuego() const { return IniciarJuego; }
     bool getContraIA() const { return ContraIA; }
     std::string getSkinSeleccionada() const { return SkinSeleccionada; }
+    bool getVerRanking() const { return EstadoInterno == OpcionesMenu::RANKING; }
+    void resetearEstadoMenu() { EstadoInterno = OpcionesMenu::PRINCIPAL; }
 };

@@ -8,8 +8,9 @@
 #include "JugadorIA.h"
 
 class Tablero;
-enum class EstadoJuego { MENU, TABLERO, ARENA, FIN };
-
+enum class EstadoJuego { MENU, TABLERO, ARENA, FIN,INGRESAR_NOMBRE,RANKING };
+class PantallaNombre;
+class PantallaRanking;
 class MotorArchon
 {
 private:
@@ -19,6 +20,8 @@ private:
     InterfazUsuario* pantallaActiva;
     GestorArchivos guardado;
     Tablero* miTablero;
+    PantallaNombre* miPantallaNombre = nullptr;
+    PantallaRanking* miPantallaRanking = nullptr;
 
     Jugador* jugador1;
     Jugador* jugador2;
