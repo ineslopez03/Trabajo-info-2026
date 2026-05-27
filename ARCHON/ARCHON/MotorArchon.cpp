@@ -65,39 +65,44 @@ void MotorArchon::bucle() {
 
             if (estadoActual == EstadoJuego::TABLERO) {
                 Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva);
-                if (tab != nullptr && tab->getHaycombate()) {
-                    casillaDestinoCombate = tab->getCoordenadasCombate();
-                    Pieza* pAtacante = tab->getAtacante();
-                    Pieza* pDefensor = tab->getDefensor();
-                    std::string currentSkin = tab->getSkin();
-
-                    ColorCasilla colorSuelo = tab->getColorCasilla(casillaDestinoCombate.x, casillaDestinoCombate.y);
-                    int porcentajeBono = 0;
-                    Bando bandoFavorecido = Bando::LUZ;
-
-                    if (colorSuelo == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
-                    else if (colorSuelo == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
-                    else if (colorSuelo == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
-                    else if (colorSuelo == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
-
-                    if (porcentajeBono > 0) {
-                        if (pAtacante->getBando() == bandoFavorecido) {
-                            pAtacante->aplicarBonoColor(porcentajeBono);
-                        }
-                        if (pDefensor->getBando() == bandoFavorecido) {
-                            pDefensor->aplicarBonoColor(porcentajeBono);
-                        }
+                if (tab != nullptr) {
+                    // Evaluación transversal de la directiva de finalización
+                    if (tab->debeVolverAlMenu()) {
+                        cambiarEstado(EstadoJuego::MENU);
                     }
+                    else if (tab->getHaycombate()) {
+                        casillaDestinoCombate = tab->getCoordenadasCombate();
+                        Pieza* pAtacante = tab->getAtacante();
+                        Pieza* pDefensor = tab->getDefensor();
+                        std::string currentSkin = tab->getSkin();
 
-                    tab->limpiarBanderaCombate();
-                    cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, currentSkin);
+                        ColorCasilla colorSuelo = tab->getColorCasilla(casillaDestinoCombate.x, casillaDestinoCombate.y);
+                        int porcentajeBono = 0;
+                        Bando bandoFavorecido = Bando::LUZ;
+
+                        if (colorSuelo == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
+                        else if (colorSuelo == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
+                        else if (colorSuelo == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
+                        else if (colorSuelo == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
+
+                        if (porcentajeBono > 0) {
+                            if (pAtacante->getBando() == bandoFavorecido) {
+                                pAtacante->aplicarBonoColor(porcentajeBono);
+                            }
+                            if (pDefensor->getBando() == bandoFavorecido) {
+                                pDefensor->aplicarBonoColor(porcentajeBono);
+                            }
+                        }
+
+                        tab->limpiarBanderaCombate();
+                        cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, currentSkin);
+                    }
                 }
             }
 
             if (estadoActual == EstadoJuego::ARENA) {
                 Arena* arena = dynamic_cast<Arena*>(pantallaActiva);
                 if (arena != nullptr) {
-                    // Refactorización: La comprobación delega el salto al temporizador interno de la Arena
                     if (arena->isTransicionLista()) {
                         Pieza* pIzq = arena->getPiezaIzquierda();
                         Pieza* pDer = arena->getPiezaDerecha();

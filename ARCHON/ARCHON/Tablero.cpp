@@ -14,7 +14,7 @@
 
 Tablero::Tablero() : Tablero(95.0f, " ") {}
 
-Tablero::Tablero(float _tamano, std::string skin) {
+Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {
     tamCasilla = _tamano;
     skinActual = skin;
     turnoActual = Bando::LUZ;
@@ -25,6 +25,12 @@ Tablero::Tablero(float _tamano, std::string skin) {
     atacante = nullptr;
     defensor = nullptr;
     turnosContados = 0;
+
+    estadoVictoria = 0;
+    motivoVictoria = 0;
+    faseVictoria = 0;
+    temporizadorFase = 0.f;
+    volverAlMenu = false;
 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -46,6 +52,11 @@ Tablero::Tablero(float _tamano, std::string skin) {
     if (!fuente.openFromFile("C:/Windows/Fonts/arial.ttf")) {
         std::cout << "Ni siquiera encontre la fuente del sistema." << std::endl;
     }
+
+    textoVictoria.setCharacterSize(60);
+    textoVictoria.setOutlineThickness(5.f);
+    textoVictoria.setOutlineColor(sf::Color::Black);
+
     inicializarBotones();
 }
 
@@ -94,7 +105,84 @@ void Tablero::inicializarTablero() {
     matriz[7][8]->setPieza(new Arquero(Bando::OSCURIDAD, skinActual));
 }
 
+int Tablero::verificarVictoria() {
+    int contadorLuz = 0, libresLuz = 0, nodosLuz = 0;
+    int contadorOsc = 0, libresOsc = 0, nodosOsc = 0;
+
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            Casilla* c = matriz[i][j];
+            if (c->estaOcupada()) {
+                Pieza* p = c->getPieza();
+                if (p->getBando() == Bando::LUZ) {
+                    contadorLuz++;
+                    if (!p->estaEncarcelada()) libresLuz++;
+                    if (c->getEsPuntoDePoder()) nodosLuz++;
+                }
+                else {
+                    contadorOsc++;
+                    if (!p->estaEncarcelada()) libresOsc++;
+                    if (c->getEsPuntoDePoder()) nodosOsc++;
+                }
+            }
+        }
+    }
+
+    if (nodosLuz == 5) { motivoVictoria = 1; return 1; }
+    if (nodosOsc == 5) { motivoVictoria = 1; return 2; }
+
+    bool pierdeLuz = (contadorLuz == 0) || (contadorLuz == 1 && libresLuz == 0);
+    bool pierdeOsc = (contadorOsc == 0) || (contadorOsc == 1 && libresOsc == 0);
+
+    if (pierdeLuz && pierdeOsc) { motivoVictoria = 2; return 3; }
+    if (pierdeLuz) {
+        motivoVictoria = (contadorLuz == 0) ? 2 : 3;
+        return 2;
+    }
+    if (pierdeOsc) {
+        motivoVictoria = (contadorOsc == 0) ? 2 : 3;
+        return 1;
+    }
+
+    return 0;
+}
+
 void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
+    float dt = relojTablero.restart().asSeconds();
+
+    // Inyección de la máquina de estados lógicos para el pipeline de victoria
+    if (estadoVictoria == 0) {
+        estadoVictoria = verificarVictoria();
+        if (estadoVictoria != 0) {
+            if (motivoVictoria == 3) {
+                faseVictoria = 1; // Retardo estático para visualizar el bloqueo azul
+                temporizadorFase = 2.0f;
+            }
+            else {
+                faseVictoria = 2; // Salto directo a la saturación verde
+                temporizadorFase = 1.5f;
+            }
+        }
+    }
+    else {
+        temporizadorFase -= dt;
+        if (temporizadorFase <= 0.f) {
+            if (faseVictoria == 1) {
+                faseVictoria = 2;
+                temporizadorFase = 1.5f; // Duración del destello cinemático
+            }
+            else if (faseVictoria == 2) {
+                faseVictoria = 3;
+                temporizadorFase = 4.0f; // Duración del texto de clausura
+            }
+            else if (faseVictoria == 3) {
+                volverAlMenu = true;
+            }
+        }
+        while (ventanaJuego.pollEvent()) {} // Vaciamos el buffer de eventos para impedir interacciones
+        return;
+    }
+
     while (const std::optional<sf::Event> evento = ventanaJuego.pollEvent()) {
         if (evento->is<sf::Event::Closed>()) {
             ventanaJuego.close();
@@ -210,23 +298,18 @@ bool Tablero::esAtaqueValido(Casilla* origen, Casilla* destino) {
     return false;
 }
 
-// Nueva rutina de seguridad: Permite transicionar de estado sin alterar datos prematuramente
 void Tablero::limpiarBanderaCombate() {
     hayCombatePendiente = false;
 }
 
-// Consolidación estructural de eventos post-arena
 void Tablero::procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* atacanteOriginal) {
-    // 1. Gestión del cementerio
     registrarMuerte(perdedor);
     eliminarPiezaDelMapa(perdedor);
 
-    // 2. Ocupación de la coordenada disputada
     if (ganador == atacanteOriginal) {
         moverPiezaACasilla(ganador, coordenadasCombate);
     }
 
-    // 3. Resolución inversa de la bonificación ambiental
     ColorCasilla colorCasilla = getColorCasilla(coordenadasCombate.x, coordenadasCombate.y);
     int porcentajeBono = 0;
     Bando bandoFavorecido = Bando::LUZ;
@@ -246,7 +329,6 @@ void Tablero::procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* a
         ganador->restaurarValoresOriginales(ganador->getVidaBase());
     }
 
-    // 4. Limpieza de punteros de asalto y ciclo de reloj
     atacante = nullptr;
     defensor = nullptr;
     turnosContados++;
@@ -255,6 +337,35 @@ void Tablero::procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* a
 
 void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
     ventanaJuego.setView(vistaEstatica);
+
+    // Renderizado del subestado final: Vacía los buffers visuales y muestra el veredicto en fondo negro
+    if (estadoVictoria != 0 && faseVictoria == 3) {
+        sf::RectangleShape fondoNegro(vistaEstatica.getSize());
+        fondoNegro.setOrigin({ vistaEstatica.getSize().x / 2.f, vistaEstatica.getSize().y / 2.f });
+        fondoNegro.setPosition(vistaEstatica.getCenter());
+        fondoNegro.setFillColor(sf::Color::Black);
+        ventanaJuego.draw(fondoNegro);
+
+        if (estadoVictoria == 1) {
+            textoVictoria.setString("GANADOR BANDO DE LUZ");
+            textoVictoria.setFillColor(sf::Color::Cyan);
+        }
+        else if (estadoVictoria == 2) {
+            textoVictoria.setString("GANADOR BANDO DE OSCURIDAD");
+            textoVictoria.setFillColor(sf::Color::Red);
+        }
+        else {
+            textoVictoria.setString("EMPATE ESTRUCTURAL");
+            textoVictoria.setFillColor(sf::Color::Yellow);
+        }
+
+        sf::FloatRect limites = textoVictoria.getLocalBounds();
+        textoVictoria.setOrigin({ limites.size.x / 2.f, limites.size.y / 2.f });
+        textoVictoria.setPosition(vistaEstatica.getCenter());
+        ventanaJuego.draw(textoVictoria);
+
+        return; // Interrupción crítica del pipeline gráfico
+    }
 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -283,6 +394,17 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
             }
             botonesHechizos[i]->actualizarColorBoton(mousePos);
             botonesHechizos[i]->dibujar(ventanaJuego);
+        }
+    }
+
+    // Proyección de la saturación esmeralda superpuesta al tablero base
+    if (estadoVictoria != 0 && faseVictoria == 2) {
+        if (static_cast<int>(temporizadorFase * 10) % 2 == 0) {
+            sf::RectangleShape fondoVerde(vistaEstatica.getSize());
+            fondoVerde.setOrigin({ vistaEstatica.getSize().x / 2.f, vistaEstatica.getSize().y / 2.f });
+            fondoVerde.setPosition(vistaEstatica.getCenter());
+            fondoVerde.setFillColor(sf::Color(0, 255, 0, 120));
+            ventanaJuego.draw(fondoVerde);
         }
     }
 }
@@ -402,7 +524,8 @@ void Tablero::procesarMagia(Casilla* objetivo) {
     break;
     case 7:
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
-            objetivo->getPieza()->setEncarcelada(3);
+            // Corrección de asimetría: El valor 4 compensa la deducción inmediata al final del turno actual
+            objetivo->getPieza()->setEncarcelada(4);
             registro[7] = true;
         }
         break;
@@ -475,15 +598,15 @@ ColorCasilla Tablero::getColorCasilla(int x, int y) {
     if (x < 0 || x >= 9 || y < 0 || y >= 9) return ColorCasilla::GRIS_CLARO;
     Casilla* c = matriz[x][y];
     if (c->getEsOscilante()) {
-        int fase = turnosContados % 6;
-        switch (fase) {
-        case 0: return ColorCasilla::NEGRO;
-        case 1: return ColorCasilla::GRIS_OSCURO;
-        case 2: return ColorCasilla::GRIS_CLARO;
-        case 3: return ColorCasilla::BLANCO;
-        case 4: return ColorCasilla::GRIS_CLARO;
-        case 5: return ColorCasilla::GRIS_OSCURO;
-        }
+        int fase = (turnosContados / 4) % 4;
+        if (fase == 0) return ColorCasilla::NEGRO;
+        if (fase == 2) return ColorCasilla::BLANCO;
+        return ColorCasilla::GRIS_CLARO;
     }
-    return c->getColorActual();
+    if (c->getEsPuntoDePoder()) {
+        return ColorCasilla::GRIS_CLARO;
+    }
+    if (x <= 1) return ColorCasilla::BLANCO;
+    if (x >= 7) return ColorCasilla::NEGRO;
+    return ColorCasilla::GRIS_CLARO;
 }

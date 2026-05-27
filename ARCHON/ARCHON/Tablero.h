@@ -33,6 +33,15 @@ private:
     std::vector<Pieza*> piezasMuertasOscuridad;
     sf::Vector2i coordenadasCombate;
 
+    // Subsistema de máquina de estados para la cinemática de cierre
+    sf::Clock relojTablero;
+    int estadoVictoria = 0;     // 1: LUZ, 2: OSCURIDAD, 3: EMPATE
+    int motivoVictoria = 0;     // 1: Nodos, 2: Aniquilación, 3: Prisión
+    int faseVictoria = 0;       // 0: Gameplay, 1: Delay Prisión, 2: Parpadeo Verde, 3: Pantalla Negra
+    float temporizadorFase = 0.f;
+    sf::Text textoVictoria;
+    bool volverAlMenu = false;
+
 public:
     Tablero();
     Tablero(float tam, std::string skin);
@@ -47,7 +56,6 @@ public:
     Pieza* getAtacante() const { return atacante; }
     Pieza* getDefensor() const { return defensor; }
 
-    // Refactorización: Desacoplamiento de las rutinas pre y post combate
     void limpiarBanderaCombate();
     void procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* atacanteOriginal);
 
@@ -59,4 +67,7 @@ public:
     void moverPiezaACasilla(Pieza* p, sf::Vector2i destino);
     sf::Vector2i getCoordenadasCombate() const { return coordenadasCombate; }
     ColorCasilla getColorCasilla(int x, int y);
+
+    int verificarVictoria();
+    bool debeVolverAlMenu() const { return volverAlMenu; }
 };
