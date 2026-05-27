@@ -150,6 +150,8 @@
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
     <ClInclude Include="Obstaculos.h" />
+    <ClInclude Include="PantallaNombre.h" />
+    <ClInclude Include="PantallaRanking.h" />
     <ClInclude Include="Pieza.h" />
     <ClInclude Include="PiezaTeletransporte.h" />
     <ClInclude Include="PiezaTerrestre.h" />
@@ -179,6 +181,7 @@
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
     <ClCompile Include="Obstaculos.cpp" />
+    <ClCompile Include="PantallaNombre.cpp" />
     <ClCompile Include="Pieza.cpp" />
     <ClCompile Include="PiezaTeletransporte.cpp" />
     <ClCompile Include="PiezaTerrestre.cpp" />

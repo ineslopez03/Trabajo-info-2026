@@ -1,1 +1,48 @@
-Aquí hay un manual de Archon
+[ REGLAS GENERALES ]
+
+1. OBJETIVO:
+Dominar el tablero eliminando al rival 
+o capturando los 5 Puntos de Poder
+2. CONTROLES EN EL TABLERO:
+- Click Izquierdo: Seleccionar pieza 
+  y marcar destino de movimiento.
+- El juego cambia de turno de forma
+  automatica tras un movimiento valido.
+
+3. CONTROLES EN LA ARENA:
+- BANDO LUZ:   Mover con W, A, S, D
+               Atacar con Tecla 2
+- BANDO OSCURO: Mover con Flechas
+                Atacar con Tecla 0
+
+4. EFECTO TERRENO:
+Combatir en casillas de tu propio bando 
+otorga bonificacion de vida en la arena.
+
+== HECHIZOS ==
+[ SISTEMA DE HECHIZOS ]
+
+Solo puedes utilizar UNO en toda la partida, 
+asi que piensa bien cuando activarlo:
+
+- Teleport: Mueve una pieza aliada a
+  otra casilla valida. 
+
+- Heal: Cura completamente la vida de
+  una pieza aliada. 
+
+- Shift Time: Altera el ciclo de
+  oscilacion de las casillas.
+
+- Exchange: Intercambia la posicion
+  de dos piezas seleccionadas. 
+
+- Summon: Invoca un elemental temporal
+  para luchar contra una pieza enemiga. 
+
+- Revive: Resucita la ultima pieza aliada
+  caida junto al hechicero. 
+
+- Imprison: Bloquea el movimiento de una
+  pieza rival segun los ciclos de color.
+ 

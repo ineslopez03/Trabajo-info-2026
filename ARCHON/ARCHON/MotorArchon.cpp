@@ -2,6 +2,8 @@
 #include "Tablero.h"
 #include "Arena.h"
 #include "MenuPrincipal.h"
+#include "PantallaNombre.h" 
+#include"PantallaRanking.h"
 #include <optional>
 
 MotorArchon::MotorArchon() {
@@ -12,12 +14,15 @@ MotorArchon::MotorArchon() {
     ejecutando = true;
     miTablero = nullptr;
     skinActual = "ARCHON";
+    miPantallaNombre = nullptr; 
+    miPantallaRanking = nullptr;
 }
 
 MotorArchon::~MotorArchon() {
     if (pantallaActiva != nullptr) delete pantallaActiva;
     if (jugador1 != nullptr) delete jugador1;
     if (jugador2 != nullptr) delete jugador2;
+    if (miPantallaNombre != nullptr) delete miPantallaNombre;
 }
 
 void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, std::string skinSeleccionada) {
@@ -46,6 +51,26 @@ void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, s
             pantallaActiva = new Arena(p1, p2, skinActual, p1);
         }
         break;
+    case EstadoJuego::INGRESAR_NOMBRE: 
+    {
+        Bando bandoGanadorCompleto = Bando::LUZ;
+        if (miTablero != nullptr) {
+            
+            int veredicto = miTablero->verificarVictoria();
+            if (veredicto == 2) {
+                bandoGanadorCompleto = Bando::OSCURIDAD;
+            }
+        }
+        miPantallaNombre = new PantallaNombre(bandoGanadorCompleto);
+    }
+    break;
+    case EstadoJuego::RANKING:
+        ventana.setView(ventana.getDefaultView());
+        if (miPantallaRanking != nullptr) {
+            delete miPantallaRanking;
+        }
+        miPantallaRanking = new PantallaRanking();
+        break;
     case EstadoJuego::FIN:
         ejecutando = false;
         break;
@@ -54,21 +79,43 @@ void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, s
 
 void MotorArchon::bucle() {
     while (ejecutando && ventana.isOpen()) {
-        if (pantallaActiva != nullptr) {
+        if (estadoActual == EstadoJuego::INGRESAR_NOMBRE && miPantallaNombre != nullptr) {
+            miPantallaNombre->procesarEntrada(ventana);
+            if (miPantallaNombre->esTransicionLista()) {
+                delete miPantallaNombre;
+                miPantallaNombre = nullptr;
+                cambiarEstado(EstadoJuego::MENU);
+            }
+        }
+        else if (estadoActual == EstadoJuego::RANKING && miPantallaRanking != nullptr) {
+            miPantallaRanking->procesarEntrada(ventana);
+            if (miPantallaRanking->esTransicionLista()) {
+                delete miPantallaRanking;
+                miPantallaRanking = nullptr;
+                cambiarEstado(EstadoJuego::MENU);
+            }
+        }
+        else if (pantallaActiva != nullptr) {
             pantallaActiva->procesarEntrada(ventana);
             if (estadoActual == EstadoJuego::MENU) {
                 MenuPrincipal* menu = dynamic_cast<MenuPrincipal*>(pantallaActiva);
-                if (menu != nullptr && menu->getIniciarJuego()) {
-                    cambiarEstado(EstadoJuego::TABLERO, nullptr, nullptr, menu->getSkinSeleccionada());
+                if (menu != nullptr) {
+                    if (menu->getIniciarJuego()) {
+                        cambiarEstado(EstadoJuego::TABLERO, nullptr, nullptr, menu->getSkinSeleccionada());
+                    }
+                    else if (menu->getVerRanking()) { 
+                        cambiarEstado(EstadoJuego::RANKING);
+                    }
                 }
             }
 
             if (estadoActual == EstadoJuego::TABLERO) {
                 Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva);
                 if (tab != nullptr) {
-                    // Evaluación transversal de la directiva de finalización
                     if (tab->debeVolverAlMenu()) {
-                        cambiarEstado(EstadoJuego::MENU);
+                        cambiarEstado(EstadoJuego::INGRESAR_NOMBRE);
+                        delete miTablero;
+                        miTablero = nullptr;
                     }
                     else if (tab->getHaycombate()) {
                         casillaDestinoCombate = tab->getCoordenadasCombate();
@@ -118,10 +165,18 @@ void MotorArchon::bucle() {
                     }
                 }
             }
-            ventana.clear();
-            pantallaActiva->dibujarPantalla(ventana);
-            ventana.display();
         }
+        ventana.clear();
+        if (estadoActual == EstadoJuego::INGRESAR_NOMBRE && miPantallaNombre != nullptr) {
+            miPantallaNombre->dibujar(ventana);
+        }
+        else if (estadoActual == EstadoJuego::RANKING && miPantallaRanking != nullptr) {
+            miPantallaRanking->dibujarPantalla(ventana);
+        }
+        else if (pantallaActiva != nullptr) {
+            pantallaActiva->dibujarPantalla(ventana);
+        }
+        ventana.display();
     }
 }
 

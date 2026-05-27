@@ -1,5 +1,7 @@
 #include "MenuPrincipal.h"
 #include <iostream>
+#include<fstream>
+#include<sstream>
 
 MenuPrincipal::MenuPrincipal() : SpriteFondo(FondoMenu), Titulos(FuenteMenu) {
     EstadoInterno = OpcionesMenu::PRINCIPAL;
@@ -38,6 +40,7 @@ MenuPrincipal::MenuPrincipal() : SpriteFondo(FondoMenu), Titulos(FuenteMenu) {
     SpriteFondo.setScale(sf::Vector2f(EscalaX, EscalaY));
 
     inicializarBotones();
+    cargarTextoManual();
 }
 
 MenuPrincipal::~MenuPrincipal() {}
@@ -68,6 +71,7 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
     case OpcionesMenu::SELECCION_MODO: actualizar(BotonesSeleccionModo); break;
     case OpcionesMenu::IA_NODISPONIBLE: actualizar(BotonVolverIA); break;
     case OpcionesMenu::SELECCION_SKIN: actualizar(BotonesSeleccionSkin); break;
+    case OpcionesMenu::MANUAL_GRAFICO: actualizar(BotonesManual); break;
     }
 
     while (auto evento = ventana.pollEvent()) {
@@ -79,7 +83,7 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
                 if (EstadoInterno == OpcionesMenu::PRINCIPAL) {
                     if (BotonesMenuPrincipal[0].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::SELECCION_MODO;
                     if (BotonesMenuPrincipal[2].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::RANKING;
-                    if (BotonesMenuPrincipal[3].botonContieneRaton(PosRaton)) system("start Manual.txt");
+                    if (BotonesMenuPrincipal[3].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::MANUAL_GRAFICO;
                     if (BotonesMenuPrincipal[4].botonContieneRaton(PosRaton)) ventana.close();
                 }
                 else if (EstadoInterno == OpcionesMenu::SELECCION_MODO) {
@@ -100,6 +104,10 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
                 else if (EstadoInterno == OpcionesMenu::IA_NODISPONIBLE) {
                     if (BotonVolverIA[0].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::SELECCION_MODO;
                 }
+                else if (EstadoInterno == OpcionesMenu::MANUAL_GRAFICO) {
+                    if (BotonesManual[0].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::PRINCIPAL; 
+                
+                }
             }
         }
     }
@@ -115,6 +123,7 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
     case OpcionesMenu::SELECCION_MODO: Titulos.setCharacterSize(80); titulo = "MODO DE JUEGO"; break;
     case OpcionesMenu::IA_NODISPONIBLE: Titulos.setCharacterSize(50); titulo = "DLC-IA POR 99 EUROS"; break;
     case OpcionesMenu::SELECCION_SKIN: Titulos.setCharacterSize(100); titulo = "TEMATICA"; break;
+    case OpcionesMenu::MANUAL_GRAFICO: Titulos.setCharacterSize(60); titulo = "MANUAL"; break;
     }
 
     
@@ -130,6 +139,26 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
     case OpcionesMenu::SELECCION_MODO: dibujarLista(BotonesSeleccionModo); break;
     case OpcionesMenu::IA_NODISPONIBLE: dibujarLista(BotonVolverIA); break;
     case OpcionesMenu::SELECCION_SKIN: dibujarLista(BotonesSeleccionSkin); break;
+    case OpcionesMenu::MANUAL_GRAFICO:
+    {
+        sf::RectangleShape fondoMorado;
+        fondoMorado.setSize(sf::Vector2f(860.0f, 660.0f)); 
+        fondoMorado.setFillColor(sf::Color(35, 15, 55, 230)); 
+        fondoMorado.setOutlineColor(sf::Color(150, 60, 240)); 
+        fondoMorado.setOutlineThickness(3.0f);
+        fondoMorado.setPosition(sf::Vector2f(120.0f, 130.0f)); 
+        ventana.draw(fondoMorado);
+
+        for (const auto& linea : lineasReglas) {
+            ventana.draw(linea);
+        }
+        for (const auto& linea : lineasHechizos) {
+            ventana.draw(linea);
+        }
+        dibujarLista(BotonesManual);
+    }
+    break;
+        
     }
 }
 
@@ -160,4 +189,56 @@ void MenuPrincipal::inicializarBotones() {
     BotonVolverIA.push_back(Boton(cx, 250.0f, ancho, alto, "NO DISPONIBLE-VOLVER", FuenteMenu));
     BotonesRanking.clear();
     BotonesRanking.push_back(Boton(cx, 250.0f, ancho, alto, "VOLVER", FuenteMenu));
+    
+    BotonesManual.clear();
+    BotonesManual.push_back(Boton(cx, 800.0f,ancho,alto, "VOLVER", FuenteMenu));
+   
+}
+void MenuPrincipal::cargarTextoManual() {
+    std::ifstream archivo("Manual.txt");
+    std::string linea;
+
+    
+    lineasReglas.clear();
+    lineasHechizos.clear();
+
+    if (!archivo.is_open()) {
+        sf::Text errorTxt(FuenteMenu);
+        errorTxt.setString("Error: No se pudo encontrar el archivo 'Manual.txt'");
+        errorTxt.setCharacterSize(20);
+        errorTxt.setFillColor(sf::Color::Red);
+        errorTxt.setPosition(sf::Vector2f(100.f, 150.f));
+        lineasReglas.push_back(errorTxt);
+        return;
+    }
+
+    float yOffset = 150.0f; 
+    bool leyendoHechizos = false; 
+    while (std::getline(archivo, linea)) {
+        
+        if (linea == "== HECHIZOS ==") {
+            leyendoHechizos = true;
+            yOffset = 150.0f; 
+            continue;         
+        }
+
+        sf::Text t(FuenteMenu);
+        t.setString(linea);
+        t.setCharacterSize(14);
+        t.setFillColor(sf::Color::White);
+
+        if (!leyendoHechizos) {
+           
+            t.setPosition(sf::Vector2f(140.0f, yOffset));
+            lineasReglas.push_back(t);
+        }
+        else {
+           
+            t.setPosition(sf::Vector2f(560.0f, yOffset));
+            lineasHechizos.push_back(t);
+        }
+
+        yOffset += 20.0f; 
+    }
+    archivo.close();
 }
