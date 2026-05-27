@@ -305,34 +305,46 @@ void Tablero::limpiarBanderaCombate() {
 void Tablero::procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* atacanteOriginal) {
     registrarMuerte(perdedor);
     eliminarPiezaDelMapa(perdedor);
-
-    if (ganador == atacanteOriginal) {
-        moverPiezaACasilla(ganador, coordenadasCombate);
-    }
-
-    ColorCasilla colorCasilla = getColorCasilla(coordenadasCombate.x, coordenadasCombate.y);
-    int porcentajeBono = 0;
-    Bando bandoFavorecido = Bando::LUZ;
-
-    if (colorCasilla == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
-    else if (colorCasilla == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
-    else if (colorCasilla == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
-    else if (colorCasilla == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
-
-    if (ganador->getBando() == bandoFavorecido && porcentajeBono > 0) {
-        int vidaConBono = ganador->getVidaBase();
-        int vidaOriginal = static_cast<int>(vidaConBono / (1.0f + (porcentajeBono / 100.0f)));
-        if (vidaOriginal <= 0 && vidaConBono > 0) vidaOriginal = 1;
-        ganador->restaurarValoresOriginales(vidaOriginal);
+    bool* registro = (turnoActual == Bando::LUZ) ? hechizosLuzUsados : hechizosOscurosUsados;
+    if (atacanteOriginal == atacante && hechizoSeleccionado == 5) {
+        if (ganador == atacanteOriginal) {
+            delete ganador;
+            std::cout << "El Elemental vencio y se desvanecio en el eter." << std::endl;
+        }
+        else {
+            ganador->restaurarValoresOriginales(ganador->getVidaBase());
+        }
     }
     else {
-        ganador->restaurarValoresOriginales(ganador->getVidaBase());
-    }
 
+        if (ganador == atacanteOriginal) {
+            moverPiezaACasilla(ganador, coordenadasCombate);
+        }
+
+        ColorCasilla colorCasilla = getColorCasilla(coordenadasCombate.x, coordenadasCombate.y);
+        int porcentajeBono = 0;
+        Bando bandoFavorecido = Bando::LUZ;
+
+        if (colorCasilla == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
+        else if (colorCasilla == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
+        else if (colorCasilla == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
+        else if (colorCasilla == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
+
+        if (ganador->getBando() == bandoFavorecido && porcentajeBono > 0) {
+            int vidaConBono = ganador->getVidaBase();
+            int vidaOriginal = static_cast<int>(vidaConBono / (1.0f + (porcentajeBono / 100.0f)));
+            if (vidaOriginal <= 0 && vidaConBono > 0) vidaOriginal = 1;
+            ganador->restaurarValoresOriginales(vidaOriginal);
+        }
+        else {
+            ganador->restaurarValoresOriginales(ganador->getVidaBase());
+        }
+    }
     atacante = nullptr;
     defensor = nullptr;
     turnosContados++;
     turnoActual = (turnoActual == Bando::LUZ) ? Bando::OSCURIDAD : Bando::LUZ;
+
 }
 
 void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
@@ -479,52 +491,57 @@ void Tablero::procesarMagia(Casilla* objetivo) {
         }
         break;
     case 5:
-        if (piezaAuxiliar == nullptr) {
-            if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == turnoActual) {
-                piezaAuxiliar = objetivo;
-                std::cout << "Pieza seleccionada para invocar. Elige casilla vacia junto al Hechicero." << std::endl;
-                return;
-            }
+        if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
+            this->coordenadasCombate = sf::Vector2i(objetivo->getX(), objetivo->getY());
+            this->atacante = new Golem(turnoActual, skinActual);
+            this->defensor = objetivo->getPieza();
+            this->hayCombatePendiente = true;
+            registro[5] = true;
+            std::cout << "¡Elemental invocado! Iniciando combate directo contra el enemigo." << std::endl;
         }
         else {
-            if (!objetivo->estaOcupada()) {
-                objetivo->setPieza(piezaAuxiliar->getPieza());
-                piezaAuxiliar->setPieza(nullptr);
-                registro[5] = true;
-                std::cout << "¡Invocacion completada!" << std::endl;
-                piezaAuxiliar = nullptr;
-            }
-            else {
-                std::cout << "El destino de la invocacion debe estar vacio." << std::endl;
-                return;
-            }
+            std::cout << "Debes seleccionar una pieza ENEMIGA para enviar al Elemental a luchar." << std::endl;
+            return;
         }
         break;
     case 6:
     {
         std::vector<Pieza*>& cementerio = (turnoActual == Bando::LUZ) ? piezasMuertasLuz : piezasMuertasOscuridad;
         if (cementerio.empty()) {
-            std::cout << "No hay piezas para revivir." << std::endl;
+            std::cout << "No hay piezas en el cementerio para revivir." << std::endl;
             modoHechizoActivo = false;
             return;
         }
-        if (!objetivo->estaOcupada()) {
+
+        if (objetivo->estaOcupada()) {
+            std::cout << "La casilla destino debe estar vacia." << std::endl;
+            return;
+        }
+        int hX = -1, hY = -1;
+        if (origenSeleccionado != nullptr) {
+            hX = origenSeleccionado->getX();
+            hY = origenSeleccionado->getY();
+        }
+        int diffX = std::abs(objetivo->getX() - hX);
+        int diffY = std::abs(objetivo->getY() - hY);
+
+        if (diffX <= 1 && diffY <= 1) {
             Pieza* pRevivida = cementerio.back();
             cementerio.pop_back();
             pRevivida->resetVida();
             objetivo->setPieza(pRevivida);
+
             registro[6] = true;
-            std::cout << "¡Pieza revivida con exito!" << std::endl;
+            std::cout << "¡Pieza revivida con exito junto al Hechicero!" << std::endl;
         }
         else {
-            std::cout << "La casilla destino debe estar vacia." << std::endl;
+            std::cout << "Error: Debes elegir una casilla adyacente (junto) al Hechicero." << std::endl;
             return;
         }
     }
     break;
     case 7:
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
-            // Corrección de asimetría: El valor 4 compensa la deducción inmediata al final del turno actual
             objetivo->getPieza()->setEncarcelada(4);
             registro[7] = true;
         }
