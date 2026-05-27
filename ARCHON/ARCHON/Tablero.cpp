@@ -489,6 +489,7 @@ void Tablero::procesarMagia(Casilla* objetivo) {
                 std::cout << "¡Intercambio completado!" << std::endl;
             }
         }
+
         break;
     case 5:
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
