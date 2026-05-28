@@ -5,114 +5,101 @@
 #include <fstream>
 #include <iostream>
 #include <optional>
+#include "Boton.h"
 
 class PantallaRanking {
 private:
     sf::Font fuente;
-    sf::Text* titulo;   
-    std::vector<sf::Text*> lineasRanking; 
-    sf::RectangleShape botonVolver;
-    sf::Text* textoVolver;      
+    sf::Text* titulo;
+    std::vector<sf::Text> lineasRanking;
+    std::vector<Boton> botones;
+    sf::Texture* fondoTextura;
+    sf::Sprite* fondoSprite;
     bool transicionMenu;
 
 public:
-    PantallaRanking() {
-        transicionMenu = false;
-
-        if (!fuente.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-            std::cout << "Error al cargar la fuente en Ranking." << std::endl;
+    PantallaRanking() : transicionMenu(false) {
+        if (!fuente.openFromFile("../ARCHON/fuentes/Rush Zone.otf")) {
+            std::cout << "Error fuente" << std::endl;
         }
 
- 
-        titulo = new sf::Text(fuente);
-        titulo->setString("TOP RANKING - ARCHON");
-        titulo->setCharacterSize(45);
-        titulo->setFillColor(sf::Color::Yellow);
-        titulo->setPosition({ 350.f, 50.f });
+        titulo = new sf::Text(fuente, "RANKING", 60);
+        titulo->setFillColor(sf::Color::White);
+        titulo->setOutlineThickness(4.0f);
+        titulo->setOutlineColor(sf::Color::Black);
 
- 
-        botonVolver.setSize({ 200.f, 60.f });
-        botonVolver.setFillColor(sf::Color(50, 50, 50));
-        botonVolver.setOutlineThickness(2.f);
-        botonVolver.setOutlineColor(sf::Color::White);
-        botonVolver.setPosition({ 450.f, 700.f });
-        textoVolver = new sf::Text(fuente);
-        textoVolver->setString("VOLVER");
-        textoVolver->setCharacterSize(25);
-        textoVolver->setFillColor(sf::Color::White);
-        sf::FloatRect bounds = textoVolver->getLocalBounds();
-        textoVolver->setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
-        textoVolver->setPosition({ 450.f + 100.f, 700.f + 30.f });
+        fondoTextura = new sf::Texture();
+        if (fondoTextura->loadFromFile("../ARCHON/imagenes/Fondo Menu 800x800.png")) {
+            fondoSprite = new sf::Sprite(*fondoTextura);
+            fondoSprite->setScale({ 1100.0f / fondoTextura->getSize().x, 855.0f / fondoTextura->getSize().y });
+        }
+        else {
+            fondoSprite = new sf::Sprite(*fondoTextura);
+        }
 
+        botones.emplace_back(400.0f, 750.0f, 300.0f, 50.0f, "VOLVER", fuente);
         cargarDatos();
     }
+
     ~PantallaRanking() {
-        if (titulo != nullptr) delete titulo;
-        if (textoVolver != nullptr) delete textoVolver;
-        for (auto* linea : lineasRanking) {
-            if (linea != nullptr) delete linea;
-        }
-        lineasRanking.clear();
+        delete titulo;
+        delete fondoSprite;
+        delete fondoTextura;
     }
 
     void cargarDatos() {
+        lineasRanking.clear();
         std::ifstream archivo("ranking.txt");
         std::string nombre;
         int victorias;
-        float posY = 150.f;
+        float posY = 180.f;
 
         if (archivo.is_open()) {
             int puesto = 1;
-            while (archivo >> nombre >> victorias && puesto <= 10) { // Mostramos el Top 10
-                sf::Text* textoLinea = new sf::Text(fuente);
-                textoLinea->setString(std::to_string(puesto) + ". " + nombre + "  -  " + std::to_string(victorias) + " " + (victorias == 1 ? "Victoria" : "Victorias"));
-                textoLinea->setCharacterSize(30);
-                textoLinea->setFillColor(sf::Color::White);
-                textoLinea->setPosition({ 350.f, posY });
+            while (archivo >> nombre >> victorias && puesto <= 10) {
+                sf::Text t(fuente, std::to_string(puesto) + ". " + nombre + " - " + std::to_string(victorias) + " Victorias", 30);
+                t.setFillColor(sf::Color::White);
 
-                lineasRanking.push_back(textoLinea);
-                posY += 50.f;
+                sf::FloatRect b = t.getLocalBounds();
+                t.setOrigin({ b.size.x / 2.f, 0.f });
+                t.setPosition({ 550.f, posY });
+
+                lineasRanking.push_back(t);
+                posY += 60.f;
                 puesto++;
             }
             archivo.close();
         }
-
-        if (lineasRanking.empty()) {
-            sf::Text* textoVacio = new sf::Text(fuente);
-            textoVacio->setString("No hay partidas registradas aun.");
-            textoVacio->setCharacterSize(30);
-            textoVacio->setFillColor(sf::Color::Cyan);
-            textoVacio->setPosition({ 350.f, 250.f });
-            lineasRanking.push_back(textoVacio);
-        }
     }
 
     void procesarEntrada(sf::RenderWindow& ventana) {
+        sf::Vector2f mousePos = ventana.mapPixelToCoords(sf::Mouse::getPosition(ventana));
         while (const std::optional<sf::Event> evento = ventana.pollEvent()) {
-            if (evento->is<sf::Event::Closed>()) {
-                ventana.close();
-            }
-
-            if (const auto* mouseClick = evento->getIf<sf::Event::MouseButtonPressed>()) {
-                if (mouseClick->button == sf::Mouse::Button::Left) {
-                    sf::Vector2i posRaton = sf::Mouse::getPosition(ventana);
-                    sf::Vector2f posMapeada = ventana.mapPixelToCoords(posRaton);
-
-                    if (botonVolver.getGlobalBounds().contains(posMapeada)) {
-                        transicionMenu = true;
-                    }
+            if (evento->is<sf::Event::Closed>()) ventana.close();
+            if (const auto* click = evento->getIf<sf::Event::MouseButtonPressed>()) {
+                if (click->button == sf::Mouse::Button::Left) {
+                    if (botones[0].botonContieneRaton(mousePos)) transicionMenu = true;
                 }
             }
         }
+        botones[0].actualizarColorBoton(mousePos);
     }
 
     void dibujarPantalla(sf::RenderWindow& ventana) {
-        if (titulo != nullptr) ventana.draw(*titulo);
-        for (auto* linea : lineasRanking) {
-            if (linea != nullptr) ventana.draw(*linea);
-        }
-        ventana.draw(botonVolver);
-        if (textoVolver != nullptr) ventana.draw(*textoVolver);
+        ventana.draw(*fondoSprite);
+        sf::FloatRect bounds = titulo->getLocalBounds();
+        titulo->setPosition({ (1100.0f - bounds.size.x) / 2.0f, 50.0f });
+        ventana.draw(*titulo);
+
+        sf::RectangleShape fondoMorado({ 700.0f, 600.0f });
+        fondoMorado.setFillColor(sf::Color(35, 15, 55, 230));
+        fondoMorado.setOutlineColor(sf::Color(150, 60, 240));
+        fondoMorado.setOutlineThickness(3.0f);
+        fondoMorado.setPosition({ 200.0f, 130.0f });
+        ventana.draw(fondoMorado);
+
+        for (auto& l : lineasRanking) ventana.draw(l);
+        for (auto& b : botones) b.dibujar(ventana);
     }
 
     bool esTransicionLista() const { return transicionMenu; }

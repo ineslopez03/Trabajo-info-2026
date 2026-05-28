@@ -1,7 +1,6 @@
 #pragma once
 #include "InterfazUsuario.h"
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include "Boton.h"
 #include <vector>
 #include <string>
@@ -22,7 +21,6 @@ private:
 
     sf::Texture FondoMenu, FondoHarryPotter, FondoStarWars, FondoArchon;
     sf::Sprite SpriteFondo;
-    sf::Music MusicaFondo;
     sf::Text Titulos;
 
     std::vector<Boton> BotonesMenuPrincipal;

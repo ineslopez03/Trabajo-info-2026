@@ -16,6 +16,11 @@ MotorArchon::MotorArchon() {
     skinActual = "ARCHON";
     miPantallaNombre = nullptr; 
     miPantallaRanking = nullptr;
+    if (MusicaFondo.openFromFile("../ARCHON/Musica/MusicaFondo.mp3")) {
+        MusicaFondo.setVolume(50.0f);
+        MusicaFondo.setLooping(true);
+        MusicaFondo.play();
+    }
 }
 
 MotorArchon::~MotorArchon() {
@@ -26,6 +31,14 @@ MotorArchon::~MotorArchon() {
 }
 
 void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, std::string skinSeleccionada) {
+    if (nuevoEstado == EstadoJuego::TABLERO || nuevoEstado == EstadoJuego::ARENA) {
+        MusicaFondo.pause(); 
+    }
+    else {
+        if (MusicaFondo.getStatus() != sf::SoundSource::Status::Playing) {
+            MusicaFondo.play();
+        }
+    }
     if (pantallaActiva != nullptr && pantallaActiva != miTablero) {
         delete pantallaActiva;
     }

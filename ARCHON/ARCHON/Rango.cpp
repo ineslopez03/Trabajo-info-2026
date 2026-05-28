@@ -1,6 +1,6 @@
 #include "Rango.h"
 #include <iostream>
-std::string obtenerRutaRango(Bando b, std::string skin) {
+static std::string obtenerRutaRango(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
         // Carpeta HP + nombres específicos
         return (b == Bando::LUZ) ? "imagenes/HP/Ginny.png" : "imagenes/HP/Bellatrix.png";

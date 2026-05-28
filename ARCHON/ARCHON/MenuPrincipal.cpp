@@ -18,15 +18,6 @@ MenuPrincipal::MenuPrincipal() : SpriteFondo(FondoMenu), Titulos(FuenteMenu) {
     Titulos.setOutlineThickness(4.0f);
     Titulos.setOutlineColor(sf::Color::Black);
 
-    if (!MusicaFondo.openFromFile("../ARCHON/Musica/MusicaFondo.mp3")) {
-        std::cout << "Error cargando la Musica\n\n";
-    }
-    else {
-        MusicaFondo.setVolume(50.0f);
-        MusicaFondo.setLooping(true);
-        MusicaFondo.play();
-    }
-
     // Carga de texturas de fondo
     if (!FondoMenu.loadFromFile("../ARCHON/imagenes/Fondo Menu 800x800.png")) std::cout << "Error fondo menu\n";
     if (!FondoStarWars.loadFromFile("../ARCHON/imagenes/DarthVaderEpica.png")) std::cout << "Error fondo SW\n";

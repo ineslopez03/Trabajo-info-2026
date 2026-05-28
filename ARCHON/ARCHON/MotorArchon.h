@@ -1,11 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "InterfazUsuario.h"
 #include "GestorArchivos.h"
 #include "Pieza.h"
 #include "Jugador.h"
 #include "JugadorHumano.h"
 #include "JugadorIA.h"
+
 
 class Tablero;
 enum class EstadoJuego { MENU, TABLERO, ARENA, FIN,INGRESAR_NOMBRE,RANKING };
@@ -15,7 +17,7 @@ class MotorArchon
 {
 private:
     sf::RenderWindow ventana;
-
+    sf::Music MusicaFondo;
     EstadoJuego estadoActual;
     InterfazUsuario* pantallaActiva;
     GestorArchivos guardado;
