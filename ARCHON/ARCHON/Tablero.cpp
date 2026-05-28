@@ -540,7 +540,7 @@ void Tablero::procesarMagia(Casilla* objetivo) {
     break;
     case 7:
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
-            objetivo->getPieza()->setEncarcelada(4);
+            objetivo->getPieza()->setEncarcelada(2);
             if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
         }
         break;
