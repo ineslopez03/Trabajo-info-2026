@@ -16,7 +16,8 @@ Proyecto de informatica industrial y comunicaciones inspirado en el juego Archon
 -Una vez seleccionado el ambiente se cargará un tablero de 9x9 con 8 piezas distintas por bando.
 
 #Cada pieza se comporta de una forma específica:
-******************(ARCHON,HARRY POTTER,STAR WARS)*********************
+**********************************************************************
+/////////////////////(ARCHON,HARRY POTTER,STAR WARS)/////////////////////////
 LUZ:CABALLERO,DOBBY,REBELDE || OSCURIDAD:GOBLIN,GRIPHOOK,STORMTROOPER
 
 LUZ:ARQUERO,HARRY POTTER,HAN SOLO || OSCURIDAD:MANTICORA,DOLORES UMBRIDGE,BOBBA FETT
