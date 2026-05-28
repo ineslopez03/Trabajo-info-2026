@@ -3,6 +3,7 @@
 1. OBJETIVO:
 Dominar el tablero eliminando al rival 
 o capturando los 5 Puntos de Poder
+
 2. CONTROLES EN EL TABLERO:
 - Click Izquierdo: Seleccionar pieza 
   y marcar destino de movimiento.

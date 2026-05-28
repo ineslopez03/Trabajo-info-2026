@@ -73,9 +73,9 @@ void MenuPrincipal::procesarEntrada(sf::RenderWindow& ventana) {
             if (click->button == sf::Mouse::Button::Left) {
                 if (EstadoInterno == OpcionesMenu::PRINCIPAL) {
                     if (BotonesMenuPrincipal[0].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::SELECCION_MODO;
-                    if (BotonesMenuPrincipal[2].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::RANKING;
-                    if (BotonesMenuPrincipal[3].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::MANUAL_GRAFICO;
-                    if (BotonesMenuPrincipal[4].botonContieneRaton(PosRaton)) ventana.close();
+                    if (BotonesMenuPrincipal[1].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::RANKING;
+                    if (BotonesMenuPrincipal[2].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::MANUAL_GRAFICO;
+                    if (BotonesMenuPrincipal[3].botonContieneRaton(PosRaton)) ventana.close();
                 }
                 else if (EstadoInterno == OpcionesMenu::SELECCION_MODO) {
                     if (BotonesSeleccionModo[0].botonContieneRaton(PosRaton)) EstadoInterno = OpcionesMenu::SELECCION_SKIN;
@@ -120,7 +120,13 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
     
     Titulos.setString(titulo); 
     sf::FloatRect limites = Titulos.getLocalBounds();
-    Titulos.setPosition({ (1100.0f - limites.size.x) / 2.0f, 50.0f - limites.position.y });
+    if (EstadoInterno == OpcionesMenu::MANUAL_GRAFICO) {
+        sf::Vector2f posManual = sf::Vector2f(120.0f, 130.0f);
+        Titulos.setPosition({ posManual.x + (860.0f - limites.size.x) / 2.0f, posManual.y - 80.0f });
+    }
+    else {
+        Titulos.setPosition({ ((1100.0f - limites.size.x) / 2.0f) + 10.0f, 50.0f - limites.position.y });
+    }
     ventana.draw(Titulos);
    
     auto dibujarLista = [&](std::vector<Boton>& lista) { for (auto& b : lista) b.dibujar(ventana); };
@@ -132,13 +138,15 @@ void MenuPrincipal::dibujarPantalla(sf::RenderWindow& ventana) {
     case OpcionesMenu::SELECCION_SKIN: dibujarLista(BotonesSeleccionSkin); break;
     case OpcionesMenu::MANUAL_GRAFICO:
     {
+        sf::Vector2f posManual = sf::Vector2f(120.0f, 130.0f);
         sf::RectangleShape fondoMorado;
         fondoMorado.setSize(sf::Vector2f(860.0f, 660.0f)); 
         fondoMorado.setFillColor(sf::Color(35, 15, 55, 230)); 
         fondoMorado.setOutlineColor(sf::Color(150, 60, 240)); 
         fondoMorado.setOutlineThickness(3.0f);
-        fondoMorado.setPosition(sf::Vector2f(120.0f, 130.0f)); 
+        fondoMorado.setPosition(posManual);
         ventana.draw(fondoMorado);
+
 
         for (const auto& linea : lineasReglas) {
             ventana.draw(linea);
@@ -160,10 +168,9 @@ void MenuPrincipal::inicializarBotones() {
     float alto = 50.0f, esp = 80.0f;
     BotonesMenuPrincipal.clear();
     BotonesMenuPrincipal.push_back(Boton(cx, 250.0f, ancho, alto, "INICIAR PARTIDA", FuenteMenu));
-    BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp, ancho, alto, "CARGAR PARTIDA", FuenteMenu));
-    BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp * 2, ancho, alto, "RANKING", FuenteMenu));
-    BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp * 3, ancho, alto, "MANUAL", FuenteMenu));
-    BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp * 4, ancho, alto, "SALIR", FuenteMenu));
+    BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp, ancho, alto, "RANKING", FuenteMenu));
+    BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp *2, ancho, alto, "MANUAL", FuenteMenu));
+    BotonesMenuPrincipal.push_back(Boton(cx, 250.0f + esp * 3, ancho, alto, "SALIR", FuenteMenu));
 
     BotonesSeleccionModo.clear();
     BotonesSeleccionModo.push_back(Boton(cx, 250.0f, ancho, alto, "JUGADOR VS JUGADOR", FuenteMenu));
