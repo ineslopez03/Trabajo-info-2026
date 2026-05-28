@@ -11,7 +11,7 @@
 #include "Genio.h"
 #include "Fenix.h"
 #include "Hechicero.h"
-#include"Rango.h"
+#include"Elemental.h"
 Tablero::Tablero() : Tablero(95.0f, " ") {}
 
 Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {

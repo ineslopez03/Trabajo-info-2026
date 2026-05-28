@@ -157,7 +157,7 @@
     <ClInclude Include="PiezaTerrestre.h" />
     <ClInclude Include="PiezaVoladora.h" />
     <ClInclude Include="Proyectiles.h" />
-    <ClInclude Include="Rango.h" />
+    <ClInclude Include="Elemental.h" />
     <ClInclude Include="Tablero.h" />
     <ClInclude Include="Unicornio.h" />
     <ClInclude Include="Valquiria.h" />
@@ -187,7 +187,7 @@
     <ClCompile Include="PiezaTerrestre.cpp" />
     <ClCompile Include="PiezaVoladora.cpp" />
     <ClCompile Include="Proyectiles.cpp" />
-    <ClCompile Include="Rango.cpp" />
+    <ClCompile Include="Elemental.cpp" />
     <ClCompile Include="Tablero.cpp" />
     <ClCompile Include="Unicornio.cpp" />
     <ClCompile Include="Valquiria.cpp" />

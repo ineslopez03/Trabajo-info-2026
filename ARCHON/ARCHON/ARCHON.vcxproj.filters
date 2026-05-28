@@ -54,7 +54,7 @@
     <ClInclude Include="PiezaTerrestre.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Rango.h">
+    <ClInclude Include="Elemental.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="PiezaVoladora.h">
@@ -146,7 +146,7 @@
     <ClCompile Include="PiezaTerrestre.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Rango.cpp">
+    <ClCompile Include="Elemental.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="PiezaVoladora.cpp">

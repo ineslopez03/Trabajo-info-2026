@@ -2,6 +2,7 @@
 #include "Pieza.h"
 
 class PiezaVoladora : public Pieza {
+protected: float factorEscalaExtra = 1.0f;
 public:
     PiezaVoladora(int _v, int _d, int _vm, int _va, sf::Texture& _tex, Bando _b)
         : Pieza(_v, _d, _vm, _va, _tex, _b) {
