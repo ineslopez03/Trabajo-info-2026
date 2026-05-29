@@ -198,6 +198,6 @@ void MotorArchon::inicializar() {
     sf::View vistaMenu(sf::FloatRect({ 0.f, 0.f }, { 1100.f, 855.f }));
     ventana.setView(vistaMenu);
     jugador1 = new JugadorHumano("Heroe de la Luz", Bando::LUZ);
-    jugador2 = new JugadorIA("Senor de la Oscuridad", Bando::OSCURIDAD);
+    jugador2 = new JugadorHumano("Senor de la Oscuridad", Bando::OSCURIDAD);
     cambiarEstado(EstadoJuego::MENU);
 }

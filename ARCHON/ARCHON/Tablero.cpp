@@ -452,7 +452,7 @@ void Tablero::inicializarBotones() {
     std::string nombres[] = { "Teleport", "Heal", "Shift Time", "Exchange", "Summon", "Revive", "Imprison" };
     float posX = (9 * tamCasilla) + 20;
     for (int i = 0; i < 7; i++) {
-        float posY = 50 + (i * 70);
+        float posY = 50.0f + ((float)i * 70.0f);
         botonesHechizos.push_back(new Boton(posX, posY, 180, 50, nombres[i], fuente));
     }
 }

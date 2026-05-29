@@ -6,7 +6,6 @@
 #include "Pieza.h"
 #include "Jugador.h"
 #include "JugadorHumano.h"
-#include "JugadorIA.h"
 
 
 class Tablero;

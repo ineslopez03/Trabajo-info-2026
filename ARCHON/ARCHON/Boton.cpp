@@ -31,7 +31,7 @@ void Boton::dibujar(sf::RenderWindow& ventana)//metodo para dibujar el boton
 bool Boton::botonContieneRaton(sf::Vector2f posRaton)//metodo para detectar si el mouse esta encima del boton
 {
 	if (fondo.getGlobalBounds().contains(posRaton))//si el rectangulo del fondo contiene la posicion del raton
-		return true; else false;
+		return true; else return false;
 }
 void Boton::actualizarColorBoton(sf::Vector2f posRaton)//metodo para cambiar el color del boton al pasar por encima
 {

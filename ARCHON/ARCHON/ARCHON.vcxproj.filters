@@ -48,9 +48,6 @@
     <ClInclude Include="JugadorHumano.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="JugadorIA.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="PiezaTerrestre.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -141,9 +138,6 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="JugadorHumano.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="JugadorIA.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="PiezaTerrestre.cpp">
