@@ -18,12 +18,12 @@ PantallaRanking::PantallaRanking() : transicionMenu(false), titulo(fuente), fond
     titulo.setOutlineColor(sf::Color::Black);
 
     if (fondoTextura.loadFromFile("../ARCHON/imagenes/Fondo Menu 800x800.png")) {
-        fondoSprite.setTexture(fondoTextura);
-        fondoSprite.setScale({ 1100.0f / fondoTextura.getSize().x, 855.0f / fondoTextura.getSize().y });
+        fondoSprite.setTexture(fondoTextura, true);//le asignamos la textura del fondo al sprite
+        float EscalaX = 1100.0f / fondoTextura.getSize().x;//se le da un tamaño de 1100x855 para que se adapte al ancho de la ventana
+        float EscalaY = 855.0f / fondoTextura.getSize().y;//se le da un tamaño de 1100x855 para que se adapte al alto de la ventana
+        fondoSprite.setScale(sf::Vector2f(EscalaX, EscalaY));//se le asignan los tamaños al sprite
     }
 
-    // 2. SUBIMOS EL BOTÓN a Y=670 para que no se corte en pantallas de portátiles
-    // Y usamos push_back (como en tu MenuPrincipal)
     botones.push_back(Boton(400.0f, 670.0f, 300.0f, 50.0f, "VOLVER", fuente));
 
     cargarDatos();
