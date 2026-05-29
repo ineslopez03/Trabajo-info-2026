@@ -50,5 +50,4 @@ public:
     bool getIniciarJuego() const { return IniciarJuego; }//si se selecciona la skin se empieza el juego
     std::string getSkinSeleccionada() const { return SkinSeleccionada; }//para obtener la skin que se ha seleccionado 
     bool getVerRanking() const { return EstadoInterno == OpcionesMenu::RANKING; }//para saber si se ha seleccionado el ranking
-    void resetearEstadoMenu() { EstadoInterno = OpcionesMenu::PRINCIPAL; }//para volver al menu principal
 };
