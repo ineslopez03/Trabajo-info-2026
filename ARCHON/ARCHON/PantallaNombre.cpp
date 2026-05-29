@@ -141,7 +141,7 @@ void PantallaNombre::dibujarPantalla(sf::RenderWindow& ventana) {
     //se hace un rectangulo morado semitransparente para que se vea el fondo.
     fondoMorado.setFillColor(sf::Color(20, 10, 30,100));
 	ventana.draw(SpriteFondo);//pintamos el fondo del menú
-    ventana.draw(fondoMorado);
+    ventana.draw(fondoMorado);//luego pinto el rectangulo ....
     ventana.draw(textoTitulo);
     ventana.draw(textoInstrucciones);
     ventana.draw(textoNombre);//pintamos todo por orden, de atras hacia adelante
