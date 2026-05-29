@@ -1,7 +1,8 @@
-#include "Tablero.h"
 #include <iostream>
 #include <optional>
 #include <cmath>
+#include "Tablero.h"
+#include"GestorHechizos.h"
 #include "Casilla.h"
 #include "Caballero.h"
 #include "Golem.h"
@@ -11,23 +12,24 @@
 #include "Genio.h"
 #include "Fenix.h"
 #include "Hechicero.h"
-#include"Elemental.h"
-Tablero::Tablero() : Tablero(95.0f, " ") {}
 
+
+Tablero::Tablero() : Tablero(95.0f, " ") {}
+//Constructor por defecto:usa tamaño casilla 95px y sin skin especial
 Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {
-    tamCasilla = _tamano;
-    skinActual = skin;
-    turnoActual = Bando::LUZ;
-    primerClicRealizado = false;
+    tamCasilla = _tamano;//tamaño en pixeles de cada casilla
+    skinActual = skin;//nombre del pack de imágenes
+    turnoActual = Bando::LUZ;//siempre empieza LUZ
+    primerClicRealizado = false;//aún no se ha seleccionado ninguna pieza
     origenSeleccionado = nullptr;
-    piezaAuxiliar = nullptr;
+    piezaAuxiliar = nullptr;//casilla auxiliar usada para algunos hechizos(Teleport y Exchange)
     hayCombatePendiente = false;
     atacante = nullptr;
     defensor = nullptr;
-    turnosContados = 0;
+    turnosContados = 0;//contador global de turnos,controla el ciclo de colores
 
-    estadoVictoria = 0;
-    motivoVictoria = 0;
+    estadoVictoria = 0;// 0=jugando,1=gana LUZ,2=gana OSCURIDAD, 3=empate;
+    motivoVictoria = 0;//1=nodos,2=aniquilación
     faseVictoria = 0;
     temporizadorFase = 0.f;
     volverAlMenu = false;
@@ -48,6 +50,7 @@ Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {
     for (int i = 0; i < 8; i++) {
         hechizosLuzUsados[i] = false;
         hechizosOscurosUsados[i] = false;
+        //Rastrean qué hechizos se han gastado
     }
     if (!fuente.openFromFile("C:/Windows/Fonts/arial.ttf")) {
         std::cout << "Ni siquiera encontre la fuente del sistema." << std::endl;
@@ -58,7 +61,8 @@ Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {
     textoVictoria.setOutlineColor(sf::Color::Black);
 
     inicializarBotones();
-}
+}// Inicializa todos los atributos de estado del tablero
+//La vista estática define el área visible(9 casillas * tamCasilla)
 
 Tablero::~Tablero() {
     for (int i = 0; i < 9; i++) {
@@ -103,63 +107,60 @@ void Tablero::inicializarTablero() {
         matriz[7][j]->setPieza(new Caballero(Bando::OSCURIDAD, skinActual));
     }
     matriz[7][8]->setPieza(new Arquero(Bando::OSCURIDAD, skinActual));
-}
+}// Coloca las piezas en su posición inicial de Archon:
+//Fila 0(LUZ): Valquiria-Golem-Unicornio-Genio-Hechicero-Fenix-Unicornio-Golem-Valquiria
+//Fila 1(LUZ): Arquero en extremos,Caballeros en el centro
+//Fila 8 y 7(Oscuridad): espejo exacto
 
 int Tablero::verificarVictoria() {
     int contadorLuz = 0, libresLuz = 0, nodosLuz = 0;
     int contadorOsc = 0, libresOsc = 0, nodosOsc = 0;
-
+    //Recorre el tablero contando piezas de cada bando
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             Casilla* c = matriz[i][j];
-            if (c->estaOcupada()) {
-                Pieza* p = c->getPieza();
-                if (p->getBando() == Bando::LUZ) {
-                    contadorLuz++;
-                    if (!p->estaEncarcelada()) libresLuz++;
-                    if (c->getEsPuntoDePoder()) nodosLuz++;
-                }
-                else {
-                    contadorOsc++;
-                    if (!p->estaEncarcelada()) libresOsc++;
-                    if (c->getEsPuntoDePoder()) nodosOsc++;
-                }
+            if (!c->estaOcupada()) continue; // casilla vacía, se salta
+            Pieza* p = c->getPieza();
+
+            if (p->getBando() == Bando::LUZ) {
+                contadorLuz++;
+                if (!p->estaEncarcelada()) libresLuz++; // solo cuenta si puede moverse
+                if (c->getEsPuntoDePoder())  nodosLuz++; // controla un nodo
+            }
+            else {
+                contadorOsc++;
+                if (!p->estaEncarcelada()) libresOsc++;
+                if (c->getEsPuntoDePoder())  nodosOsc++;
             }
         }
     }
-
+    // Condición 1: un bando ocupa los 5 nodos → gana
     if (nodosLuz == 5) { motivoVictoria = 1; return 1; }
     if (nodosOsc == 5) { motivoVictoria = 1; return 2; }
-
+    // Pierde un bando si no tiene piezas, o si su única pieza está encarcelada
     bool pierdeLuz = (contadorLuz == 0) || (contadorLuz == 1 && libresLuz == 0);
     bool pierdeOsc = (contadorOsc == 0) || (contadorOsc == 1 && libresOsc == 0);
-
+    //Condición 2/3 empate si los dos pierden a la vez
     if (pierdeLuz && pierdeOsc) { motivoVictoria = 2; return 3; }
-    if (pierdeLuz) {
-        motivoVictoria = (contadorLuz == 0) ? 2 : 3;
-        return 2;
-    }
-    if (pierdeOsc) {
-        motivoVictoria = (contadorOsc == 0) ? 2 : 3;
-        return 1;
-    }
-
-    return 0;
+    if (pierdeLuz) { motivoVictoria = (contadorLuz == 0) ? 2 : 3; return 2; }
+    if (pierdeOsc) { motivoVictoria = (contadorOsc == 0) ? 2 : 3; return 1; }
+    return 0;//nadie ha ganado todavía
 }
 
 void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
     float dt = relojTablero.restart().asSeconds();
-
-    // Inyección de la máquina de estados lógicos para el pipeline de victoria
+    //tiempo desde el último frame para temporizadores
+    
     if (estadoVictoria == 0) {
+        //solo comprueba victoria mientras 
         estadoVictoria = verificarVictoria();
         if (estadoVictoria != 0) {
             if (motivoVictoria == 3) {
-                faseVictoria = 1; // Retardo estático para visualizar el bloqueo azul
+                faseVictoria = 1; 
                 temporizadorFase = 2.0f;
             }
             else {
-                faseVictoria = 2; // Salto directo a la saturación verde
+                faseVictoria = 2; 
                 temporizadorFase = 1.5f;
             }
         }
@@ -169,17 +170,17 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
         if (temporizadorFase <= 0.f) {
             if (faseVictoria == 1) {
                 faseVictoria = 2;
-                temporizadorFase = 1.5f; // Duración del destello cinemático
+                temporizadorFase = 1.5f; 
             }
             else if (faseVictoria == 2) {
                 faseVictoria = 3;
-                temporizadorFase = 4.0f; // Duración del texto de clausura
+                temporizadorFase = 4.0f; 
             }
             else if (faseVictoria == 3) {
                 volverAlMenu = true;
             }
         }
-        while (ventanaJuego.pollEvent()) {} // Vaciamos el buffer de eventos para impedir interacciones
+        while (ventanaJuego.pollEvent()) {} 
         return;
     }
 
@@ -280,20 +281,17 @@ void Tablero::gestionarTurno(Casilla* casillaClicada) {
         }
     }
 }
+//Primer clic: selecciona una pieza propia no encarcelada
+//Segundo clic:
+//Si es un botón de hechizo-> activa modoHechizoActivo
+//Si el movimiento es válido y la casilla está vacía->mueve
+//Si el movimiento es válido y hay enemigo->inicia combate(hayCombatePendiente=true)
 
 bool Tablero::esMovimientoValido(Casilla* origen, Casilla* destino) {
     if (!origen || !destino) return false;
     Pieza* p = origen->getPieza();
     if (p == nullptr) return false;
     return p->mover(origen, destino, matriz);
-}
-
-bool Tablero::esAtaqueValido(Casilla* origen, Casilla* destino) {
-    if (!origen || !destino || !destino->estaOcupada()) return false;
-    if (origen->getPieza()->getBando() != destino->getPieza()->getBando()) {
-        return true;
-    }
-    return false;
 }
 
 void Tablero::limpiarBanderaCombate() {
@@ -325,10 +323,7 @@ void Tablero::procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* a
         Bando bandoFavorecido = Bando::LUZ;
 
         if (colorCasilla == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
-        else if (colorCasilla == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
-        else if (colorCasilla == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
         else if (colorCasilla == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
-
         if (ganador->getBando() == bandoFavorecido && porcentajeBono > 0) {
             int vidaConBono = ganador->getVidaBase();
             int vidaOriginal = static_cast<int>(vidaConBono / (1.0f + (porcentajeBono / 100.0f)));
@@ -425,127 +420,12 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
 
 void Tablero::procesarMagia(Casilla* objetivo) {
     if (!modoHechizoActivo || !origenSeleccionado) return;
-    Bando bandoLanzador = turnoActual;
-    switch (hechizoSeleccionado) {
-    case 1:
-        if (piezaAuxiliar == nullptr) {
-            if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == turnoActual) {
-                piezaAuxiliar = objetivo;
-                std::cout << "Pieza seleccionada para Teleport. Ahora elige el destino vacio." << std::endl;
-                return;
-            }
-            else {
-                std::cout << "Debes elegir una pieza ALIADA para teletransportar." << std::endl;
-                return;
-            }
-        }
-        else {
-            if (!objetivo->estaOcupada()) {
-                objetivo->setPieza(piezaAuxiliar->getPieza());
-                piezaAuxiliar->setPieza(nullptr);
-                if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
-                std::cout << "¡Teletransporte completado!" << std::endl;
-            }
-            else {
-                std::cout << "El destino debe estar vacio. Elige otra casilla." << std::endl;
-                return;
-            }
-        }
-        break;
-    case 2:
-        if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == turnoActual) {
-            Pieza* p = objetivo->getPieza();
-            if (p->getVidaBase() < p->getVidaMaxima()) {
-                p->resetVida();
-                if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
-                piezaAuxiliar = nullptr;
-                std::cout << "Hechizo Heal aplicado con exito." << std::endl;
-            }
-            else {
-                std::cout << "La pieza ya tiene salud maxima." << std::endl;
-            }
-        }
-        break;
-    case 3:
-        turnosContados += 3;
-        if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
-        break;
-    case 4:
-        if (objetivo->estaOcupada()) {
-            if (piezaAuxiliar == nullptr) {
-                piezaAuxiliar = objetivo;
-                std::cout << "Pieza A marcada. Elige la Pieza B para el intercambio." << std::endl;
-                return;
-            }
-            else {
-                Pieza* p1 = piezaAuxiliar->getPieza();
-                Pieza* p2 = objetivo->getPieza();
-                piezaAuxiliar->setPieza(p2);
-                objetivo->setPieza(p1);
-                if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
-                std::cout << "¡Intercambio completado!" << std::endl;
-            }
-        }
 
-        break;
-    case 5:
-        if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
-            this->coordenadasCombate = sf::Vector2i(objetivo->getX(), objetivo->getY());
-            this->atacante = new Rango(turnoActual, skinActual);
-            this->defensor = objetivo->getPieza();
-            this->hayCombatePendiente = true;
-            if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
-            std::cout << "¡Elemental invocado! Iniciando combate directo contra el enemigo." << std::endl;
-        }
-        else {
-            std::cout << "Debes seleccionar una pieza ENEMIGA para enviar al Elemental a luchar." << std::endl;
-            return;
-        }
-        break;
-    case 6:
-    {
-        std::vector<Pieza*>& cementerio = (turnoActual == Bando::LUZ) ? piezasMuertasLuz : piezasMuertasOscuridad;
-        if (cementerio.empty()) {
-            std::cout << "No hay piezas en el cementerio para revivir." << std::endl;
-            modoHechizoActivo = false;
-            return;
-        }
+   
+    static GestorHechizos gestor;
+    gestor.ejecutarHechizo(hechizoSeleccionado, objetivo, this);
 
-        if (objetivo->estaOcupada()) {
-            std::cout << "La casilla destino debe estar vacia." << std::endl;
-            return;
-        }
-        int hX = -1, hY = -1;
-        if (origenSeleccionado != nullptr) {
-            hX = origenSeleccionado->getX();
-            hY = origenSeleccionado->getY();
-        }
-        int diffX = std::abs(objetivo->getX() - hX);
-        int diffY = std::abs(objetivo->getY() - hY);
-
-        if (diffX <= 1 && diffY <= 1) {
-            Pieza* pRevivida = cementerio.back();
-            cementerio.pop_back();
-            pRevivida->resetVida();
-            objetivo->setPieza(pRevivida);
-
-            if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
-            std::cout << "¡Pieza revivida con exito junto al Hechicero!" << std::endl;
-        }
-        else {
-            std::cout << "Error: Debes elegir una casilla adyacente (junto) al Hechicero." << std::endl;
-            return;
-        }
-    }
-    break;
-    case 7:
-        if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != turnoActual) {
-            objetivo->getPieza()->setEncarcelada(2);
-            if (bandoLanzador == Bando::LUZ) bandoLuzUsoMagia = true; else bandoOscuroUsoMagia = true;
-        }
-        break;
-    }
-    bool magiaCompletada = (bandoLanzador == Bando::LUZ) ? bandoLuzUsoMagia : bandoOscuroUsoMagia;
+    bool magiaCompletada = (turnoActual == Bando::LUZ) ? bandoLuzUsoMagia : bandoOscuroUsoMagia;
     if (magiaCompletada) {
         finalizarTurno();
     }
@@ -613,12 +493,9 @@ void Tablero::moverPiezaACasilla(Pieza* p, sf::Vector2i destino) {
 ColorCasilla Tablero::getColorCasilla(int x, int y) {
     if (x < 0 || x >= 9 || y < 0 || y >= 9) return ColorCasilla::GRIS_CLARO;
     Casilla* c = matriz[x][y];
-    if (c->getEsOscilante()) {
-        int fase = (turnosContados / 4) % 4;
-        if (fase == 0) return ColorCasilla::NEGRO;
-        if (fase == 2) return ColorCasilla::BLANCO;
-        return ColorCasilla::GRIS_CLARO;
-    }
+    if (x < 0 || x >= 9 || y < 0 || y >= 9) return ColorCasilla::GRIS_CLARO;
+    
+    return matriz[x][y]->getColorActual();
     if (c->getEsPuntoDePoder()) {
         return ColorCasilla::GRIS_CLARO;
     }

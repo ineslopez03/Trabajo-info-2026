@@ -140,6 +140,7 @@
     <ClInclude Include="Fenix.h" />
     <ClInclude Include="Genio.h" />
     <ClInclude Include="GestorArchivos.h" />
+    <ClInclude Include="GestorHechizos.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="GraficosArena.h" />
     <ClInclude Include="Hechicero.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Fenix.cpp" />
     <ClCompile Include="Genio.cpp" />
     <ClCompile Include="GestorArchivos.cpp" />
+    <ClCompile Include="GestorHechizos.cpp" />
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="GraficosArena.cpp" />
     <ClCompile Include="Hechicero.cpp" />

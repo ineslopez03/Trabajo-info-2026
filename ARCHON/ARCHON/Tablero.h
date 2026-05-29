@@ -7,8 +7,9 @@
 #include <string>
 #include "Boton.h"
 #include <vector>
-
+class GestorHechizos;
 class Tablero : public InterfazUsuario {
+    friend class GestorHechizos;
 private:
     std::string skinActual;
     Casilla* matriz[9][9];

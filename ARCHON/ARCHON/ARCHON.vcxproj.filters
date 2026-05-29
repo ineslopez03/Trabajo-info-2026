@@ -105,6 +105,9 @@
     <ClInclude Include="PantallaRanking.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="GestorHechizos.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MotorArchon.cpp">
@@ -189,6 +192,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="PantallaNombre.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="GestorHechizos.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

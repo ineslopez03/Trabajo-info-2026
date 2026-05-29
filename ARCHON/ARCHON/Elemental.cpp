@@ -15,7 +15,7 @@ static std::string obtenerRutaRango(std::string skin) {
 }
 
 
-Rango::Rango(Bando b, std::string skin)
+Elemental::Elemental(Bando b, std::string skin)
     : PiezaVoladora(30, 10, 3, 1, PiezaVoladora::obtenerTexturaDesdeRuta(obtenerRutaRango(skin)), b)
 {
     this->rangoMovimiento = 3;
