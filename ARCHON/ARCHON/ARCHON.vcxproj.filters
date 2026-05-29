@@ -24,9 +24,6 @@
     <ClInclude Include="Casilla.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="GestorArchivos.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Jugador.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -113,9 +110,6 @@
     <ClCompile Include="Casilla.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="GestorArchivos.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Jugador.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
@@ -183,6 +177,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="PantallaNombre.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="PantallaRanking.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

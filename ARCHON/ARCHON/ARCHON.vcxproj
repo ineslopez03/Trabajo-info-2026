@@ -139,7 +139,6 @@
     <ClInclude Include="Constantes.h" />
     <ClInclude Include="Fenix.h" />
     <ClInclude Include="Genio.h" />
-    <ClInclude Include="GestorArchivos.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="GraficosArena.h" />
     <ClInclude Include="Hechicero.h" />
@@ -169,7 +168,6 @@
     <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="Fenix.cpp" />
     <ClCompile Include="Genio.cpp" />
-    <ClCompile Include="GestorArchivos.cpp" />
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="GraficosArena.cpp" />
     <ClCompile Include="Hechicero.cpp" />
@@ -180,6 +178,7 @@
     <ClCompile Include="MotorArchon.cpp" />
     <ClCompile Include="Obstaculos.cpp" />
     <ClCompile Include="PantallaNombre.cpp" />
+    <ClCompile Include="PantallaRanking.cpp" />
     <ClCompile Include="Pieza.cpp" />
     <ClCompile Include="PiezaTeletransporte.cpp" />
     <ClCompile Include="PiezaTerrestre.cpp" />

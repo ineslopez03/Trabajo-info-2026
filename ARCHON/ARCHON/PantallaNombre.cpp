@@ -21,10 +21,8 @@ PantallaNombre::PantallaNombre(Bando ganador)
     nombreIngresado = "";
 
    
-    if (!fuente.openFromFile("fuentes/Rush Zone.otf")) {
-        if (!fuente.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+    if (!fuente.openFromFile("../ARCHON/fuentes/Rush Zone.otf")) {
             std::cerr << "Error cargando fuente en PantallaNombre" << std::endl;
-        }
     }
 
 
@@ -130,9 +128,10 @@ void PantallaNombre::guardarEnRanking() {
     }
 }
 
-void PantallaNombre::dibujar(sf::RenderWindow& ventana) {
-    ventana.clear(sf::Color(20, 10, 30));
-
+void PantallaNombre::dibujarPantalla(sf::RenderWindow& ventana) {
+    sf::RectangleShape fondoMorado(sf::Vector2f(static_cast<float>(ventana.getSize().x), static_cast<float>(ventana.getSize().y)));
+    fondoMorado.setFillColor(sf::Color(20, 10, 30));
+    ventana.draw(fondoMorado);
     ventana.draw(textoTitulo);
     ventana.draw(textoInstrucciones);
     ventana.draw(textoNombre);

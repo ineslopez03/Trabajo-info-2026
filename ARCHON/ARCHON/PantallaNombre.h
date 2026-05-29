@@ -2,7 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "Constantes.h"
-class PantallaNombre {
+#include "InterfazUsuario.h"
+
+class PantallaNombre:public InterfazUsuario {
 private:
     sf::Font fuente;
     sf::Text textoTitulo;      
@@ -15,7 +17,7 @@ private:
     void guardarEnRanking();
 public:
     PantallaNombre(Bando ganador);
-    void procesarEntrada(sf::RenderWindow& ventana);
-    void dibujar(sf::RenderWindow& ventana);
+    void procesarEntrada(sf::RenderWindow& ventana) override;
+    void dibujarPantalla(sf::RenderWindow& ventana) override;
     bool esTransicionLista() const { return terminado; }
 };
