@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cctype> //tiene la opcion de tolower
 
 struct RegistroRanking {
     std::string nombre;
@@ -97,6 +98,12 @@ void PantallaNombre::procesarEntrada(sf::RenderWindow& ventana) {//metodo de pro
 }
 
 void PantallaNombre::guardarEnRanking() {//para guardar el nombre ingresado en el ranking(al final de todo)
+    std::transform(nombreIngresado.begin(), nombreIngresado.end(), nombreIngresado.begin(),[](unsigned char c) 
+        { return std::tolower(c); });//se transforma el nombre ingresado a minusculas
+    //para evitar que si se escribe el nombre en minusculas y/o mayusculas se creen dos entradas para la misma persona
+    //NOTA: los dos primeros nombreingresado son el principio y el final de la cadena(para el iterador),
+    //el tercero es el lugar donde se va a guardar el resultado de la transformacion(empieza al principio) 
+    //el resto es la funcion lambda que hace el tolower a cada caracter de la cadena
     std::vector<RegistroRanking> listaRanking;//vector para almacenar los registros del ranking
     //del archivo y lo que hemos metido 
 	bool encontrado = false;//si encontramos el nombre en el ranking activamos el flag para cambiar su numero de victorias
