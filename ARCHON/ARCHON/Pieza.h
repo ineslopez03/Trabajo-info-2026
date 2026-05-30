@@ -100,4 +100,5 @@ public:
     virtual bool mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) = 0;
     virtual void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) = 0;
     virtual void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) = 0;
+    void curar(int cantidad);
 };

@@ -19,3 +19,9 @@ void Pieza::restaurarValoresOriginales(int vidaAntesDelCombate)
         this->vida = this->vidaMaxima; 
     }
 }
+void Pieza::curar(int cantidad) {
+    this->vida += cantidad;
+    if (this->vida > this->vidaMaximaBase) {
+        this->vida = this->vidaMaximaBase;
+    }
+}
