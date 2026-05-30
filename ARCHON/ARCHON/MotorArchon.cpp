@@ -140,16 +140,13 @@ void MotorArchon::bucle() {
                 Arena* arena = dynamic_cast<Arena*>(pantallaActiva);
                 if (arena != nullptr) {
                     if (arena->isTransicionLista()) {
-                        Pieza* pIzq = arena->getPiezaIzquierda();
-                        Pieza* pDer = arena->getPiezaDerecha();
 
-                        Pieza* muerto = (pIzq->getVidaBase() <= 0) ? pIzq : pDer;
-                        Pieza* ganador = (pIzq->getVidaBase() <= 0) ? pDer : pIzq;
-
+                        // Le pasamos el ganador y el perdedor directamente desde la Arena al Tablero
                         if (miTablero != nullptr) {
-                            miTablero->procesarResultadoCombate(ganador, muerto, arena->getPiezaAtacanteReal());
+                            miTablero->procesarResultadoCombate(arena->getGanador(), arena->getPerdedor(), arena->getPiezaAtacanteReal());
                         }
 
+                        // Volvemos al tablero
                         cambiarEstado(EstadoJuego::TABLERO);
                     }
                 }
