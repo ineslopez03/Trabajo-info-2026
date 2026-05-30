@@ -1,6 +1,7 @@
 #include <iostream>
 #include <optional>
 #include <cmath>
+#include "MotorArchon.h"
 #include "Tablero.h"
 #include "GestorHechizos.h"
 #include "GestorVictoria.h"
@@ -42,7 +43,6 @@ Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {
             matriz[i][j] = new Casilla(i, j);
 
     inicializarTablero();
-
     float anchoVisible = 12.0f * tamCasilla;
     float altoVisible = 9.0f * tamCasilla;
     vistaEstatica.setSize({ anchoVisible, altoVisible });
@@ -53,14 +53,12 @@ Tablero::Tablero(float _tamano, std::string skin) : textoVictoria(fuente) {
         hechizosLuzUsados[i] = false;
         hechizosOscurosUsados[i] = false;
     }
-
     if (!fuente.openFromFile("C:/Windows/Fonts/arial.ttf"))
         std::cout << "Error cargando fuente." << std::endl;
 
     textoVictoria.setCharacterSize(60);
     textoVictoria.setOutlineThickness(5.f);
     textoVictoria.setOutlineColor(sf::Color::Black);
-
     inicializarBotones();
 }
 
@@ -85,6 +83,7 @@ void Tablero::inicializarTablero() {
     matriz[1][0]->setPieza(new Arquero(Bando::LUZ, skinActual));
     for (int j = 1; j <= 7; j++) matriz[1][j]->setPieza(new Caballero(Bando::LUZ, skinActual));
     matriz[1][8]->setPieza(new Arquero(Bando::LUZ, skinActual));
+
     matriz[8][0]->setPieza(new Valquiria(Bando::OSCURIDAD, skinActual));
     matriz[8][1]->setPieza(new Golem(Bando::OSCURIDAD, skinActual));
     matriz[8][2]->setPieza(new Unicornio(Bando::OSCURIDAD, skinActual));
@@ -99,9 +98,8 @@ void Tablero::inicializarTablero() {
     matriz[7][8]->setPieza(new Arquero(Bando::OSCURIDAD, skinActual));
 }
 
-void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
+void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego, MotorArchon* motor) {
     float dt = relojTablero.restart().asSeconds();
-
     if (estadoVictoria == 0) {
         estadoVictoria = gestorVictoria.verificarVictoria(this);
         if (estadoVictoria != 0) {
@@ -111,6 +109,11 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
     }
     else {
         gestorVictoria.actualizarFaseVictoria(this, dt);
+        if (volverAlMenu) {
+            motor->encolarCambioEstado(EstadoJuego::INGRESAR_NOMBRE);
+            motor->purgarTablero();
+            volverAlMenu = false;
+        }
         while (ventanaJuego.pollEvent()) {}
         return;
     }
@@ -154,15 +157,20 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
                 int celdaX = static_cast<int>(std::floor(posMapeada.x / tamCasilla));
                 int celdaY = static_cast<int>(std::floor(posMapeada.y / tamCasilla));
                 if (celdaX >= 0 && celdaX < 9 && celdaY >= 0 && celdaY < 9)
-                    gestionarTurno(matriz[celdaX][celdaY]);
+                    gestionarTurno(matriz[celdaX][celdaY]); // Llamada correcta con 1 argumento
             }
         }
+    }
+
+    if (hayCombatePendiente) {
+        aplicarBonosCombate();
+        motor->encolarCambioEstado(EstadoJuego::ARENA, atacante, defensor, skinActual);
+        limpiarBanderaCombate();
     }
 }
 
 void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
     ventanaJuego.setView(vistaEstatica);
-
     if (estadoVictoria != 0 && faseVictoria == 3) {
         gestorVictoria.dibujarFaseVictoria(this, ventanaJuego);
         return;
@@ -181,6 +189,7 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
             }
         }
     }
+
     for (Casilla* c : casillasValidas) {
         if (c == origenSeleccionado) continue;
         int i = c->getX();
@@ -218,6 +227,7 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
     }
 }
 
+// Firma corregida: Sin MotorArchon* para alinearla con GestorTurno
 void Tablero::gestionarTurno(Casilla* casillaClicada) {
     gestorTurno.gestionarTurno(casillaClicada, this);
 }
@@ -233,6 +243,7 @@ bool Tablero::esMovimientoValido(Casilla* origen, Casilla* destino) {
     return p->mover(origen, destino, matriz);
 }
 
+// Restaurada la definición para que el compilador la encuentre
 void Tablero::limpiarBanderaCombate() {
     hayCombatePendiente = false;
 }
@@ -262,4 +273,20 @@ void Tablero::inicializarBotones() {
 ColorCasilla Tablero::getColorCasilla(int x, int y) {
     if (x < 0 || x >= 9 || y < 0 || y >= 9) return ColorCasilla::GRIS_CLARO;
     return matriz[x][y]->getColorActual();
+}
+
+void Tablero::aplicarBonosCombate() {
+    ColorCasilla colorSuelo = getColorCasilla(coordenadasCombate.x, coordenadasCombate.y);
+    int porcentajeBono = 0;
+    Bando bandoFavorecido = Bando::LUZ;
+
+    if (colorSuelo == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
+    else if (colorSuelo == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
+    else if (colorSuelo == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
+    else if (colorSuelo == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
+
+    if (porcentajeBono > 0) {
+        if (atacante->getBando() == bandoFavorecido) atacante->aplicarBonoColor(porcentajeBono);
+        if (defensor->getBando() == bandoFavorecido) defensor->aplicarBonoColor(porcentajeBono);
+    }
 }

@@ -1,4 +1,6 @@
 #include "Arena.h"
+#include "MotorArchon.h"
+#include "Tablero.h"
 #include <iostream>
 #include <algorithm> 
 #include <cmath> 
@@ -71,7 +73,7 @@ void Arena::iniciarBatalla(Pieza* p1, Pieza* p2) {
     obstaculos.reiniciar(posIzquierda, posDerecha);
 }
 
-void Arena::procesarEntrada(sf::RenderWindow& ventana) {
+void Arena::procesarEntrada(sf::RenderWindow& ventana, MotorArchon* motor) {
     if (faseCuentaAtras >= 0) {
         float tiempoTranscurrido = relojCuentaAtras.getElapsedTime().asSeconds();
         if (tiempoTranscurrido >= 1.0f) {
@@ -86,6 +88,12 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
     if (combateFinalizado) {
         temporizadorSalida -= dt;
+        if (temporizadorSalida <= 0.f) {
+            if (motor->getTablero() != nullptr) {
+                motor->getTablero()->procesarResultadoCombate(getGanador(), getPerdedor(), atacanteOriginal);
+            }
+            motor->encolarCambioEstado(EstadoJuego::TABLERO);
+        }
         return;
     }
 
@@ -100,7 +108,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     if (tiempoRestanteCooldownIzq <= 0.f) {
         IntencionJugador intIzq = ControladorPelea::obtenerIntencionIzquierda();
         dirIzq = intIzq.direccionMovimiento;
-
         if (intIzq.intentandoAtacar) {
             if (teclaDisparoIzquierdaLibre) {
                 if (piezaIzquierda->esCuerpoACuerpo()) {
@@ -128,7 +135,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     if (tiempoRestanteCooldownDer <= 0.f) {
         IntencionJugador intDer = ControladorPelea::obtenerIntencionDerecha();
         dirDer = intDer.direccionMovimiento;
-
         if (intDer.intentandoAtacar) {
             if (teclaDisparoDerechaLibre) {
                 if (piezaDerecha->esCuerpoACuerpo()) {
@@ -174,7 +180,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
             textoVictoria.setString("GANADOR BANDO DE LUZ");
             textoVictoria.setFillColor(sf::Color::Cyan);
         }
-
         sf::FloatRect limitesTexto = textoVictoria.getLocalBounds();
         textoVictoria.setOrigin({ limitesTexto.size.x / 2.f, limitesTexto.size.y / 2.f });
         textoVictoria.setPosition({ 550.f, 427.f });

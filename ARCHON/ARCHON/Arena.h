@@ -10,6 +10,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+class MotorArchon;
+
 class Arena : public InterfazUsuario {
 private:
     Pieza* piezaIzquierda;
@@ -42,7 +44,7 @@ public:
     Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante);
     ~Arena() override;
 
-    void procesarEntrada(sf::RenderWindow& ventana) override;
+    void procesarEntrada(sf::RenderWindow& ventana, MotorArchon* motor) override;
     void dibujarPantalla(sf::RenderWindow& ventana) override;
     void iniciarBatalla(Pieza* p1, Pieza* p2);
     void gestionarColisiones();
@@ -50,6 +52,9 @@ public:
     Pieza* getPiezaIzquierda() { return piezaIzquierda; }
     Pieza* getPiezaDerecha() { return piezaDerecha; }
     Pieza* getPiezaAtacanteReal() const { return atacanteOriginal; }
+
+    Pieza* getGanador() { return (piezaIzquierda->getVidaBase() > 0) ? piezaIzquierda : piezaDerecha; }
+    Pieza* getPerdedor() { return (piezaIzquierda->getVidaBase() <= 0) ? piezaIzquierda : piezaDerecha; }
 
     bool isTransicionLista() const { return combateFinalizado && temporizadorSalida <= 0.f; }
 };
