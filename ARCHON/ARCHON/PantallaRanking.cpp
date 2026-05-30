@@ -100,6 +100,7 @@ void PantallaRanking::dibujarPantalla(sf::RenderWindow& ventana) {
     fondoMorado.setOutlineThickness(3.0f);
     fondoMorado.setPosition({ 200.0f, 130.0f });
     ventana.draw(fondoMorado);//se pinta
+	ventana.draw(titulo);//dibujamos el titulo sobre el fondo morado para que resalte
 
     // Dibujar textos
     for (auto& l : lineasRanking) {//recorre todas las lineas y las pinta

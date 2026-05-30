@@ -50,6 +50,10 @@ public:
     Pieza* getPiezaIzquierda() { return piezaIzquierda; }
     Pieza* getPiezaDerecha() { return piezaDerecha; }
     Pieza* getPiezaAtacanteReal() const { return atacanteOriginal; }
+    Pieza* getGanador() { return (piezaIzquierda->getVidaBase() > 0) ? piezaIzquierda : piezaDerecha; }
+    Pieza* getPerdedor() { return (piezaIzquierda->getVidaBase() <= 0) ? piezaIzquierda : piezaDerecha; }
 
     bool isTransicionLista() const { return combateFinalizado && temporizadorSalida <= 0.f; }
+
+   
 };
