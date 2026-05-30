@@ -1,4 +1,5 @@
 #include "Proyectiles.h"
+#include <cmath> // Requerido para la función matemática std::atan2
 
 Proyectiles::Proyectiles(float _x, float _y, int _danyo, float _vel, sf::Vector2f _dir, Bando _bando, std::string skin)
     : x(_x), y(_y), danyo(_danyo), velocidad(_vel), direccion(_dir), bandoOrigen(_bando)
@@ -19,7 +20,7 @@ Proyectiles::Proyectiles(float _x, float _y, int _danyo, float _vel, sf::Vector2
         nucleo.setSize({ 15.f, 6.f });
         resplandor.setSize({ 22.f, 16.f });
     }
-    else { // ARCHON
+    else { // ARCHON Clásico
         colorBase = sf::Color::White;
         colorLuz = (bandoOrigen == Bando::LUZ) ? sf::Color(255, 215, 0, 150) : sf::Color(138, 43, 226, 150);
         nucleo.setSize({ 18.f, 5.f });
@@ -29,12 +30,18 @@ Proyectiles::Proyectiles(float _x, float _y, int _danyo, float _vel, sf::Vector2
     nucleo.setFillColor(colorBase);
     resplandor.setFillColor(colorLuz);
 
-    // Centrado de pivotes
+    // Centrado de pivotes geométricos
     nucleo.setOrigin({ nucleo.getSize().x / 2.f, nucleo.getSize().y / 2.f });
     resplandor.setOrigin({ resplandor.getSize().x / 2.f, resplandor.getSize().y / 2.f });
-
     nucleo.setPosition({ x, y });
     resplandor.setPosition({ x, y });
+
+    // Transformación afín: Cálculo del ángulo de rotación respecto al vector de desplazamiento
+    float anguloRadianes = std::atan2(direccion.y, direccion.x);
+
+    // Corrección C2664: Instanciación estricta de sf::Angle nativo de SFML 3.x
+    nucleo.setRotation(sf::radians(anguloRadianes));
+    resplandor.setRotation(sf::radians(anguloRadianes));
 }
 
 Proyectiles::~Proyectiles() {}
