@@ -137,6 +137,7 @@
     <ClInclude Include="Caballero.h" />
     <ClInclude Include="Casilla.h" />
     <ClInclude Include="Constantes.h" />
+    <ClInclude Include="ControladorPelea.h" />
     <ClInclude Include="Fenix.h" />
     <ClInclude Include="Genio.h" />
     <ClInclude Include="Gestorcombate.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="JugadorHumano.h" />
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
+    <ClInclude Include="MotorFisicasArena.h" />
     <ClInclude Include="Obstaculos.h" />
     <ClInclude Include="PantallaNombre.h" />
     <ClInclude Include="PantallaRanking.h" />
@@ -170,6 +172,7 @@
     <ClCompile Include="Boton.cpp" />
     <ClCompile Include="Caballero.cpp" />
     <ClCompile Include="Casilla.cpp" />
+    <ClCompile Include="ControladorPelea.cpp" />
     <ClCompile Include="Fenix.cpp" />
     <ClCompile Include="Genio.cpp" />
     <ClCompile Include="GestorCombate.cpp" />
@@ -184,6 +187,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />
+    <ClCompile Include="MotorFisicasArena.cpp" />
     <ClCompile Include="Obstaculos.cpp" />
     <ClCompile Include="PantallaNombre.cpp" />
     <ClCompile Include="PantallaRanking.cpp" />

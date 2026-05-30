@@ -1,194 +1,75 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Archivos de origen">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Archivos de encabezado">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Archivos de recursos">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="Arquero.cpp" />
+    <ClCompile Include="Boton.cpp" />
+    <ClCompile Include="Caballero.cpp" />
+    <ClCompile Include="Casilla.cpp" />
+    <ClCompile Include="Fenix.cpp" />
+    <ClCompile Include="Genio.cpp" />
+    <ClCompile Include="GestorCombate.cpp" />
+    <ClCompile Include="GestorHechizos.cpp" />
+    <ClCompile Include="GestorTurno.cpp" />
+    <ClCompile Include="GestorVictoria.cpp" />
+    <ClCompile Include="Golem.cpp" />
+    <ClCompile Include="GraficosArena.cpp" />
+    <ClCompile Include="Hechicero.cpp" />
+    <ClCompile Include="Jugador.cpp" />
+    <ClCompile Include="JugadorHumano.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuPrincipal.cpp" />
+    <ClCompile Include="MotorArchon.cpp" />
+    <ClCompile Include="Obstaculos.cpp" />
+    <ClCompile Include="PantallaNombre.cpp" />
+    <ClCompile Include="PantallaRanking.cpp" />
+    <ClCompile Include="Pieza.cpp" />
+    <ClCompile Include="PiezaTeletransporte.cpp" />
+    <ClCompile Include="PiezaTerrestre.cpp" />
+    <ClCompile Include="PiezaVoladora.cpp" />
+    <ClCompile Include="Proyectiles.cpp" />
+    <ClCompile Include="Elemental.cpp" />
+    <ClCompile Include="Tablero.cpp" />
+    <ClCompile Include="Unicornio.cpp" />
+    <ClCompile Include="Valquiria.cpp" />
+    <ClCompile Include="ControladorPelea.cpp" />
+    <ClCompile Include="MotorFisicasArena.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InterfazUsuario.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="MotorArchon.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Casilla.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Jugador.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuPrincipal.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Pieza.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Tablero.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Arena.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Proyectiles.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="JugadorHumano.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="PiezaTerrestre.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Elemental.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="PiezaVoladora.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Fenix.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Boton.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Constantes.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Hechicero.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="PiezaTeletransporte.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Obstaculos.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="GraficosArena.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Caballero.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Golem.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Unicornio.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Valquiria.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Arquero.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Genio.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="PantallaNombre.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="PantallaRanking.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="GestorHechizos.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="MotorArchon.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Casilla.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Jugador.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuPrincipal.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Pieza.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Tablero.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Arena.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Proyectiles.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="JugadorHumano.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="PiezaTerrestre.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Elemental.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="PiezaVoladora.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Fenix.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Boton.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Hechicero.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="PiezaTeletransporte.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Obstaculos.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="GraficosArena.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Caballero.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Golem.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Unicornio.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Valquiria.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Arquero.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Genio.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="PantallaNombre.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-
-    <ClCompile Include="GestorHechizos.cpp">
-
-    <ClCompile Include="PantallaRanking.cpp">
-
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
+    <ClInclude Include="Arena.h" />
+    <ClInclude Include="Arquero.h" />
+    <ClInclude Include="Boton.h" />
+    <ClInclude Include="Caballero.h" />
+    <ClInclude Include="Casilla.h" />
+    <ClInclude Include="Constantes.h" />
+    <ClInclude Include="Fenix.h" />
+    <ClInclude Include="Genio.h" />
+    <ClInclude Include="Gestorcombate.h" />
+    <ClInclude Include="GestorHechizos.h" />
+    <ClInclude Include="GestorTurno.h" />
+    <ClInclude Include="GestorVictoria.h" />
+    <ClInclude Include="Golem.h" />
+    <ClInclude Include="GraficosArena.h" />
+    <ClInclude Include="Hechicero.h" />
+    <ClInclude Include="InterfazUsuario.h" />
+    <ClInclude Include="Jugador.h" />
+    <ClInclude Include="JugadorHumano.h" />
+    <ClInclude Include="MenuPrincipal.h" />
+    <ClInclude Include="MotorArchon.h" />
+    <ClInclude Include="Obstaculos.h" />
+    <ClInclude Include="PantallaNombre.h" />
+    <ClInclude Include="PantallaRanking.h" />
+    <ClInclude Include="Pieza.h" />
+    <ClInclude Include="PiezaTeletransporte.h" />
+    <ClInclude Include="PiezaTerrestre.h" />
+    <ClInclude Include="PiezaVoladora.h" />
+    <ClInclude Include="Proyectiles.h" />
+    <ClInclude Include="Elemental.h" />
+    <ClInclude Include="Tablero.h" />
+    <ClInclude Include="Unicornio.h" />
+    <ClInclude Include="Valquiria.h" />
+    <ClInclude Include="ControladorPelea.h" />
+    <ClInclude Include="MotorFisicasArena.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sfml-audio-3.dll" />
