@@ -87,11 +87,15 @@ void GestorTurno::gestionarTurno(Casilla* casillaClicada, Tablero* tablero) {
 void GestorTurno::finalizarTurno(Tablero* tablero) {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
+            Casilla* c = tablero->matriz[i][j];
             Pieza* p = tablero->matriz[i][j]->getPieza();
             if (p != nullptr) {
                 // Curación pasiva: las piezas en casillas de su color se curan 5 puntos por turno
                 if (tablero->getColorCasilla(i, j) == (p->getBando() == Bando::LUZ ? ColorCasilla::BLANCO : ColorCasilla::NEGRO)) {
                     p->curar(5);
+                }
+                if (c->getEsPuntoDePoder()) {
+                    p->curar(10); // curación extra por estar en nodo de poder
                 }
                 p->pasarTurnoBloqueo();// descuenta un turno de bloqueo si está encarcelada
             }
