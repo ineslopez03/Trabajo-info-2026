@@ -4,23 +4,18 @@
 #include "Pieza.h"
 #include "Obstaculos.h"
 #include "GraficosArena.h"
+#include "ControladorPelea.h"
+#include "MotorFisicasArena.h"
 #include <list>
 #include <SFML/Graphics.hpp>
 #include <string>
 
 class Arena : public InterfazUsuario {
 private:
-    struct EfectoOnda {
-        sf::CircleShape forma;
-        float radio;
-        float opacidad;
-        sf::Color colorBando;
-    };
-
     Pieza* piezaIzquierda;
     Pieza* piezaDerecha;
     std::list<Proyectiles*> lista_proyectiles;
-    std::list<EfectoOnda> lista_ondas;
+    std::list<EfectoOnda> lista_ondas; // Ahora se usa la estructura importada del MotorFisicas
 
     sf::Texture texturaFondoArena;
     sf::Sprite* spriteFondoArena;

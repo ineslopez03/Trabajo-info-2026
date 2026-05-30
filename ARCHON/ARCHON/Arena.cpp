@@ -1,5 +1,4 @@
 #include "Arena.h"
-#include "PiezaVoladora.h" 
 #include <iostream>
 #include <algorithm> 
 #include <cmath> 
@@ -12,6 +11,9 @@ Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
     this->skinArena = skin;
     iniciarBatalla(p1, p2);
     faseCuentaAtras = 3;
+
+    // Conexión del nuevo sistema de inyección visual
+    graficos.vincularPiezas(piezaIzquierda, piezaDerecha);
 
     std::string rutaFondo;
     if (skinArena == "HARRY_POTTER") rutaFondo = "imagenes/HP/suelo_hp_2.png";
@@ -88,102 +90,29 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     }
 
     obstaculos.actualizar(dt, posIzquierda, posDerecha);
+    MotorFisicasArena::propagarOndas(lista_ondas, dt);
 
     if (tiempoRestanteCooldownIzq > 0.f) tiempoRestanteCooldownIzq -= dt;
     if (tiempoRestanteCooldownDer > 0.f) tiempoRestanteCooldownDer -= dt;
 
-    for (auto it = lista_ondas.begin(); it != lista_ondas.end();) {
-        it->radio += 300.f * dt;
-        it->opacidad -= 600.f * dt;
-
-        if (it->opacidad <= 0.f || it->radio >= 85.f) {
-            it = lista_ondas.erase(it);
-        }
-        else {
-            it->forma.setRadius(it->radio);
-            it->forma.setOrigin({ it->radio, it->radio });
-            it->forma.setOutlineColor(sf::Color(it->colorBando.r, it->colorBando.g, it->colorBando.b, std::max(0, (int)it->opacidad)));
-            ++it;
-        }
-    }
-
-    const float margen = 30.f;
-
-    auto aplicarFisica = [&](Pieza* pieza, sf::Vector2f& pos, sf::Vector2f dir, sf::Vector2f posEnemigo) {
-        float velocidadPx = pieza->getVelMov() * 80.f;
-
-        pos.x += dir.x * velocidadPx * dt;
-        pos.y += dir.y * velocidadPx * dt;
-
-        pos.x = std::clamp(pos.x, margen, 1100.f - margen);
-        pos.y = std::clamp(pos.y, margen, 855.f - margen);
-
-        bool esVoladora = (dynamic_cast<PiezaVoladora*>(pieza) != nullptr);
-        if (!esVoladora) {
-            obstaculos.expulsarDeColision(pos, 20.f);
-        }
-
-        float radioHitboxCuerpo = 30.f;
-        float dx = pos.x - posEnemigo.x;
-        float dy = pos.y - posEnemigo.y;
-        float distancia = std::hypot(dx, dy);
-        float radioCombinado = radioHitboxCuerpo * 2.f;
-
-        if (distancia < radioCombinado && distancia > 0.0001f) {
-            float solapamiento = radioCombinado - distancia;
-            pos.x += (dx / distancia) * solapamiento;
-            pos.y += (dy / distancia) * solapamiento;
-        }
-        };
-
-    auto generarOndaChoque = [&](sf::Vector2f pos, Bando b) {
-        EfectoOnda onda;
-        onda.radio = 20.f;
-        onda.opacidad = 255.f;
-        onda.forma.setFillColor(sf::Color::Transparent);
-        onda.forma.setOutlineThickness(4.f);
-        onda.colorBando = (b == Bando::LUZ) ? sf::Color::Cyan : sf::Color::Red;
-        onda.forma.setPosition(pos);
-        lista_ondas.push_back(onda);
-        };
-
-    // Módulo heurístico de autoapuntado sectorizado
-    auto calcularDireccionOrtogonal = [](sf::Vector2f posAtacante, sf::Vector2f posEnemigo) -> sf::Vector2f {
-        float dx = posEnemigo.x - posAtacante.x;
-        float dy = posEnemigo.y - posAtacante.y;
-
-        // Evaluación del vector de mayor predominancia para encajar el disparo en la cuadrícula virtual
-        if (std::abs(dx) > std::abs(dy)) {
-            return (dx > 0) ? sf::Vector2f(1.f, 0.f) : sf::Vector2f(-1.f, 0.f);
-        }
-        else {
-            return (dy > 0) ? sf::Vector2f(0.f, 1.f) : sf::Vector2f(0.f, -1.f);
-        }
-        };
-
-    // Procesamiento de comandos: Flanco Izquierdo
+    // --- PROCESAMIENTO MODULAR FLANCO IZQUIERDO ---
     sf::Vector2f dirIzq(0.f, 0.f);
     if (tiempoRestanteCooldownIzq <= 0.f) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) dirIzq.y -= 1.0f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) dirIzq.y += 1.0f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) dirIzq.x -= 1.0f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) dirIzq.x += 1.0f;
+        IntencionJugador intIzq = ControladorPelea::obtenerIntencionIzquierda();
+        dirIzq = intIzq.direccionMovimiento;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad2)) {
+        if (intIzq.intentandoAtacar) {
             if (teclaDisparoIzquierdaLibre) {
                 if (piezaIzquierda->esCuerpoACuerpo()) {
-                    generarOndaChoque(posIzquierda, piezaIzquierda->getBando());
-                    float distanciaAlObjetivo = std::hypot(posIzquierda.x - posDerecha.x, posIzquierda.y - posDerecha.y);
-                    if (distanciaAlObjetivo <= 95.f) {
+                    MotorFisicasArena::generarOndaChoque(posIzquierda, piezaIzquierda->getBando(), lista_ondas);
+                    if (std::hypot(posIzquierda.x - posDerecha.x, posIzquierda.y - posDerecha.y) <= 95.f) {
                         piezaDerecha->recibirDanyo(piezaIzquierda->getDanio());
                     }
                 }
                 else {
-                    // Inyección de la directiva direccional analítica
-                    sf::Vector2f dirProyectil = calcularDireccionOrtogonal(posIzquierda, posDerecha);
+                    sf::Vector2f dirProyectil = MotorFisicasArena::calcularDireccionOrtogonal(posIzquierda, posDerecha);
                     lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, piezaIzquierda->getDanio(), 600.0f, dirProyectil, piezaIzquierda->getBando(), skinArena));
                 }
-
                 teclaDisparoIzquierdaLibre = false;
                 tiempoRestanteCooldownIzq = 1.4f - (piezaIzquierda->getVelAta() * 0.2f);
             }
@@ -192,31 +121,26 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
             teclaDisparoIzquierdaLibre = true;
         }
     }
-    aplicarFisica(piezaIzquierda, posIzquierda, dirIzq, posDerecha);
+    MotorFisicasArena::aplicarFisicaMovimiento(piezaIzquierda, posIzquierda, dirIzq, posDerecha, dt, obstaculos);
 
-    // Procesamiento de comandos: Flanco Derecho
+    // --- PROCESAMIENTO MODULAR FLANCO DERECHO ---
     sf::Vector2f dirDer(0.f, 0.f);
     if (tiempoRestanteCooldownDer <= 0.f) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) dirDer.y -= 1.0f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) dirDer.y += 1.0f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) dirDer.x -= 1.0f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) dirDer.x += 1.0f;
+        IntencionJugador intDer = ControladorPelea::obtenerIntencionDerecha();
+        dirDer = intDer.direccionMovimiento;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0)) {
+        if (intDer.intentandoAtacar) {
             if (teclaDisparoDerechaLibre) {
                 if (piezaDerecha->esCuerpoACuerpo()) {
-                    generarOndaChoque(posDerecha, piezaDerecha->getBando());
-                    float distanciaAlObjetivo = std::hypot(posDerecha.x - posIzquierda.x, posDerecha.y - posIzquierda.y);
-                    if (distanciaAlObjetivo <= 95.f) {
+                    MotorFisicasArena::generarOndaChoque(posDerecha, piezaDerecha->getBando(), lista_ondas);
+                    if (std::hypot(posDerecha.x - posIzquierda.x, posDerecha.y - posIzquierda.y) <= 95.f) {
                         piezaIzquierda->recibirDanyo(piezaDerecha->getDanio());
                     }
                 }
                 else {
-                    // Inyección de la directiva direccional analítica
-                    sf::Vector2f dirProyectil = calcularDireccionOrtogonal(posDerecha, posIzquierda);
+                    sf::Vector2f dirProyectil = MotorFisicasArena::calcularDireccionOrtogonal(posDerecha, posIzquierda);
                     lista_proyectiles.push_back(new Proyectiles(posDerecha.x, posDerecha.y, piezaDerecha->getDanio(), 600.0f, dirProyectil, piezaDerecha->getBando(), skinArena));
                 }
-
                 teclaDisparoDerechaLibre = false;
                 tiempoRestanteCooldownDer = 1.4f - (piezaDerecha->getVelAta() * 0.2f);
             }
@@ -225,9 +149,9 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
             teclaDisparoDerechaLibre = true;
         }
     }
-    aplicarFisica(piezaDerecha, posDerecha, dirDer, posIzquierda);
+    MotorFisicasArena::aplicarFisicaMovimiento(piezaDerecha, posDerecha, dirDer, posIzquierda, dt, obstaculos);
 
-    gestionarColisiones();
+    gestionarColisiones(); // Mantenemos esta rutina de barrido interno unida al array destructivo
 
     for (auto it = lista_proyectiles.begin(); it != lista_proyectiles.end();) {
         (*it)->mover(dt);
@@ -259,14 +183,11 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
 void Arena::gestionarColisiones() {
     float radioHitbox = 35.f;
-
     for (auto it = lista_proyectiles.begin(); it != lista_proyectiles.end();) {
         bool proyectilDestruido = false;
         sf::Vector2f posP = (*it)->getPosicion();
 
-        if (obstaculos.hayColisionCircular(posP, 5.f)) {
-            proyectilDestruido = true;
-        }
+        if (obstaculos.hayColisionCircular(posP, 5.f)) proyectilDestruido = true;
 
         if (!proyectilDestruido && piezaDerecha && (*it)->getBando() != piezaDerecha->getBando()) {
             if (std::hypot(posP.x - posDerecha.x, posP.y - posDerecha.y) < radioHitbox) {
@@ -286,9 +207,7 @@ void Arena::gestionarColisiones() {
             delete* it;
             it = lista_proyectiles.erase(it);
         }
-        else {
-            ++it;
-        }
+        else ++it;
     }
 }
 
@@ -297,9 +216,7 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     ventana.draw(*spriteFondoArena);
     obstaculos.dibujar(ventana);
 
-    for (const auto& onda : lista_ondas) {
-        ventana.draw(onda.forma);
-    }
+    for (const auto& onda : lista_ondas) ventana.draw(onda.forma);
 
     auto dibujarAuraDanyo = [&](Pieza* p, sf::Vector2f pos) {
         if (p && p->estaParpadeandoDanyo()) {
@@ -324,22 +241,9 @@ void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
 
     for (auto p : lista_proyectiles) p->dibujar(ventana);
 
-    float rIzq = 0.f;
-    if (piezaIzquierda) {
-        rIzq = (float)piezaIzquierda->getVidaBase() / (float)piezaIzquierda->getVidaMaximaOriginal();
-        if (rIzq < 0.0f) rIzq = 0.0f;
-    }
-
-    float rDer = 0.f;
-    if (piezaDerecha) {
-        rDer = (float)piezaDerecha->getVidaBase() / (float)piezaDerecha->getVidaMaximaOriginal();
-        if (rDer < 0.0f) rDer = 0.0f;
-    }
-
-    graficos.actualizar(rIzq, rDer, faseCuentaAtras);
+    // La interfaz ahora gestiona su telemetría matemáticamente en base a las piezas vinculadas
+    graficos.actualizar(faseCuentaAtras);
     graficos.dibujar(ventana, faseCuentaAtras >= 0);
 
-    if (combateFinalizado) {
-        ventana.draw(textoVictoria);
-    }
+    if (combateFinalizado) ventana.draw(textoVictoria);
 }
