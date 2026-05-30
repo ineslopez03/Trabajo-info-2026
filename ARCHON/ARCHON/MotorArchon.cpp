@@ -86,65 +86,65 @@ void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, s
     }
 }
 
-void MotorArchon::bucle() {
-    while (ejecutando && ventana.isOpen()) {
-        if (pantallaActiva != nullptr) {
-            pantallaActiva->procesarEntrada(ventana);
+void MotorArchon::bucle() {//bucle del juego
+    while (ejecutando && ventana.isOpen()) {//si el juego está en ejecución y la ventana está abiert
+        if (pantallaActiva != nullptr) {//si tenemos una pantalla activa
+            pantallaActiva->procesarEntrada(ventana);//procesamos la entrada
 
-            // 1. Comprobamos si la pantalla de Nombre ha terminado
-            if (estadoActual == EstadoJuego::INGRESAR_NOMBRE) {
-                PantallaNombre* pNombre = dynamic_cast<PantallaNombre*>(pantallaActiva);
-                if (pNombre != nullptr && pNombre->esTransicionLista()) {
-                    cambiarEstado(EstadoJuego::MENU);
+            //Comprobamos si la pantalla de Nombre ha terminado
+            if (estadoActual == EstadoJuego::INGRESAR_NOMBRE) {//si estamos en la pantalla de ingreso de nombre
+                PantallaNombre* pNombre = dynamic_cast<PantallaNombre*>(pantallaActiva);//hacemos un dynamic cast
+                if (pNombre != nullptr && pNombre->esTransicionLista()) {//si el cast es exitoso y podemos hacer la transicion
+                    cambiarEstado(EstadoJuego::MENU);//volvemos al menu
                 }
             }
-            // 2. Comprobamos si la pantalla de Ranking ha terminado
-            else if (estadoActual == EstadoJuego::RANKING) {
-                PantallaRanking* pRanking = dynamic_cast<PantallaRanking*>(pantallaActiva);
-                if (pRanking != nullptr && pRanking->esTransicionLista()) {
-                    cambiarEstado(EstadoJuego::MENU);
+            //Comprobamos si la pantalla de Ranking ha terminado
+			else if (estadoActual == EstadoJuego::RANKING) {//si estamos en la pantalla de ranking
+                PantallaRanking* pRanking = dynamic_cast<PantallaRanking*>(pantallaActiva);//hacemos un dynamic cast
+                if (pRanking != nullptr && pRanking->esTransicionLista()) {//si el cast es exitoso y podemos hacer la transicion
+					cambiarEstado(EstadoJuego::MENU);//volvemos al menu
                 }
             }
-            // 3. ¡AQUÍ ESTÁ EL CÓDIGO QUE FALTA! Escuchamos al Menú Principal
-            else if (estadoActual == EstadoJuego::MENU) {
-                MenuPrincipal* menu = dynamic_cast<MenuPrincipal*>(pantallaActiva);
-                if (menu != nullptr) {
-                    if (menu->getIniciarJuego()) {
+			//Escuchamos al menu 
+			else if (estadoActual == EstadoJuego::MENU) {//si estamos en el menu
+                MenuPrincipal* menu = dynamic_cast<MenuPrincipal*>(pantallaActiva);//dynamic cast
+                if (menu != nullptr) {//si el cast es exitoso
+                    if (menu->getIniciarJuego()) {//y se ha seleccionado iniciar juego
                         cambiarEstado(EstadoJuego::TABLERO, nullptr, nullptr, menu->getSkinSeleccionada());
-                    }
-                    else if (menu->getVerRanking()) {
-                        // ¡Esta línea es la que te salva y crea la nueva pantalla!
-                        cambiarEstado(EstadoJuego::RANKING);
-                    }
-                }
-            }
-            // 4. Lógica del Tablero
-            else if (estadoActual == EstadoJuego::TABLERO) {
-                Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva);
-                if (tab != nullptr) {
-                    if (tab->debeVolverAlMenu()) {
-                        cambiarEstado(EstadoJuego::INGRESAR_NOMBRE);
-                        delete miTablero;
-                        miTablero = nullptr;
-                    }
-                    else if (tab->getHaycombate()) {
-                        Pieza* pAtacante = tab->getAtacante();
-                        Pieza* pDefensor = tab->getDefensor();
-                        tab->limpiarBanderaCombate();
-                        cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, tab->getSkin());
+                    }//vamos al tablero, con la skin seleccionada
+                    else if (menu->getVerRanking()) {//si se ha seleccionado ver ranking
+                   
+						cambiarEstado(EstadoJuego::RANKING);//vamos al ranking
                     }
                 }
             }
-            // 5. Lógica de la Arena
-            else if (estadoActual == EstadoJuego::ARENA) {
-                Arena* arena = dynamic_cast<Arena*>(pantallaActiva);
-                if (arena != nullptr) {
-                    if (arena->isTransicionLista()) {
+            //Logica del Tablero
+			else if (estadoActual == EstadoJuego::TABLERO) {//si estamos en el tablero
+				Tablero* tab = dynamic_cast<Tablero*>(pantallaActiva);//dynamic cast
+				if (tab != nullptr) {//si el cast es exitoso
+                    if (tab->debeVolverAlMenu()) {//si el tablero nos indica que acabamos la partida
+                        cambiarEstado(EstadoJuego::INGRESAR_NOMBRE);//vamos a la pantalla de ingreso de nombre
+                        delete miTablero;//borramos el tablero para liberar memoria,ya no lo necesitamos
+                        miTablero = nullptr;//y vaciamos el puntero 
+                    }
+                    else if (tab->getHaycombate()) {//si el tablero nos indica que hay un combate pendiente
+                        Pieza* pAtacante = tab->getAtacante();//obtenemos el atacante
+                        Pieza* pDefensor = tab->getDefensor();//obtenemos el defensor
+                        tab->limpiarBanderaCombate();//limpiamos la bandera de combate
+                        cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, tab->getSkin());//vamos a la arena
+                        //con las piezas y con la skin
+                    }
+                }
+            }
+            //Logica de la Arena
+            else if (estadoActual == EstadoJuego::ARENA) {//si estamos en la arena
+                Arena* arena = dynamic_cast<Arena*>(pantallaActiva);//hacemos un dynamic cast
+                if (arena != nullptr) {//si es exitoso
+                    if (arena->isTransicionLista()) {//si la arena nos indica que podemos hacer la transicion de vuelta al tablero
 
-                        // Le pasamos el ganador y el perdedor directamente desde la Arena al Tablero
-                        if (miTablero != nullptr) {
+                        if (miTablero != nullptr) {//si hay tablero (debería haberlo siempre, pero por si acaso)
                             miTablero->procesarResultadoCombate(arena->getGanador(), arena->getPerdedor(), arena->getPiezaAtacanteReal());
-                        }
+                        }//obtenemos al ganador y al perdedor de la arena, y a la pieza atacante real para procesar el resultado del combate en el tablero
 
                         // Volvemos al tablero
                         cambiarEstado(EstadoJuego::TABLERO);
@@ -153,14 +153,14 @@ void MotorArchon::bucle() {
             }
         }
 
-        // --- ZONA DE DIBUJADO ---
-        ventana.clear();
+        
+        ventana.clear();//vaciamos la pantalla antigua
 
-        if (pantallaActiva != nullptr) {
-            pantallaActiva->dibujarPantalla(ventana);
+        if (pantallaActiva != nullptr) {//si hay pantalla activa
+            pantallaActiva->dibujarPantalla(ventana);//se llama a su metodo de dibujo
         }
 
-        ventana.display();
+		ventana.display();//se muestra la pantalla nueva
     }
 }
 
