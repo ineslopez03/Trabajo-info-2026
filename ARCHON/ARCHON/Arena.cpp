@@ -5,7 +5,6 @@
 #include <cmath> 
 #include <typeinfo>
 
-// Corrección C2512 y E0291: Inyección de la fuente en la lista de inicialización
 Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
     : spriteFondoArena(nullptr), obstaculos(sf::Vector2f(100.f, 427.f), sf::Vector2f(1000.f, 427.f)), textoVictoria(fuenteVictoria)
 {
@@ -148,6 +147,21 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
         lista_ondas.push_back(onda);
         };
 
+    // Módulo heurístico de autoapuntado sectorizado
+    auto calcularDireccionOrtogonal = [](sf::Vector2f posAtacante, sf::Vector2f posEnemigo) -> sf::Vector2f {
+        float dx = posEnemigo.x - posAtacante.x;
+        float dy = posEnemigo.y - posAtacante.y;
+
+        // Evaluación del vector de mayor predominancia para encajar el disparo en la cuadrícula virtual
+        if (std::abs(dx) > std::abs(dy)) {
+            return (dx > 0) ? sf::Vector2f(1.f, 0.f) : sf::Vector2f(-1.f, 0.f);
+        }
+        else {
+            return (dy > 0) ? sf::Vector2f(0.f, 1.f) : sf::Vector2f(0.f, -1.f);
+        }
+        };
+
+    // Procesamiento de comandos: Flanco Izquierdo
     sf::Vector2f dirIzq(0.f, 0.f);
     if (tiempoRestanteCooldownIzq <= 0.f) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) dirIzq.y -= 1.0f;
@@ -165,7 +179,9 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
                     }
                 }
                 else {
-                    lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, piezaIzquierda->getDanio(), 600.0f, { 1.f, 0.f }, piezaIzquierda->getBando(), skinArena));
+                    // Inyección de la directiva direccional analítica
+                    sf::Vector2f dirProyectil = calcularDireccionOrtogonal(posIzquierda, posDerecha);
+                    lista_proyectiles.push_back(new Proyectiles(posIzquierda.x, posIzquierda.y, piezaIzquierda->getDanio(), 600.0f, dirProyectil, piezaIzquierda->getBando(), skinArena));
                 }
 
                 teclaDisparoIzquierdaLibre = false;
@@ -178,6 +194,7 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
     }
     aplicarFisica(piezaIzquierda, posIzquierda, dirIzq, posDerecha);
 
+    // Procesamiento de comandos: Flanco Derecho
     sf::Vector2f dirDer(0.f, 0.f);
     if (tiempoRestanteCooldownDer <= 0.f) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) dirDer.y -= 1.0f;
@@ -195,7 +212,9 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
                     }
                 }
                 else {
-                    lista_proyectiles.push_back(new Proyectiles(posDerecha.x, posDerecha.y, piezaDerecha->getDanio(), 600.0f, { -1.f, 0.f }, piezaDerecha->getBando(), skinArena));
+                    // Inyección de la directiva direccional analítica
+                    sf::Vector2f dirProyectil = calcularDireccionOrtogonal(posDerecha, posIzquierda);
+                    lista_proyectiles.push_back(new Proyectiles(posDerecha.x, posDerecha.y, piezaDerecha->getDanio(), 600.0f, dirProyectil, piezaDerecha->getBando(), skinArena));
                 }
 
                 teclaDisparoDerechaLibre = false;
@@ -212,7 +231,7 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
 
     for (auto it = lista_proyectiles.begin(); it != lista_proyectiles.end();) {
         (*it)->mover(dt);
-        if ((*it)->getPosicion().x > 1100 || (*it)->getPosicion().x < 0) {
+        if ((*it)->getPosicion().x > 1100 || (*it)->getPosicion().x < 0 || (*it)->getPosicion().y > 855 || (*it)->getPosicion().y < 0) {
             delete* it;
             it = lista_proyectiles.erase(it);
         }
@@ -232,7 +251,6 @@ void Arena::procesarEntrada(sf::RenderWindow& ventana) {
             textoVictoria.setFillColor(sf::Color::Cyan);
         }
 
-        // Corrección E0135 / C2039: Adaptación a la nomenclatura vectorial de SFML 3.x
         sf::FloatRect limitesTexto = textoVictoria.getLocalBounds();
         textoVictoria.setOrigin({ limitesTexto.size.x / 2.f, limitesTexto.size.y / 2.f });
         textoVictoria.setPosition({ 550.f, 427.f });
