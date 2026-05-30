@@ -125,6 +125,7 @@ void Tablero::procesarEntrada(sf::RenderWindow& ventanaJuego) {
                 origenSeleccionado = nullptr;
                 modoHechizoActivo = false;
                 piezaAuxiliar = nullptr;
+                casillasValidas.clear();
             }
         }
 
@@ -179,6 +180,20 @@ void Tablero::dibujarPantalla(sf::RenderWindow& ventanaJuego) {
                 ventanaJuego.draw(marcador);
             }
         }
+    }
+    for (Casilla* c : casillasValidas) {
+        if (c == origenSeleccionado) continue;
+        int i = c->getX();
+        int j = c->getY();
+        sf::RectangleShape resalte(sf::Vector2f(tamCasilla - 4, tamCasilla - 4));
+        resalte.setPosition({ i * tamCasilla + 2, j * tamCasilla + 2 });
+        resalte.setFillColor(sf::Color::Transparent);
+        resalte.setOutlineThickness(3.0f);
+        if (c->estaOcupada())
+            resalte.setOutlineColor(sf::Color(255, 80, 80, 200));
+        else
+            resalte.setOutlineColor(sf::Color(80, 255, 80, 200));
+        ventanaJuego.draw(resalte);
     }
 
     if (primerClicRealizado && dynamic_cast<Hechicero*>(origenSeleccionado->getPieza())) {

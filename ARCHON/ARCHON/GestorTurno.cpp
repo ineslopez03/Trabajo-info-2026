@@ -11,6 +11,15 @@ void GestorTurno::gestionarTurno(Casilla* casillaClicada, Tablero* tablero) {
 
             tablero->origenSeleccionado = casillaClicada;
             tablero->primerClicRealizado = true;
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    Casilla* destino = tablero->matriz[i][j];
+                    if (destino == casillaClicada) continue;
+                    if (tablero->esMovimientoValido(casillaClicada, destino)) {
+                        tablero->casillasValidas.push_back(destino);
+                    }
+                }
+            }
             if (dynamic_cast<Hechicero*>(p) != nullptr) {
                 bool* registro = (tablero->turnoActual == Bando::LUZ) ? tablero->hechizosLuzUsados : tablero->hechizosOscurosUsados;
                 bool yaUsoMagia = false;
@@ -30,6 +39,7 @@ void GestorTurno::gestionarTurno(Casilla* casillaClicada, Tablero* tablero) {
         if (tablero->origenSeleccionado == casillaClicada) {
             tablero->primerClicRealizado = false;
             tablero->origenSeleccionado = nullptr;
+            tablero->casillasValidas.clear();
             return;
         }
 
@@ -53,6 +63,7 @@ void GestorTurno::gestionarTurno(Casilla* casillaClicada, Tablero* tablero) {
                 tablero->hayCombatePendiente = true;
                 tablero->primerClicRealizado = false;
                 tablero->origenSeleccionado = nullptr;
+                tablero->casillasValidas.clear();
                 std::cout << "¡Combate iniciado! Destino guardado." << std::endl;
             }
             else {
@@ -78,5 +89,6 @@ void GestorTurno::finalizarTurno(Tablero* tablero) {
     tablero->origenSeleccionado = nullptr;
     tablero->modoHechizoActivo = false;
     tablero->piezaAuxiliar = nullptr;
+    tablero->casillasValidas.clear();
     std::cout << "Turno finalizado. Turno actual: " << tablero->turnosContados << std::endl;
 }

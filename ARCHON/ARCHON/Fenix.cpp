@@ -15,7 +15,7 @@ std::string Fenix::obtenerRuta(Bando b, std::string skin) {
 Fenix::Fenix(Bando b, std::string skin)
     : PiezaVoladora(16, 8, 4, 1, Pieza::obtenerTexturaDesdeRuta(obtenerRuta(b, skin)), b)
 {
-    this->rangoMovimiento = 5;
+    this->rangoMovimiento = 4;
 }
 
 void Fenix::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {

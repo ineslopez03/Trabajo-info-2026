@@ -16,7 +16,7 @@ std::string Hechicero::obtenerRuta(Bando b, std::string skin) {
 Hechicero::Hechicero(Bando b, std::string skin)
     : PiezaTeletransporte(20, 8, 5, 2, Pieza::obtenerTexturaDesdeRuta(Hechicero::obtenerRuta(b, skin)), b)
 {
-    this->velMov = 5;
+    this->velMov = 2;
     for (int i = 0; i < 7; i++) {
         hechizosDisponibles[i] = true;
     }

@@ -15,7 +15,7 @@ std::string Unicornio::obtenerRuta(Bando b, std::string skin) {
 Unicornio::Unicornio(Bando b, std::string skin)
     : PiezaTerrestre(12, 5, 5, 4, Pieza::obtenerTexturaDesdeRuta(obtenerRuta(b, skin)), b)
 {
-    this->rangoMovimiento = 4;
+    this->rangoMovimiento = 3;
 }
 
 void Unicornio::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {

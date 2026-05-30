@@ -19,7 +19,8 @@ class Tablero : public InterfazUsuario {
     friend class GestorTurno;
 
 private:
-    std::string skinActual;         
+    std::string skinActual;    
+    std::vector<Casilla*> casillasValidas;
     Casilla* matriz[9][9];        
     sf::View vistaEstatica;         
     float tamCasilla;               

@@ -107,10 +107,11 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
     ventana.draw(luzSuperior);
     //Dos capas decorativas: un borde fino y una línea blanca semitransparente arriba para simular un efecto 3D
     if (this == seleccionada) {
-        sf::RectangleShape highlight(sf::Vector2f(tamano - 4, tamano - 4));
-        highlight.setPosition(sf::Vector2f(posX, posY));
-        highlight.setOutlineThickness(2.0f);
-        highlight.setOutlineColor(sf::Color::Green);
+        float offset = 10.0f;
+        sf::RectangleShape highlight(sf::Vector2f(tamano - (offset * 2), tamano - (offset * 2)));
+        highlight.setPosition(sf::Vector2f(posX + offset, posY + offset));
+        highlight.setOutlineThickness(3.0f); 
+        highlight.setOutlineColor(sf::Color::Yellow);
         highlight.setFillColor(sf::Color::Transparent);
         ventana.draw(highlight);
     }//Si esta casilla es seleccionada por el jugador, dibuja un borde verde encima

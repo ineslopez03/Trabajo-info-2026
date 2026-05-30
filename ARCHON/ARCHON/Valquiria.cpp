@@ -15,7 +15,7 @@ std::string Valquiria::obtenerRuta(Bando b, std::string skin) {
 Valquiria::Valquiria(Bando b, std::string skin)
     : PiezaVoladora(10, 4, 6, 3, Pieza::obtenerTexturaDesdeRuta(obtenerRuta(b, skin)), b)
 {
-    this->rangoMovimiento = 4;
+    this->rangoMovimiento = 3;
 }
 
 void Valquiria::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {

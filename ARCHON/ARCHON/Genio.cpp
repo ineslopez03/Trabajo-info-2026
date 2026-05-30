@@ -15,7 +15,7 @@ std::string Genio::obtenerRuta(Bando b, std::string skin) {
 Genio::Genio(Bando b, std::string skin)
     : PiezaVoladora(14, 5, 5, 3, Pieza::obtenerTexturaDesdeRuta(obtenerRuta(b, skin)), b)
 {
-    this->rangoMovimiento = 4;
+    this->rangoMovimiento = 3;
 }
 
 void Genio::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {
