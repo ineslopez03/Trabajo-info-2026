@@ -139,9 +139,10 @@
     <ClInclude Include="Constantes.h" />
     <ClInclude Include="Fenix.h" />
     <ClInclude Include="Genio.h" />
-
+    <ClInclude Include="Gestorcombate.h" />
     <ClInclude Include="GestorHechizos.h" />
-
+    <ClInclude Include="GestorTurno.h" />
+    <ClInclude Include="GestorVictoria.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="GraficosArena.h" />
     <ClInclude Include="Hechicero.h" />
@@ -171,9 +172,10 @@
     <ClCompile Include="Casilla.cpp" />
     <ClCompile Include="Fenix.cpp" />
     <ClCompile Include="Genio.cpp" />
-
+    <ClCompile Include="GestorCombate.cpp" />
     <ClCompile Include="GestorHechizos.cpp" />
-
+    <ClCompile Include="GestorTurno.cpp" />
+    <ClCompile Include="GestorVictoria.cpp" />
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="GraficosArena.cpp" />
     <ClCompile Include="Hechicero.cpp" />

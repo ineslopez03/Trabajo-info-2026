@@ -70,12 +70,8 @@ void MotorArchon::cambiarEstado(EstadoJuego nuevoEstado, Pieza* p1, Pieza* p2, s
     case EstadoJuego::INGRESAR_NOMBRE://cuando se acaba la partida
     {
         Bando bandoGanadorCompleto = Bando::LUZ;//por defecto se asigna la luz como ganador
-        if (miTablero != nullptr) {//si mi tablero existe
-            //ahora se asigna el bando ganador completo dependiendo del veredicto que de el tablero
-            int veredicto = miTablero->verificarVictoria();//Verifica si se hay victoria y de quienes
-            if (veredicto == 2) {//si es 2 el bando ganador es la oscuridad
-                bandoGanadorCompleto = Bando::OSCURIDAD;
-            }
+        if (miTablero != nullptr && miTablero->getEstadoVictoria() == 2) {
+            bandoGanadorCompleto = Bando::OSCURIDAD;//El tablero ya sabe quién ganó,solo lo consultamos
         }
         pantallaActiva = new PantallaNombre(bandoGanadorCompleto);//se crea la pantalla de ingreso de nombre con el bando ganador 
     }
@@ -132,27 +128,10 @@ void MotorArchon::bucle() {
                         miTablero = nullptr;
                     }
                     else if (tab->getHaycombate()) {
-                        casillaDestinoCombate = tab->getCoordenadasCombate();
                         Pieza* pAtacante = tab->getAtacante();
                         Pieza* pDefensor = tab->getDefensor();
-                        std::string currentSkin = tab->getSkin();
-
-                        ColorCasilla colorSuelo = tab->getColorCasilla(casillaDestinoCombate.x, casillaDestinoCombate.y);
-                        int porcentajeBono = 0;
-                        Bando bandoFavorecido = Bando::LUZ;
-
-                        if (colorSuelo == ColorCasilla::BLANCO) { porcentajeBono = 40; bandoFavorecido = Bando::LUZ; }
-                        else if (colorSuelo == ColorCasilla::GRIS_CLARO) { porcentajeBono = 20; bandoFavorecido = Bando::LUZ; }
-                        else if (colorSuelo == ColorCasilla::GRIS_OSCURO) { porcentajeBono = 20; bandoFavorecido = Bando::OSCURIDAD; }
-                        else if (colorSuelo == ColorCasilla::NEGRO) { porcentajeBono = 40; bandoFavorecido = Bando::OSCURIDAD; }
-
-                        if (porcentajeBono > 0) {
-                            if (pAtacante->getBando() == bandoFavorecido) pAtacante->aplicarBonoColor(porcentajeBono);
-                            if (pDefensor->getBando() == bandoFavorecido) pDefensor->aplicarBonoColor(porcentajeBono);
-                        }
-
                         tab->limpiarBanderaCombate();
-                        cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, currentSkin);
+                        cambiarEstado(EstadoJuego::ARENA, pAtacante, pDefensor, tab->getSkin());
                     }
                 }
             }
