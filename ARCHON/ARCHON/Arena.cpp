@@ -11,7 +11,7 @@ Arena::Arena(Pieza* p1, Pieza* p2, const std::string& skin, Pieza* atacante)
     this->atacanteOriginal = atacante; //guarda quien atacó en el tablero 
     this->skinArena = skin; //guarda la skin elegida en el menu
     iniciarBatalla(p1, p2); //coloca a cada uno en su lado
-    faseCuentaAtras = 3; //empoeza la cuenta atras en 3 segundos
+    faseCuentaAtras = 3; //empieza la cuenta atras en 3 segundos
 
    
     graficos.vincularPiezas(piezaIzquierda, piezaDerecha); //pasa los punteros a la clase de graficos para que lea la vida automaticamente
@@ -208,7 +208,7 @@ void Arena::gestionarColisiones() {
             }
         }
 
-        if (proyectilDestruido) { //si la bala choco con un personaje o un obstaculo
+        if (proyectilDestruido) { //si el laser choco con un personaje o un obstaculo
             delete* it; //borra el objeto dinamico
             it = lista_proyectiles.erase(it); //y lo saca de la lista
         }
@@ -219,8 +219,8 @@ void Arena::gestionarColisiones() {
 //para dubujar las cosas en la pantalla en el orden correcto
 void Arena::dibujarPantalla(sf::RenderWindow& ventana) {
     ventana.setView(ventana.getDefaultView()); 
-    ventana.draw(*spriteFondoArena); //pinta el cesped primero
-    obstaculos.dibujar(ventana); //encima del cesped ponemos los obstaculos
+    ventana.draw(*spriteFondoArena); //dibuja el cesped primero
+    obstaculos.dibujar(ventana); //encima del cesped pone los obstaculos
 
     for (const auto& onda : lista_ondas) ventana.draw(onda.forma); //dibuja las ondas de golpes cuerpo a cuerpo activas
 

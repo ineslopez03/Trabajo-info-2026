@@ -1,7 +1,7 @@
 #include "Proyectiles.h" 
 #include <cmath> 
 
-// rellenamos todos los atributos en cuanto nace el proyectil
+// rellena todos los atributos cuando nace el proyectil
 Proyectiles::Proyectiles(float _x, float _y, int _danyo, float _vel, sf::Vector2f _dir, Bando _bando, std::string skin)
     : x(_x), y(_y), danyo(_danyo), velocidad(_vel), direccion(_dir), bandoOrigen(_bando) // lista de inicializacion
 {
@@ -51,7 +51,7 @@ Proyectiles::~Proyectiles() {}
 
 
 void Proyectiles::mover(float dt) {
-    // cálculo de trayectoria del laser con formula del movimiento rectilineo uniformepara que el movimiento no dependa de los fotogramas por segundo del pc
+    // cálculo de trayectoria del laser con formula del movimiento rectilineo uniforme para que el movimiento no dependa de los fotogramas por segundo del pc
     x += direccion.x * velocidad * dt; // eje horizontal
     y += direccion.y * velocidad * dt; // eje vertical
 
@@ -61,6 +61,6 @@ void Proyectiles::mover(float dt) {
 
 
 void Proyectiles::dibujar(sf::RenderWindow& ventana) {
-    ventana.draw(resplandor); // dibujamos el brillo externo
+    ventana.draw(resplandor); // dibuja el brillo externo
     ventana.draw(nucleo); // y el nucleo despues 
 }
