@@ -2,10 +2,11 @@
 #include "PiezaVoladora.h"
 #include <string>
 
-class Genio : public PiezaVoladora {
+class Genio : public PiezaVoladora {// Genio hereda de PiezaVoladora
 private:
-    static std::string obtenerRuta(Bando b, std::string skin);
+    static std::string obtenerRuta(Bando b, std::string skin);// Devuelve la ruta de imagen según bando y skin
 public:
-    Genio(Bando b, std::string skin);
+    Genio(Bando b, std::string skin);// Constructor del Genio
+    // Sobrescribe el dibujado en arena
     void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };
