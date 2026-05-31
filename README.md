@@ -89,6 +89,72 @@ Dimitar Veselinov Dzhumbeshliev
 Inés López-Boado Rodriguez
 
 Pablo Muñoz Moreno
+```mermaid
+classDiagram
+    %% --- NÚCLEO Y MOTOR ---
+    class MotorArchon
+    MotorArchon o-- InterfazUsuario : pantallaActiva
+    MotorArchon o-- Tablero : miTablero
+    MotorArchon o-- Jugador : jugador1, jugador2
 
+    class Jugador
+    <<Abstract>> Jugador
+    Jugador <|-- JugadorHumano
+    Jugador o-- Pieza : piezas
 
+    %% --- INTERFAZ DE USUARIO (Patrón State / Polimorfismo) ---
+    class InterfazUsuario
+    <<Abstract>> InterfazUsuario
+    InterfazUsuario <|-- MenuPrincipal
+    InterfazUsuario <|-- Tablero
+    InterfazUsuario <|-- Arena
+    InterfazUsuario <|-- PantallaNombre
+    InterfazUsuario <|-- PantallaRanking
 
+    MenuPrincipal *-- Boton : botones
+    PantallaRanking *-- Boton : botones
+    Tablero *-- Boton : botonesHechizos
+
+    %% --- EL TABLERO Y SU ENCAPSULACIÓN ---
+    Tablero *-- GestorCombate
+    Tablero *-- GestorTurno
+    Tablero *-- GestorHechizos
+    Tablero *-- GestorVictoria
+    Tablero *-- Casilla : matriz[9][9]
+    Tablero --> Pieza : atacante, defensor (prestados)
+
+    class Casilla
+    Casilla o-- Pieza : piezaOcupante
+
+    %% --- LA ARENA DE COMBATE ---
+    Arena *-- Obstaculos
+    Arena *-- GraficosArena
+    Arena o-- Proyectiles : lista_proyectiles
+    Arena --> Pieza : piezaIzq, piezaDer (prestadas)
+    
+    %% Utilidades estáticas de la Arena
+    Arena ..> ControladorPelea : usa
+    Arena ..> MotorFisicasArena : usa
+
+    %% --- JERARQUÍA DE PIEZAS (Herencia Multinivel) ---
+    class Pieza
+    <<Abstract>> Pieza
+    Pieza <|-- PiezaTerrestre
+    Pieza <|-- PiezaVoladora
+    Pieza <|-- PiezaTeletransporte
+
+    %% Hijas Terrestres
+    PiezaTerrestre <|-- Arquero
+    PiezaTerrestre <|-- Caballero
+    PiezaTerrestre <|-- Golem
+    PiezaTerrestre <|-- Valquiria
+
+    %% Hijas Voladoras
+    PiezaVoladora <|-- Elemental
+    PiezaVoladora <|-- Fenix
+    PiezaVoladora <|-- Genio
+    PiezaVoladora <|-- Unicornio
+
+    %% Hijas Teletransporte
+    PiezaTeletransporte <|-- Hechicero
+```
