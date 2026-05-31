@@ -2,7 +2,7 @@
 #include <iostream>
 
 // Función libre que devuelve la ruta de imagen del Elemental según el skin
-static std::string obtenerRuta(std::string skin) {
+std::string Elemental::obtenerRuta(Bando bando, std::string skin) {
     if (skin == "HARRY_POTTER") {
         return "imagenes/HP/invocacion.png";// Imagen de invocación para skin HP
     }
