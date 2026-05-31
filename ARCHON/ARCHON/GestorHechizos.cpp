@@ -43,13 +43,13 @@ void GestorHechizos::ejecutarHechizo(int idHechizo, Casilla* objetivo, Tablero* 
         else tablero->bandoOscuroUsoMagia = true;
         break;
 
-    case 4:// EXCHANGE: intercambia la posición de dos piezas cualesquiera del tablero
-        if (objetivo->estaOcupada()) {
+    case 4: // EXCHANGE: intercambia la posición de dos piezas aliadas del tablero
+        if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == tablero->turnoActual) {
             if (tablero->piezaAuxiliar == nullptr) {
-                tablero->piezaAuxiliar = objetivo;// primer clic: guarda la primera pieza
+                tablero->piezaAuxiliar = objetivo; // primer clic: guarda la primera pieza aliada
             }
             else {
-                // Segundo clic: intercambia las dos piezas
+                // Segundo clic: intercambia las dos piezas aliadas
                 Pieza* p1 = tablero->piezaAuxiliar->getPieza();
                 Pieza* p2 = objetivo->getPieza();
                 tablero->piezaAuxiliar->setPieza(p2);
@@ -60,9 +60,9 @@ void GestorHechizos::ejecutarHechizo(int idHechizo, Casilla* objetivo, Tablero* 
             }
         }
         break;
-
     case 5:// SUMMON: crea un Elemental temporal para combatir contra una pieza enemiga
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != tablero->turnoActual) {
+            if (tablero->matriz[objetivo->getX()][objetivo->getY()]->getEsPuntoDePoder()) return;
             tablero->coordenadasCombate = sf::Vector2i(objetivo->getX(), objetivo->getY());
             tablero->atacante = new Elemental(tablero->turnoActual, tablero->skinActual);// Elemental creado en memoria
             tablero->defensor = objetivo->getPieza();
@@ -91,9 +91,11 @@ void GestorHechizos::ejecutarHechizo(int idHechizo, Casilla* objetivo, Tablero* 
     }
     break;
 
-    case 7:// IMPRISON: bloquea una pieza enemiga durante 2 turnos
+    case 7: // IMPRISON: bloquea una pieza enemiga durante 2 turnos
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != tablero->turnoActual) {
-            objetivo->getPieza()->setEncarcelada(2);// 2 = turnos que estará bloqueada
+            // Las piezas en puntos de poder son inmunes a hechizos enemigos
+            if (tablero->matriz[objetivo->getX()][objetivo->getY()]->getEsPuntoDePoder()) return;
+            objetivo->getPieza()->setEncarcelada(2); // 2 = turnos que estará bloqueada
             if (bandoLanzador == Bando::LUZ) tablero->bandoLuzUsoMagia = true;
             else tablero->bandoOscuroUsoMagia = true;
         }
