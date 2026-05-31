@@ -9,6 +9,4 @@ private:
 public:
     // Constructor: crea un Arquero del bando y skin indicados
     Arquero(Bando b, std::string skin);
-    // Sobrescribe el dibujado en la arena de combate (delega a PiezaTerrestre)
-    void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };

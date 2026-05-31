@@ -148,8 +148,6 @@
     <ClInclude Include="GraficosArena.h" />
     <ClInclude Include="Hechicero.h" />
     <ClInclude Include="InterfazUsuario.h" />
-    <ClInclude Include="Jugador.h" />
-    <ClInclude Include="JugadorHumano.h" />
     <ClInclude Include="MenuPrincipal.h" />
     <ClInclude Include="MotorArchon.h" />
     <ClInclude Include="MotorFisicasArena.h" />
@@ -182,8 +180,6 @@
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="GraficosArena.cpp" />
     <ClCompile Include="Hechicero.cpp" />
-    <ClCompile Include="Jugador.cpp" />
-    <ClCompile Include="JugadorHumano.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuPrincipal.cpp" />
     <ClCompile Include="MotorArchon.cpp" />

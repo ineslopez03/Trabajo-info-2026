@@ -1,4 +1,5 @@
 #include "Fenix.h"
+
 // Devuelve la ruta de imagen del Fénix según el skin y bando
 std::string Fenix::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
@@ -21,9 +22,4 @@ Fenix::Fenix(Bando b, std::string skin)// Constructor: inicializa el Fénix con 
 {
     this->rangoMovimiento = 4;
     // Puede moverse hasta 4 casillas en cualquier dirección
-
-}
-// Dibuja el Fénix en la arena de combate (delega a PiezaVoladora)
-void Fenix::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {
-    PiezaVoladora::dibujarEnArena(ventana, pos, mirandoDerecha, skin);
 }

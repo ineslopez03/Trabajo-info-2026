@@ -7,6 +7,4 @@ private:
     static std::string obtenerRuta(Bando b, std::string skin);// Devuelve la ruta de imagen según bando y skin
 public:
     Genio(Bando b, std::string skin);// Constructor del Genio
-    // Sobrescribe el dibujado en arena
-    void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };
