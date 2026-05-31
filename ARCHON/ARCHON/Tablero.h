@@ -54,10 +54,10 @@ private:
     sf::Text textoVictoria; //texto del ganador en la pantalla final         
     bool volverAlMenu = false; //true cuando la cinemática de victoria termina
     //Gestores desacoplados, acceden a los privados via friend
-    GestorHechizos gestorHechizos;
-    GestorVictoria gestorVictoria;
-    GestorCombate  gestorCombate;
-    GestorTurno    gestorTurno;
+    GestorHechizos gestorHechizos;// Instancia del gestor de hechizos
+    GestorVictoria gestorVictoria;// Instancia del gestor de victoria
+    GestorCombate  gestorCombate;// Instancia del gestor de combate
+    GestorTurno    gestorTurno; // Instancia del gestor de turno
     void inicializarBotones();//crea los 7 botones de hechizos
     void gestionarTurno(Casilla* casillaClicada);//delega en GestorTurno
     bool esMovimientoValido(Casilla* origen, Casilla* destino);//valida si el movimiento es legal
@@ -69,21 +69,21 @@ private:
 
 public:
     Tablero();//constructor por defecto:95px, sin skin
-    Tablero(float tam, std::string skin);
-    virtual ~Tablero() override;
+    Tablero(float tam, std::string skin);// Constructor parametrizado con tamaño y skin
+    virtual ~Tablero() override; // Destructor: libera toda la memoria dinámica
 
     void inicializarTablero(); //coloca las 18 piezas de cada bando en posición inicial
     void procesarEntrada(sf::RenderWindow& ventanaJuego) override;//bucle de eventos+victoria
     void dibujarPantalla(sf::RenderWindow& ventanaJuego) override;//pipeline gráfico del tablero
     //Getters consultados por MotorArchon para coordinar los estados del juego
-    bool getHaycombate() const { return hayCombatePendiente; }
-    Pieza* getAtacante() const { return atacante; }
-    Pieza* getDefensor() const { return defensor; }
+    bool getHaycombate() const { return hayCombatePendiente; }// Getter: ¿hay combate pendiente?
+    Pieza* getAtacante() const { return atacante; }// Getter: puntero al atacante
+    Pieza* getDefensor() const { return defensor; }  // Getter: puntero al defensor
     void limpiarBanderaCombate();//resetea hayCombatePendiente tras lanzar la Arena
-    void procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* atacanteOriginal);
-    std::string getSkin() const { return skinActual; }
-    sf::Vector2i getCoordenadasCombate() const { return coordenadasCombate; }
+    void procesarResultadoCombate(Pieza* ganador, Pieza* perdedor, Pieza* atacanteOriginal);// Aplica el resultado del combate
+    std::string getSkin() const { return skinActual; }// Getter: nombre del skin actual
+    sf::Vector2i getCoordenadasCombate() const { return coordenadasCombate; }// Getter: coordenadas del combate
     ColorCasilla getColorCasilla(int x, int y);//devuelve el color actual de la casilla para el bono
-    bool debeVolverAlMenu() const { return volverAlMenu; }
+    bool debeVolverAlMenu() const { return volverAlMenu; }// Getter: ¿debe volver al menú principal?
     int getEstadoVictoria() const { return estadoVictoria; }//1=LUZ,2=OSCURIDAD,3=empate
 };

@@ -114,7 +114,7 @@ void Casilla::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turn
         highlight.setOutlineColor(sf::Color::Yellow);
         highlight.setFillColor(sf::Color::Transparent);
         ventana.draw(highlight);
-    }//Si esta casilla es seleccionada por el jugador, dibuja un borde verde encima
+    }//Si esta casilla es seleccionada por el jugador, dibuja un borde amarillo encima
     if (piezaOcupante != nullptr) {
         piezaOcupante->dibujar(ventana, seleccionada, turno, tamano);
     }

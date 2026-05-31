@@ -8,12 +8,12 @@ int GestorVictoria::verificarVictoria(Tablero* tablero) {
     // Recorre el tablero contando piezas, piezas libres y nodos controlados de cada bando
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-            Casilla* c = tablero->matriz[i][j];
+            Casilla* c = tablero->matriz[i][j];// Casilla actual
             if (!c->estaOcupada()) continue;// casilla vacía, se salta
-            Pieza* p = c->getPieza();
-            if (p->getBando() == Bando::LUZ) {
-                contadorLuz++;
-                if (!p->estaEncarcelada()) libresLuz++;// encarcelada no puede moverse
+            Pieza* p = c->getPieza(); // Obtiene la pieza
+            if (p->getBando() == Bando::LUZ) { // Si es del bando LUZ
+                contadorLuz++; // Incrementa el total de LUZ
+                if (!p->estaEncarcelada()) libresLuz++;// Si no está encarcelada, cuenta como libre
                 if (c->getEsPuntoDePoder())  nodosLuz++;// controla un nodo de poder
             }
             else {

@@ -8,18 +8,18 @@ void GestorHechizos::ejecutarHechizo(int idHechizo, Casilla* objetivo, Tablero* 
     // guarda el bando antes de cualquier cambio
     switch (idHechizo) {
     case 1:// TELEPORT: mueve una pieza aliada a cualquier casilla vacía del tablero
-        if (tablero->piezaAuxiliar == nullptr) {
-            // Primer clic: selecciona la pieza aliada a teletransportar
+        if (tablero->piezaAuxiliar == nullptr) {// Primer click: seleccionar la pieza a teleportar
+            // Solo se puede seleccionar una pieza propia
             if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == tablero->turnoActual) {
-                tablero->piezaAuxiliar = objetivo;
+                tablero->piezaAuxiliar = objetivo;// Guarda la casilla origen del teleport
             }
         }
         else {
             // Segundo clic: coloca la pieza en la casilla vacía destino
-            if (!objetivo->estaOcupada()) {
-                objetivo->setPieza(tablero->piezaAuxiliar->getPieza());
-                tablero->piezaAuxiliar->setPieza(nullptr);
-                if (bandoLanzador == Bando::LUZ) tablero->bandoLuzUsoMagia = true;
+            if (!objetivo->estaOcupada()) {// El destino debe estar vacío
+                objetivo->setPieza(tablero->piezaAuxiliar->getPieza());// Mueve la pieza al destino
+                tablero->piezaAuxiliar->setPieza(nullptr); // Vacía la casilla origen
+                if (bandoLanzador == Bando::LUZ) tablero->bandoLuzUsoMagia = true;// Marca magia usada
                 else tablero->bandoOscuroUsoMagia = true;
             }
         }
@@ -29,10 +29,10 @@ void GestorHechizos::ejecutarHechizo(int idHechizo, Casilla* objetivo, Tablero* 
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() == tablero->turnoActual) {
             Pieza* p = objetivo->getPieza();
             if (p->getVidaBase() < p->getVidaMaxima()) {// solo cura si tiene vida perdida
-                p->resetVida();
+                p->resetVida();  // Restaura la vida al máximo
                 if (bandoLanzador == Bando::LUZ) tablero->bandoLuzUsoMagia = true;
                 else tablero->bandoOscuroUsoMagia = true;
-                tablero->piezaAuxiliar = nullptr;
+                tablero->piezaAuxiliar = nullptr;  // Limpia la auxiliar tras curar
             }
         }
         break;
@@ -62,10 +62,11 @@ void GestorHechizos::ejecutarHechizo(int idHechizo, Casilla* objetivo, Tablero* 
         break;
     case 5:// SUMMON: crea un Elemental temporal para combatir contra una pieza enemiga
         if (objetivo->estaOcupada() && objetivo->getPieza()->getBando() != tablero->turnoActual) {
+            // Solo se puede invocar contra piezas enemigas
             if (tablero->matriz[objetivo->getX()][objetivo->getY()]->getEsPuntoDePoder()) return;
-            tablero->coordenadasCombate = sf::Vector2i(objetivo->getX(), objetivo->getY());
+            tablero->coordenadasCombate = sf::Vector2i(objetivo->getX(), objetivo->getY());// Guarda la posición del combate
             tablero->atacante = new Elemental(tablero->turnoActual, tablero->skinActual);// Elemental creado en memoria
-            tablero->defensor = objetivo->getPieza();
+            tablero->defensor = objetivo->getPieza();// El defensor es la pieza enemiga en la casilla
             tablero->hayCombatePendiente = true;// MotorArchon lanzará la Arena
             if (bandoLanzador == Bando::LUZ) tablero->bandoLuzUsoMagia = true;
             else tablero->bandoOscuroUsoMagia = true;
@@ -74,14 +75,14 @@ void GestorHechizos::ejecutarHechizo(int idHechizo, Casilla* objetivo, Tablero* 
 
     case 6:// REVIVE: resucita la última pieza muerta en una casilla adyacente al Hechicero
     {
-        std::vector<Pieza*>& cementerio = (tablero->turnoActual == Bando::LUZ) ? tablero->piezasMuertasLuz : tablero->piezasMuertasOscuridad;
-        if (!cementerio.empty() && !objetivo->estaOcupada()) {
+        std::vector<Pieza*>& cementerio = (tablero->turnoActual == Bando::LUZ) ? tablero->piezasMuertasLuz : tablero->piezasMuertasOscuridad;// Selecciona el cementerio del bando activo
+        if (!cementerio.empty() && !objetivo->estaOcupada()) { // Debe haber piezas muertas y el destino libre
             int hX = (tablero->origenSeleccionado != nullptr) ? tablero->origenSeleccionado->getX() : -1;
             int hY = (tablero->origenSeleccionado != nullptr) ? tablero->origenSeleccionado->getY() : -1;
             // Solo permite resucitar en casillas a 1 paso del Hechicero (adyacentes y diagonales)
             if (std::abs(objetivo->getX() - hX) <= 1 && std::abs(objetivo->getY() - hY) <= 1) {
                 Pieza* pRevivida = cementerio.back();// coge la última pieza muerta
-                cementerio.pop_back();
+                cementerio.pop_back();// La elimina del cementerio
                 pRevivida->resetVida(); // restaura su vida máxima
                 objetivo->setPieza(pRevivida);// la coloca en el tablero
                 if (bandoLanzador == Bando::LUZ) tablero->bandoLuzUsoMagia = true;

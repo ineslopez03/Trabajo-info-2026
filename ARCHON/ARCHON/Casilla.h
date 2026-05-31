@@ -10,16 +10,16 @@ private:
     Pieza* piezaOcupante; //Puntero a la pieza
     ColorCasilla Color;//Color actual de la casilla
 public:
-    Casilla(int _x, int _y); 
-    ~Casilla();
-    void setPieza(Pieza* p);
+    Casilla(int _x, int _y); // Constructor: recibe coordenadas
+    ~Casilla();// Destructor
+    void setPieza(Pieza* p);// Asigna una pieza a la casilla y notifica a la pieza su posición
     
-    Pieza* getPieza() { return piezaOcupante; } 
-    bool estaOcupada() { return piezaOcupante != nullptr; }
-    void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano);
-	int getX() const { return x; }
-	int getY() const { return y; }
-    ColorCasilla getColorActual()const { return Color; }
-   bool getEsPuntoDePoder() const { return esPuntoDePoder; } 
-   bool getEsOscilante() const { return esOscilante; } 
+    Pieza* getPieza() { return piezaOcupante; }  // Getter: puntero a la pieza ocupante
+    bool estaOcupada() { return piezaOcupante != nullptr; } // True si hay una pieza en esta casilla
+    void dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano);// Dibuja la casilla (color, decoración, pieza) en la ventana
+	int getX() const { return x; }// Getter: coordenada X
+	int getY() const { return y; }// Getter: coordenada Y
+    ColorCasilla getColorActual()const { return Color; }// Getter: color actual de la casilla
+   bool getEsPuntoDePoder() const { return esPuntoDePoder; } // Getter: ¿es punto de poder?
+   bool getEsOscilante() const { return esOscilante; }  // Getter: ¿es casilla oscilante?
 };
