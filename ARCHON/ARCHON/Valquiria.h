@@ -2,10 +2,9 @@
 #include "PiezaVoladora.h"
 #include <string>
 
-class Valquiria : public PiezaVoladora {
+class Valquiria : public PiezaVoladora {//hereda de pieza voladora
 private:
-    static std::string obtenerRuta(Bando b, std::string skin);
+    static std::string obtenerRuta(Bando b, std::string skin);//metodo para la textura
 public:
-    Valquiria(Bando b, std::string skin);
-    void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
+    Valquiria(Bando b, std::string skin);//constructor de la valquiria
 };

@@ -7,6 +7,4 @@ private:
     static std::string obtenerRuta(Bando b, std::string skin);// Devuelve la ruta de imagen según bando y skin
 public:
     Golem(Bando b, std::string skin);// Constructor del Golem
-    // Sobrescribe el dibujado en arena
-    void dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) override;
 };

@@ -4,105 +4,94 @@
 #include <algorithm>
 #include <iostream>
 
-void PiezaVoladora::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) {
-    if (posicion == nullptr) return;
+void PiezaVoladora::dibujar(sf::RenderWindow& ventana, Casilla* seleccionada, int turno, float tamano) {//render en el tablero
+    if (posicion == nullptr) return;//seguridad
 
-    if (this->estaEncarcelada()) {
-        sprite.setColor(sf::Color(100, 100, 255, 180));
+    if (this->estaEncarcelada()) {//hechizo de prision
+        sprite.setColor(sf::Color(100, 100, 255, 180));//azul
     }
     else {
-        sprite.setColor(sf::Color::White);
+        sprite.setColor(sf::Color::White);//normal
     }
 
-    // 1. Coordenadas de la casilla donde debería estar (Destino Lógico)
-    float destinoX = (float)posicion->getX() * tamano;
-    float destinoY = (float)posicion->getY() * tamano;
-    sf::Vector2f posDestino = { destinoX + tamano / 2.f, destinoY + tamano / 2.f };
+    float destinoX = (float)posicion->getX() * tamano;//coordenadas logicas x
+    float destinoY = (float)posicion->getY() * tamano;//coordenadas logicas y
+    sf::Vector2f posDestino = { destinoX + tamano / 2.f, destinoY + tamano / 2.f };//centro de su casilla
 
-    // 2. Interpolación para el desplazamiento suave
-    sf::Vector2f posActual = sprite.getPosition();
-    sf::Vector2f direccion = posDestino - posActual;
-    float distancia = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
+    sf::Vector2f posActual = sprite.getPosition();//interpolacion para movimiento suave
+    sf::Vector2f direccion = posDestino - posActual;//vector direccion
+    float distancia = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);//modulo del vector
 
-    if (distancia > 1.0f) {
-        sprite.move(direccion * 0.015f);
+    if (distancia > 1.0f) {//si aun no ha llegado
+        sprite.move(direccion * 0.015f);//avanza un porcentaje de la distancia (lerp)
     }
     else {
-        sprite.setPosition(posDestino);
+        sprite.setPosition(posDestino);//lo ancla si ya esta muy cerca
     }
 
-    // 3. Efecto de levitación
-    static sf::Clock clock;
-    float offset = std::sin(clock.getElapsedTime().asSeconds() * 3.f) * 4.f;
+    static sf::Clock clock;//reloj estatico para animacion
+    float offset = std::sin(clock.getElapsedTime().asSeconds() * 3.f) * 4.f;//efecto de levitacion con onda senoidal
+    sf::Vector2f posVisual = sprite.getPosition();//guardamos la posicion lerp
+    sprite.move({ 0, offset });//aplicamos la onda
 
-    sf::Vector2f posVisual = sprite.getPosition();
-    sprite.move({ 0, offset });
-    sf::FloatRect bounds = sprite.getLocalBounds();
-
-    if (bounds.size.x > 0.1f) {
-        sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
-        float escala = (tamano * 0.8f) / bounds.size.x;
-        sprite.setScale({ escala, escala });
-        ventana.draw(sprite);
+    sf::FloatRect bounds = sprite.getLocalBounds();//limites
+    if (bounds.size.x > 0.1f) {//si es valido
+        sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });//centramos
+        float escala = (tamano * 0.8f) / bounds.size.x;//escalado estandar
+        sprite.setScale({ escala, escala });//aplica escala
+        ventana.draw(sprite);//dibuja en pantalla
     }
-
-    // Restauramos la posición sin el offset para el siguiente frame
-    sprite.setPosition(posVisual);
+    sprite.setPosition(posVisual);//restauramos sin el offset para el calculo del siguiente frame
 }
 
-bool PiezaVoladora::mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) {
-    if (!origen || !destino) return false;
+bool PiezaVoladora::mover(Casilla* origen, Casilla* destino, Casilla* matriz[9][9]) {//validacion logica aerea
+    if (!origen || !destino) return false;//punteros seguros
 
-    if (this->estaEncarcelada()) {
-        std::cout << "DEBUG: La pieza esta encarcelada y no puede moverse." << std::endl;
-        return false;
+    if (this->estaEncarcelada()) {//restriccion por magia
+        std::cout << "DEBUG: La pieza esta encarcelada y no puede moverse." << std::endl;//traza
+        return false;//deniega
     }
 
-    if (destino->estaOcupada() && destino->getPieza()->getBando() == this->bando) {
-        return false;
+    if (destino->estaOcupada() && destino->getPieza()->getBando() == this->bando) {//casilla amiga
+        return false;//no se puede comer a si mismo
     }
 
-    int x1 = origen->getX();
-    int y1 = origen->getY();
-    int x2 = destino->getX();
-    int y2 = destino->getY();
+    int x1 = origen->getX();//origen x
+    int y1 = origen->getY();//origen y
+    int x2 = destino->getX();//destino x
+    int y2 = destino->getY();//destino y
+    int diffX = std::abs(x2 - x1);//distancia x
+    int diffY = std::abs(y2 - y1);//distancia y
+    int distancia = std::max(diffX, diffY);//como vuela en diagonal, se toma el mayor desplazamiento como coste
 
-    int diffX = std::abs(x2 - x1);
-    int diffY = std::abs(y2 - y1);
-    int distancia = std::max(diffX, diffY);
-
-    if (distancia > this->velMov || distancia == 0) {
-        return false;
+    if (distancia > this->velMov || distancia == 0) {//si supera su rango
+        return false;//fuera de alcance
     }
 
-    return true;
+    return true;//las voladoras saltan obstaculos, no miramos colisiones intermedias
 }
 
-void PiezaVoladora::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {
-    sprite.setTexture(textura);
-    sprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)textura.getSize().x, (int)textura.getSize().y }));
+void PiezaVoladora::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {//render de combate
+    sprite.setTexture(textura);//garantiza textura original
+    sprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)textura.getSize().x, (int)textura.getSize().y }));//resetea
 
-    if (this->estaEncarcelada()) {
-        sprite.setColor(sf::Color(100, 100, 255, 180));
+    if (this->estaEncarcelada()) {//consistencia visual de estado alterado
+        sprite.setColor(sf::Color(100, 100, 255, 180));//azul
     }
     else {
-        sprite.setColor(sf::Color::White);
+        sprite.setColor(sf::Color::White);//normal
     }
 
-    // Efecto de levitación adaptado para la arena
-    static sf::Clock clockA;
-    float offset = std::sin(clockA.getElapsedTime().asSeconds() * 4.f) * 8.f;
-    sf::Vector2f posAnimada = { pos.x, pos.y + offset };
+    static sf::Clock clockA;//reloj estatico para animacion de arena
+    float offset = std::sin(clockA.getElapsedTime().asSeconds() * 4.f) * 8.f;//onda senoidal mas marcada
+    sf::Vector2f posAnimada = { pos.x, pos.y + offset };//le sumamos el efecto a la fisica
 
-    sf::FloatRect bounds = sprite.getLocalBounds();
-
-    if (bounds.size.x > 0.1f) {
-        sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
-        sprite.setPosition(posAnimada);
-
-        float escala = (65.f*factorEscalaExtra)/ bounds.size.x;
-        sprite.setScale({ mirandoDerecha ? escala : -escala, escala });
-
-        ventana.draw(sprite);
+    sf::FloatRect bounds = sprite.getLocalBounds();//limites
+    if (bounds.size.x > 0.1f) {//si existe
+        sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });//centro
+        sprite.setPosition(posAnimada);//colocamos con onda
+        float escala = (65.f * factorEscalaExtra) / bounds.size.x;//escala estandar multiplicada por su parametro individual
+        sprite.setScale({ mirandoDerecha ? escala : -escala, escala });//rotacion de espejo
+        ventana.draw(sprite);//dibuja
     }
 }

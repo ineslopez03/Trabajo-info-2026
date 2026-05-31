@@ -1,5 +1,6 @@
 #include "Hechicero.h"
 #include <iostream>
+
 // Devuelve la ruta de imagen del Hechicero según el skin y bando
 std::string Hechicero::obtenerRuta(Bando b, std::string skin) {
     if (skin == "HARRY_POTTER") {
@@ -15,6 +16,7 @@ std::string Hechicero::obtenerRuta(Bando b, std::string skin) {
         return (b == Bando::LUZ) ? "imagenes/Classic/Hechicero.png" : "imagenes/Classic/Hechicera.png";
     }
 }
+
 // Constructor: inicializa el Hechicero con sus estadísticas y prepara sus hechizos
 Hechicero::Hechicero(Bando b, std::string skin)
     : PiezaTeletransporte(20, 8, 5, 2, Pieza::obtenerTexturaDesdeRuta(Hechicero::obtenerRuta(b, skin)), b)
@@ -23,10 +25,4 @@ Hechicero::Hechicero(Bando b, std::string skin)
     for (int i = 0; i < 7; i++) {
         hechizosDisponibles[i] = true;// Todos los hechizos comienzan disponibles al inicio
     }
-}
-// Dibuja el Hechicero en la arena de combate (delega a PiezaTeletransporte)
-void Hechicero::dibujarEnArena(sf::RenderWindow& ventana, sf::Vector2f pos, bool mirandoDerecha, std::string skin) {
-    // Delega completamente al padre; no añade lógica visual propia
-        PiezaTeletransporte::dibujarEnArena(ventana, pos, mirandoDerecha, skin);
-    
 }

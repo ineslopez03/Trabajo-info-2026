@@ -21,7 +21,6 @@ private:
     Tablero* miTablero;//se crea un puntero a tablero para mantenerlo vivo durante el juego y no perderlo al cambiar de estado
     bool ejecutando;//flag para salir del bucle del juego
     std::string skinActual;  // Guarda la skin seleccionada de menu para usarla en el tablero y la arena
-    sf::Vector2i casillaDestinoCombate;//
 
 public:
     MotorArchon();//constructor
